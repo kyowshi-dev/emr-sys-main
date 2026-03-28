@@ -20,11 +20,42 @@
             --border: rgba(26, 31, 28, 0.12);
             --primary: #0d4a3c;
             --accent: #c45c41;
+            --accent-strong: #b13f2f;
             --accent-hover: #a84d36;
             --teal-soft: rgba(13, 74, 60, 0.08);
             --shadow-md: 0 4px 12px rgba(26, 31, 28, 0.08);
             --shadow-lg: 0 12px 32px rgba(26, 31, 28, 0.12);
         }
+
+        input[type="text"], input[type="password"] {
+            border: 1px solid var(--border);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(13, 74, 60, 0.2);
+        }
+
+        .accent-button {
+            background: var(--accent-strong);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(196, 92, 65, 0.35);
+            border: 1px solid transparent;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .accent-button:hover {
+            background: var(--accent-hover);
+        }
+
+        .accent-button:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(13, 74, 60, 0.35);
+        }
+
         .grain::before {
             content: '';
             position: absolute;
@@ -83,10 +114,13 @@
                         <input type="checkbox" name="remember" class="mr-2 h-4 w-4 rounded border-[var(--border)]" style="accent-color: var(--primary);">
                         Remember me
                     </label>
+                    <a href="#" class="text-sm font-medium" style="color: var(--primary); text-decoration: underline;"
+                       onclick="event.preventDefault(); alert('Please contact your IT admin to reset your password.');">
+                        Forgot Password?
+                    </a>
                 </div>
 
-                <button type="submit" class="w-full py-3 rounded-xl text-white font-semibold text-sm transition-all duration-200 hover:opacity-95 active:scale-[0.99]"
-                        style="background: var(--accent); box-shadow: 0 2px 8px rgba(196, 92, 65, 0.3);">
+                <button type="submit" class="w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.99] accent-button">
                     Sign in
                 </button>
             </form>
