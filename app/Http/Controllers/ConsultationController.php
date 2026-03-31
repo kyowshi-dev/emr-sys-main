@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Consultation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,11 @@ class ConsultationController extends Controller
 {
     public function index(Request $request)
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
+            abort(403, 'Unauthorized');
+        }
+
         $query = DB::table('consultations')
             ->join('patients', 'consultations.patient_id', '=', 'patients.id')
             ->join('health_workers', 'consultations.worker_id', '=', 'health_workers.id')
@@ -170,10 +176,15 @@ class ConsultationController extends Controller
     // 3. Show the Doctor's Workspace (View Consultation)
     public function show($id)
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+            abort(403, 'Unauthorized');
+        }
+
         $consultation = DB::table('consultations')->find($id);
 
         if (! $consultation) {
-            abort(404, 'Consultation not found');
+            abort(404, 'Resource not found');
         }
 
         $patient = DB::table('patients')->find($consultation->patient_id);
@@ -220,6 +231,11 @@ class ConsultationController extends Controller
     // 4. Save a Diagnosis (Doctor's Action)
     public function addDiagnosis(Request $request, $id)
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+            abort(403, 'Unauthorized');
+        }
+
         $request->validate([
             'diagnosis_id' => 'required|exists:diagnosis_lookup,id',
             'remarks' => 'nullable|string',
@@ -251,6 +267,11 @@ class ConsultationController extends Controller
     // 5. Save a Prescription
     public function addPrescription(Request $request, $id)
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+            abort(403, 'Unauthorized');
+        }
+
         $validated = $request->validate([
             'medicine_id' => ['required', 'exists:medicines_lookup,id'],
             'dosage' => ['required', 'string', 'max:255'],

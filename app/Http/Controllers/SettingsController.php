@@ -40,7 +40,7 @@ class SettingsController extends Controller
             'password.confirmed' => 'New password confirmation does not match.',
         ]);
 
-        $user->password = $validated['password'];
+        $user->password = Hash::make($validated['password']);
         $user->save();
 
         return redirect()

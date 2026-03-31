@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Patient;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,11 @@ class PatientController extends Controller
     // 1. List all patients
     public function index()
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
+            abort(403, 'Unauthorized');
+        }
+
         $patients = DB::table('patients')
             ->join('households', 'patients.household_id', '=', 'households.id')
             ->leftJoinSub(
@@ -39,6 +45,11 @@ class PatientController extends Controller
     // 2. Show the Registration Form
     public function create(Request $request)
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
+            abort(403, 'Unauthorized');
+        }
+
         $selectedHouseholdId = $request->old('household_id') ?? $request->input('household_id');
 
         $transientHousehold = DB::table('households')
@@ -69,6 +80,11 @@ class PatientController extends Controller
     // 3. Save the New Patient
     public function store(Request $request)
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
+            abort(403, 'Unauthorized');
+        }
+
         // --- 1. ENHANCED VALIDATION ---
         $validated = $request->validate([
             'household_id' => 'required|exists:households,id', // Still required for now
@@ -145,7 +161,12 @@ class PatientController extends Controller
             ->first();
 
         if (! $patient) {
-            abort(404, 'Patient not found');
+            abort(404, 'Resource not found');
+        }
+
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
+            abort(403, 'Unauthorized');
         }
 
         // 2. Calculate Age

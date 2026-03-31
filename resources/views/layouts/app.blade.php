@@ -102,12 +102,33 @@
                 </button>
             </div>
 
-            <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto">
+            <nav class="flex-1 p-3 space-y-1 overflow-y-auto" x-data="{ 
+                patientCareOpen: false, 
+                managementOpen: false, 
+                adminOpen: false,
+                initDropdowns() {
+                    const current = window.location.pathname;
+                    if (current.includes('household') || current.includes('patient') || current.includes('consultation') || current.includes('immunization')) {
+                        this.patientCareOpen = true;
+                    }
+                    if (current.includes('medicine') || current.includes('report')) {
+                        this.managementOpen = true;
+                    }
+                    if (current.includes('user')) {
+                        this.adminOpen = true;
+                    }
+                },
+                isActive(routes) {
+                    const current = window.location.pathname;
+                    return routes.some(route => current.includes(route));
+                }
+            }" @load="initDropdowns()">
                 @php
                     /** @var \App\Models\User|null $authUser */
                     $authUser = auth()->user();
                 @endphp
 
+                <!-- Dashboard -->
                 <a href="{{ route('dashboard') }}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
                     <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <rect x="9" y="3" width="6" height="4" rx="1"></rect>
@@ -116,66 +137,114 @@
                     </svg>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('households.index') }}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
-                    <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M3 10.5 12 3l9 7.5"></path>
-                        <path d="M5 10v11h14V10"></path>
-                        <path d="M10 21v-7h4v7"></path>
-                    </svg>
-                    <span>Households</span>
-                </a>
-                <a href="{{ url('/patients') }}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
-                    <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                    <span>Patients</span>
-                </a>
-                <a href="{{ route('consultations.index') }}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
-                    <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="M21 21l-4.35-4.35"></path>
-                        <path d="M8 8l6 6"></path>
-                        <path d="M14 8l-6 6"></path>
-                    </svg>
-                    <span>Consultations</span>
-                </a>
-                <a href="{{ route('immunizations.index') }}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
-                    <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M10 3h4v4h4v4h-4v4h-4v-4H6V7h4z"></path>
-                    </svg>
-                    <span>Immunization</span>
-                </a>
-                @if ($authUser && $authUser->hasRole('Admin', 'Nurse'))
-                    <a href="{{ route('medicines.index') }}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+
+                <!-- Patient Care Dropdown -->
+                <div>
+                    <button @click="patientCareOpen = !patientCareOpen" :class="{ 'bg-opacity-100': patientCareOpen }" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200 hover:opacity-100" style="color: var(--ink-muted);">
                         <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M10.5 6h2.25v.75h-2.25V6zm0 3h2.25v.75h-2.25V9zm0 3h2.25v.75h-2.25v-.75z"></path>
-                            <path d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"></path>
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
-                        <span>Medicines</span>
-                    </a>
-                @endif
-                @if ($authUser && $authUser->hasRole('Admin', 'BHW', 'Nurse'))
-                    <a href="{{ route('reports.index') }}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
-                        <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M3 3v18h18"></path>
-                            <path d="M7 14l2-2 3 3 5-5"></path>
+                        <span class="flex-1 text-left">Patient Care</span>
+                        <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': patientCareOpen }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 9l6 6 6-6"></path>
                         </svg>
-                        <span>Reports</span>
-                    </a>
+                    </button>
+                    <div x-show="patientCareOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="mt-1 ml-2 pl-3 border-l space-y-0.5" style="border-color: var(--border);">
+                        <a href="{{ route('households.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                            <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M3 10.5 12 3l9 7.5"></path>
+                                <path d="M5 10v11h14V10"></path>
+                                <path d="M10 21v-7h4v7"></path>
+                            </svg>
+                            <span>Households</span>
+                        </a>
+                        <a href="{{ url('/patients') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                            <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                            </svg>
+                            <span>Patients</span>
+                        </a>
+                        <a href="{{ route('consultations.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                            <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="M21 21l-4.35-4.35"></path>
+                            </svg>
+                            <span>Consultations</span>
+                        </a>
+                        <a href="{{ route('immunizations.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                            <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M10 3h4v4h4v4h-4v4h-4v-4H6V7h4z"></path>
+                            </svg>
+                            <span>Immunization</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Management & Reports Dropdown -->
+                @if ($authUser && ($authUser->hasRole('Admin', 'Nurse') || $authUser->hasRole('Admin', 'BHW', 'Nurse')))
+                    <div>
+                        <button @click="managementOpen = !managementOpen" :class="{ 'bg-opacity-100': managementOpen }" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200 hover:opacity-100" style="color: var(--ink-muted);">
+                            <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"></path>
+                                <rect x="10" y="6" width="4" height="8" rx="1"></rect>
+                            </svg>
+                            <span class="flex-1 text-left">Management</span>
+                            <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': managementOpen }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 9l6 6 6-6"></path>
+                            </svg>
+                        </button>
+                        <div x-show="managementOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="mt-1 ml-2 pl-3 border-l space-y-0.5" style="border-color: var(--border);">
+                            @if ($authUser && $authUser->hasRole('Admin', 'Nurse'))
+                                <a href="{{ route('medicines.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                                    <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M10.5 6h2.25v.75h-2.25V6zm0 3h2.25v.75h-2.25V9zm0 3h2.25v.75h-2.25v-.75z"></path>
+                                        <path d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"></path>
+                                    </svg>
+                                    <span>Medicines</span>
+                                </a>
+                            @endif
+                            @if ($authUser && $authUser->hasRole('Admin', 'BHW', 'Nurse'))
+                                <a href="{{ route('reports.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                                    <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M3 3v18h18"></path>
+                                        <path d="M7 14l2-2 3 3 5-5"></path>
+                                    </svg>
+                                    <span>Reports</span>
+                                </a>
+                            @endif
+                        </div>
+                    </div>
                 @endif
 
+                <!-- Administration Dropdown (Admin only) -->
                 @if ($authUser && $authUser->isAdmin())
-                    <a href="{{ route('users.index') }}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
-                        <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        <span>Users</span>
-                    </a>
+                    <div>
+                        <button @click="adminOpen = !adminOpen" :class="{ 'bg-opacity-100': adminOpen }" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200 hover:opacity-100" style="color: var(--ink-muted);">
+                            <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"></path>
+                            </svg>
+                            <span class="flex-1 text-left">Administration</span>
+                            <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': adminOpen }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 9l6 6 6-6"></path>
+                            </svg>
+                        </button>
+                        <div x-show="adminOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="mt-1 ml-2 pl-3 border-l space-y-0.5" style="border-color: var(--border);">
+                            <a href="{{ route('users.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                                <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <span>User Management</span>
+                            </a>
+                        </div>
+                    </div>
                 @endif
+
+                <!-- Settings -->
                 <a href="{{ route('settings.index') }}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
                     <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 0 0 2.572-1.065z"></path>
@@ -269,11 +338,14 @@
 
     <style>
         .nav-link:hover { background: var(--teal-soft); color: var(--primary) !important; }
+        .nav-submenu:hover { background: var(--teal-soft); color: var(--primary) !important; }
         a[href="{{ request()->url() }}"].nav-link,
         .nav-link.router-link-active { background: var(--teal-soft); color: var(--primary) !important; }
+        a[href="{{ request()->url() }}"].nav-submenu,
+        .nav-submenu.router-link-active { background: var(--teal-soft); color: var(--primary) !important; }
     </style>
     <script>
-        document.querySelectorAll('.nav-link').forEach(function(link) {
+        document.querySelectorAll('.nav-link, .nav-submenu').forEach(function(link) {
             var href = link.getAttribute('href') || '';
             var path = href.replace(/^https?:\/\/[^/]+/, '').replace(/\/$/, '') || '/';
             var current = window.location.pathname.replace(/\/$/, '') || '/';

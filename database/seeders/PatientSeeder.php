@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class PatientSeeder extends Seeder
 {
@@ -14,18 +14,18 @@ class PatientSeeder extends Seeder
         $lastNames = ['Santos', 'Reyes', 'Cruz', 'Bautista', 'Ocampo', 'Garcia', 'Mendoza', 'Torres', 'Flores', 'Gonzales', 'Rivera', 'Castro'];
         $firstNamesMale = ['Jose', 'Juan', 'Pedro', 'Manuel', 'Ramon', 'Antonio', 'Francisco', 'Luis', 'Carlos', 'Eduardo'];
         $firstNamesFemale = ['Maria', 'Ana', 'Elena', 'Luz', 'Carmen', 'Teresa', 'Rosario', 'Patricia', 'Gloria', 'Josefina'];
-        
+
         $patients = [];
         $households = [];
 
         // Generate 50 Dummy Patients
         for ($i = 0; $i < 50; $i++) {
-            
+
             // 1. Create a Household First (Required by database schema)
             $householdId = DB::table('households')->insertGetId([
                 'zone_id' => rand(1, 8), // Random Zone 1-8 (since we only have 8 zones)
                 'family_name_head' => $lastNames[array_rand($lastNames)],
-                'contact_number' => '09' . rand(100000000, 999999999),
+                'contact_number' => '09'.rand(100000000, 999999999),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -34,7 +34,7 @@ class PatientSeeder extends Seeder
             $isMale = rand(0, 1);
             $firstName = $isMale ? $firstNamesMale[array_rand($firstNamesMale)] : $firstNamesFemale[array_rand($firstNamesFemale)];
             $lastName = $lastNames[array_rand($lastNames)];
-            
+
             // Random birth date between 1950 and 2023
             $birthDate = Carbon::createFromDate(rand(1950, 2023), rand(1, 12), rand(1, 28));
 

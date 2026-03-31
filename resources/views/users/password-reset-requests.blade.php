@@ -38,11 +38,11 @@
                         <td class="px-3 py-2">{{ $req->created_at->diffForHumans() }}</td>
                         <td class="px-3 py-2">
                             @if($req->status === 'pending')
-                                <form action="{{ route('users.password-reset-requests.complete', ['passwordResetRequest' => $req->id]) }}" method="POST" class="flex gap-2 items-center">
-                                    @csrf
-                                    <input type="hidden" name="admin_note" value="Manual reset completed by admin." />
-                                    <button type="submit" class="px-2 py-1 rounded text-xs bg-emerald-500 text-white hover:bg-emerald-600">Mark Completed</button>
-                                </form>
+                                <button type="button" 
+                                        class="px-2 py-1 rounded text-xs bg-emerald-500 text-white hover:bg-emerald-600"
+                                        onclick="openModal({{ $req->id }}, '{{ $req->user?->username ?? 'Unknown' }}', '{{ $req->username_requested }}')">
+                                    Mark Completed
+                                </button>
                             @else
                                 <span class="text-xs text-gray-500">No action</span>
                             @endif
@@ -61,4 +61,36 @@
         {{ $requests->links() }}
     </div>
 </div>
+
+<!-- Modal -->
+<div id="passwordResetModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Complete Password Reset</h3>
+            <p class="text-sm text-gray-600 mb-4">
+                Confirm completion of password reset request for user: <span id="modalUsername"></span>
+            </p>
+            <form id="passwordResetForm" action="" method="POST">
+                @csrf
+                <input type="hidden" name="admin_note" value="Manual reset completed by admin." />
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
+                    <button type="submit" class="px-4 py-2 text-sm bg-emerald-500 text-white rounded hover:bg-emerald-600">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function openModal(requestId, username, requestedUsername) {
+    document.getElementById('modalUsername').textContent = username + ' (' + requestedUsername + ')';
+    document.getElementById('passwordResetForm').action = '{{ url("/users/password-reset-requests") }}/' + requestId + '/complete';
+    document.getElementById('passwordResetModal').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('passwordResetModal').classList.add('hidden');
+}
+</script>
 @endsection

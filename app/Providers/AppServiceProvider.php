@@ -19,6 +19,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Register authorization policies
+        $this->registerPolicies();
+    }
+
+    /**
+     * Register the application's authorization policies.
+     */
+    protected function registerPolicies(): void
+    {
+        // Use Gate::policy() or register policies through gate facade
+        // In Laravel 11+, policies in app/Policies directory are auto-discovered
+        // But we can be explicit here for clarity
     }
 }

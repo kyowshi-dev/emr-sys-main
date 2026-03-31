@@ -57,18 +57,24 @@
                                 @endif
                             </td>
                             <td class="px-3 lg:px-6 py-2 lg:py-3 text-sm text-right">
-                                @if ($user->is_active)
-                                    <form action="{{ route('users.disable', $user) }}" method="POST" class="inline">
-                                        @csrf
-                                        <button
-                                            type="submit"
-                                            class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-full border border-red-300 text-xs font-semibold text-red-600 hover:bg-red-50 transition"
-                                            onclick="return confirm('Are you sure you want to disable this user?');"
-                                        >
-                                            Disable
-                                        </button>
-                                    </form>
-                                @endif
+                                <div class="flex items-center justify-end gap-2 flex-wrap">
+                                    <a href="{{ route('users.edit', $user) }}"
+                                       class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-full border border-sky-300 text-xs font-semibold text-sky-600 hover:bg-sky-50 transition">
+                                        Edit
+                                    </a>
+                                    @if ($user->is_active)
+                                        <form action="{{ route('users.disable', $user) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button
+                                                type="submit"
+                                                class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-full border border-red-300 text-xs font-semibold text-red-600 hover:bg-red-50 transition"
+                                                onclick="return confirm('Are you sure you want to disable this user?');"
+                                            >
+                                                Disable
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @empty

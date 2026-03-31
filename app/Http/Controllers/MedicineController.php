@@ -9,6 +9,11 @@ class MedicineController extends Controller
 {
     public function index()
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+            abort(403, 'Unauthorized');
+        }
+
         $medicines = DB::table('medicines_lookup')
             ->orderBy('medicine_name')
             ->paginate(5)
@@ -21,11 +26,21 @@ class MedicineController extends Controller
 
     public function create()
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+            abort(403, 'Unauthorized');
+        }
+
         return view('medicines.create');
     }
 
     public function store(Request $request)
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+            abort(403, 'Unauthorized');
+        }
+
         $validated = $request->validate([
             'medicine_name' => ['required', 'string', 'max:255', 'unique:medicines_lookup,medicine_name'],
             'category' => ['nullable', 'string', 'max:255'],
@@ -49,6 +64,11 @@ class MedicineController extends Controller
 
     public function import(Request $request)
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+            abort(403, 'Unauthorized');
+        }
+
         $request->validate([
             'csv_file' => ['required', 'file', 'mimes:csv,txt', 'max:2048'],
         ]);
@@ -154,10 +174,15 @@ class MedicineController extends Controller
 
     public function show($id)
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+            abort(403, 'Unauthorized');
+        }
+
         $medicine = DB::table('medicines_lookup')->where('id', $id)->first();
 
         if (! $medicine) {
-            abort(404, 'Medicine not found');
+            abort(404, 'Resource not found');
         }
 
         // Get usage statistics
@@ -177,10 +202,15 @@ class MedicineController extends Controller
 
     public function edit($id)
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+            abort(403, 'Unauthorized');
+        }
+
         $medicine = DB::table('medicines_lookup')->where('id', $id)->first();
 
         if (! $medicine) {
-            abort(404, 'Medicine not found');
+            abort(404, 'Resource not found');
         }
 
         return view('medicines.edit', [
@@ -190,10 +220,15 @@ class MedicineController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+            abort(403, 'Unauthorized');
+        }
+
         $medicine = DB::table('medicines_lookup')->where('id', $id)->first();
 
         if (! $medicine) {
-            abort(404, 'Medicine not found');
+            abort(404, 'Resource not found');
         }
 
         $validated = $request->validate([
@@ -220,10 +255,15 @@ class MedicineController extends Controller
 
     public function destroy($id)
     {
+        // Check authorization
+        if (! auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized');
+        }
+
         $medicine = DB::table('medicines_lookup')->where('id', $id)->first();
 
         if (! $medicine) {
-            abort(404, 'Medicine not found');
+            abort(404, 'Resource not found');
         }
 
         // Check if medicine is used in prescriptions

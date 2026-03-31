@@ -21,10 +21,14 @@ use Illuminate\Support\Facades\Route;
 
 // --- PUBLIC ROUTES (No login required) ---
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'processLogin'])->name('login.process');
+Route::post('/login', [AuthController::class, 'processLogin'])
+    ->middleware('throttle:5,1')  // 5 attempts per minute
+    ->name('login.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/password/forgot', [AuthController::class, 'showForgotPassword'])->name('password.forgot');
-Route::post('/password/forgot', [AuthController::class, 'submitForgotPassword'])->name('password.forgot.submit');
+Route::post('/password/forgot', [AuthController::class, 'submitForgotPassword'])
+    ->middleware('throttle:3,1')  // 3 attempts per minute
+    ->name('password.forgot.submit');
 
 // --- PROTECTED ROUTES (Only for logged-in users) ---
 Route::middleware('auth')->group(function () {
@@ -106,6 +110,12 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:Admin');
     Route::post('/users', [UserManagementController::class, 'store'])
         ->name('users.store')
+        ->middleware('role:Admin');
+    Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])
+        ->name('users.edit')
+        ->middleware('role:Admin');
+    Route::put('/users/{user}', [UserManagementController::class, 'update'])
+        ->name('users.update')
         ->middleware('role:Admin');
     Route::post('/users/{user}/disable', [UserManagementController::class, 'disable'])
         ->name('users.disable')

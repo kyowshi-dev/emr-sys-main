@@ -9,6 +9,11 @@ class ImmunizationController extends Controller
 {
     public function index()
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
+            abort(403, 'Unauthorized');
+        }
+
         $recentRecords = DB::table('immunization_records')
             ->join('patients', 'immunization_records.patient_id', '=', 'patients.id')
             ->join('vaccines_lookup', 'immunization_records.vaccine_id', '=', 'vaccines_lookup.id')
@@ -39,6 +44,11 @@ class ImmunizationController extends Controller
 
     public function forPatient($id)
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
+            abort(403, 'Unauthorized');
+        }
+
         $patient = DB::table('patients')
             ->join('households', 'patients.household_id', '=', 'households.id')
             ->where('patients.id', $id)
@@ -85,6 +95,11 @@ class ImmunizationController extends Controller
 
     public function store(Request $request)
     {
+        // Check authorization
+        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
+            abort(403, 'Unauthorized');
+        }
+
         $validated = $request->validate([
             'patient_id' => ['required', 'integer', 'exists:patients,id'],
             'vaccine_id' => ['required', 'integer', 'exists:vaccines_lookup,id'],

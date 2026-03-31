@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserManagementController extends Controller
 {
@@ -42,7 +43,7 @@ class UserManagementController extends Controller
             $user = User::query()->create([
                 'username' => $validated['username'],
                 'email' => $validated['email'],
-                'password' => $validated['password'],
+                'password' => Hash::make($validated['password']),
                 'role_id' => $validated['role_id'],
                 'is_active' => true,
             ]);
@@ -103,7 +104,7 @@ class UserManagementController extends Controller
             }
 
             if (! empty($validated['password'])) {
-                $user->password = $validated['password'];
+                $user->password = Hash::make($validated['password']);
             }
 
             $user->save();
