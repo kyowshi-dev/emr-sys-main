@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'processLogin'])->name('login.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/password/forgot', [AuthController::class, 'showForgotPassword'])->name('password.forgot');
+Route::post('/password/forgot', [AuthController::class, 'submitForgotPassword'])->name('password.forgot.submit');
 
 // --- PROTECTED ROUTES (Only for logged-in users) ---
 Route::middleware('auth')->group(function () {
@@ -113,6 +115,14 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:Admin');
     Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])
         ->name('users.destroy')
+        ->middleware('role:Admin');
+
+    // 7a. Password reset request admin queue
+    Route::get('/users/password-reset-requests', [UserManagementController::class, 'passwordResetRequests'])
+        ->name('users.password-reset-requests')
+        ->middleware('role:Admin');
+    Route::post('/users/password-reset-requests/{passwordResetRequest}/complete', [UserManagementController::class, 'completePasswordResetRequest'])
+        ->name('users.password-reset-requests.complete')
         ->middleware('role:Admin');
 
     // 8. MEDICINE MANAGEMENT

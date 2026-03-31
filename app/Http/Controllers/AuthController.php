@@ -62,4 +62,29 @@ class AuthController extends Controller
 
         return redirect()->route('login');
     }
+
+    public function showForgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function submitForgotPassword(Request $request)
+    {
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'max:255'],
+        ]);
+
+        $user = \App\Models\User::where('username', $validated['username'])->first();
+
+        $requestRecord = \App\Models\PasswordResetRequest::create([
+            'user_id' => $user?->id,
+            'username_requested' => $validated['username'],
+            'status' => 'pending',
+        ]);
+
+        // Simple non-email notification: tracked in DB for admins.
+        // Optionally this can be replaced with real notifications when available.
+
+        return redirect()->route('login')->with('success', 'Password reset request submitted. An administrator will be notified and will assist you with your login.');
+    }
 }

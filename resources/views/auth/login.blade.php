@@ -114,8 +114,7 @@
                         <input type="checkbox" name="remember" class="mr-2 h-4 w-4 rounded border-[var(--border)]" style="accent-color: var(--primary);">
                         Remember me
                     </label>
-                    <a href="#" class="text-sm font-medium" style="color: var(--primary); text-decoration: underline;"
-                       onclick="event.preventDefault(); alert('Please contact your IT admin to reset your password.');">
+                    <a href="{{ route('password.forgot') }}" class="text-sm font-medium" style="color: var(--primary); text-decoration: underline;">
                         Forgot Password?
                     </a>
                 </div>

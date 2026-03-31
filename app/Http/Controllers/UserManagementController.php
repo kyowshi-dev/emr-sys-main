@@ -128,4 +128,26 @@ class UserManagementController extends Controller
             ->route('users.index')
             ->with('success', 'User deleted successfully.');
     }
+
+    public function passwordResetRequests()
+    {
+        $requests = \App\Models\PasswordResetRequest::with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(12);
+
+        return view('users.password-reset-requests', [
+            'requests' => $requests,
+        ]);
+    }
+
+    public function completePasswordResetRequest(Request $request, \App\Models\PasswordResetRequest $passwordResetRequest)
+    {
+        $passwordResetRequest->update([
+            'status' => 'completed',
+            'admin_note' => $request->input('admin_note'),
+            'completed_at' => now(),
+        ]);
+
+        return redirect()->route('users.password-reset-requests')->with('success', 'Password reset request marked as completed.');
+    }
 }
