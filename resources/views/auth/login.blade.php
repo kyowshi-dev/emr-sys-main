@@ -78,7 +78,7 @@
     <div class="relative z-10 w-full max-w-md mx-4">
         <div class="rounded-2xl border p-8 lg:p-10 animate-in opacity-0" style="background: var(--bg-card); border-color: var(--border); box-shadow: var(--shadow-lg);">
             <div class="text-center mb-8">
-                <div class="inline-flex h-12 w-12 items-center justify-center rounded-xl text-white font-display font-semibold text-xl mb-4" style="background: var(--primary); font-family: var(--font-display);">B</div>
+                
                 <h1 class="font-display font-semibold text-2xl lg:text-3xl mb-2" style="color: var(--ink); font-family: var(--font-display);">BHCIS</h1>
                 <p class="text-sm" style="color: var(--ink-muted);">Sta. Ana Health Center — sign in to continue</p>
             </div>

@@ -11,13 +11,13 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         :root {
-            --font-display: 'Fraunces', Georgia, serif;
+            --font-display: 'Poppins', Georgia, serif;
             --font-body: 'Source Sans 3', system-ui, sans-serif;
             --bg-page: #f5f0e8;
             --bg-surface: #fdfcfa;
             --bg-surface-elevated: #ffffff;
             --ink: #1a1f1c;
-            --ink-muted: #5c6560;
+            --ink-muted: #000000;
             --ink-subtle: #8a928d;
             --border: rgba(26, 31, 28, 0.12);
             
