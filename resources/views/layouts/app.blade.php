@@ -323,7 +323,26 @@
 
             <main class="flex-1 px-4 lg:px-6 py-6 lg:py-8 overflow-auto">
                 <div class="max-w-5xl mx-auto">
-                    <div class="rounded-2xl p-5 lg:p-8 border border-[var(--border)] animate-in opacity-0" style="background: var(--bg-surface-elevated); box-shadow: var(--shadow-sm);">
+                    @php
+                        $breadcrumbs = \App\Helpers\BreadcrumbHelper::getBreadcrumbs();
+                    @endphp
+                    @if(count($breadcrumbs) > 1)
+                        <nav class="flex items-center gap-2 mb-6 text-sm animate-in opacity-0 delay-1" aria-label="Breadcrumb">
+                            @foreach($breadcrumbs as $index => $crumb)
+                                @if($index > 0)
+                                    <svg class="w-4 h-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M9 18l6-6-6-6"></path>
+                                    </svg>
+                                @endif
+                                @if($crumb['url'])
+                                    <a href="{{ $crumb['url'] }}" class="font-medium transition-colors duration-200 hover:opacity-75" style="color: var(--primary);">{{ $crumb['name'] }}</a>
+                                @else
+                                    <span class="font-semibold" style="color: var(--ink);">{{ $crumb['name'] }}</span>
+                                @endif
+                            @endforeach
+                        </nav>
+                    @endif
+                    <div class="rounded-2xl p-5 lg:p-8 border border-[var(--border)] animate-in opacity-0 delay-2" style="background: var(--bg-surface-elevated); box-shadow: var(--shadow-sm);">
                         @yield('content')
                     </div>
                 </div>

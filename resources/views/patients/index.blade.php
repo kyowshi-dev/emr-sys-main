@@ -51,7 +51,6 @@
                         <th class="px-4 py-3 font-semibold uppercase tracking-wider whitespace-nowrap hidden sm:table-cell" style="color: var(--ink-muted);">Gender</th>
                         <th class="px-4 py-3 font-semibold uppercase tracking-wider whitespace-nowrap hidden md:table-cell" style="color: var(--ink-muted);">Phone</th>
                         <th class="px-4 py-3 font-semibold uppercase tracking-wider whitespace-nowrap hidden lg:table-cell" style="color: var(--ink-muted);">Last visit</th>
-                        <th class="px-4 py-3 font-semibold uppercase tracking-wider whitespace-nowrap" style="color: var(--ink-muted);">Status</th>
                         <th class="px-4 py-3 font-semibold uppercase tracking-wider text-right whitespace-nowrap" style="color: var(--ink-muted);">Actions</th>
                     </tr>
                 </thead>
@@ -68,14 +67,6 @@
                             <td class="px-4 py-2.5 whitespace-nowrap hidden md:table-cell" style="color: var(--ink-muted);">{{ $patient->contact_number ?? '—' }}</td>
                             <td class="px-4 py-2.5 whitespace-nowrap hidden lg:table-cell" style="color: var(--ink-muted);">
                                 @if ($patient->last_visit) {{ \Carbon\Carbon::parse($patient->last_visit)->format('Y-m-d') }} @else — @endif
-                            </td>
-                            <td class="px-4 py-2.5">
-                                @php
-                                    $isActive = !empty($patient->last_visit);
-                                    $statusLabel = $isActive ? 'Active' : 'Inactive';
-                                    $statusColor = $isActive ? 'var(--primary)' : 'var(--ink-muted)';
-                                @endphp
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" style="background: var(--teal-soft); color: {{ $statusColor }};">{{ $statusLabel }}</span>
                             </td>
                             <td class="px-4 py-2.5 text-right whitespace-nowrap">
                                 <a href="{{ route('patients.show', $patient->id) }}" class="font-semibold text-sm transition-colors hover:underline" style="color: var(--primary);">View</a>

@@ -11,16 +11,16 @@ class PatientSeeder extends Seeder
     public function run(): void
     {
         // Common Filipino Names
-        $lastNames = ['Santos', 'Reyes', 'Cruz', 'Bautista', 'Ocampo', 'Garcia', 'Mendoza', 'Torres', 'Flores', 'Gonzales', 'Rivera', 'Castro'];
-        $firstNamesMale = ['Jose', 'Juan', 'Pedro', 'Manuel', 'Ramon', 'Antonio', 'Francisco', 'Luis', 'Carlos', 'Eduardo'];
-        $firstNamesFemale = ['Maria', 'Ana', 'Elena', 'Luz', 'Carmen', 'Teresa', 'Rosario', 'Patricia', 'Gloria', 'Josefina'];
-
+        $lastNames = ['Santos', 'Batoon', 'Dumdum', 'Laurel', 'Chavaria', 'Coquilla', 'Velasquez', 'Torres', 'de la Torre', 'Gonzales', 'Rivera', 'Castro'];
+        $firstNamesMale = ['Charles', 'John', 'James', 'Michael', 'David', 'Rafael', 'Joseph', 'Luis', 'Carlos', 'Eduardo'];
+        $firstNamesFemale = ['Shem', 'Zyrel', 'Ronalyn', 'Roselmae', 'Sheanna', 'Marivic', 'Mary Ann', 'Maria', 'Anna Leah', 'Josefina'];
+        
         $patients = [];
         $households = [];
 
-        // Generate 50 Dummy Patients
-        for ($i = 0; $i < 50; $i++) {
-
+        // Generate 100 Dummy Patients
+        for ($i = 0; $i < 100; $i++) {
+            
             // 1. Create a Household First (Required by database schema)
             $householdId = DB::table('households')->insertGetId([
                 'zone_id' => rand(1, 8), // Random Zone 1-8 (since we only have 8 zones)

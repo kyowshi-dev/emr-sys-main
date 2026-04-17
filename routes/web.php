@@ -178,4 +178,4 @@ Route::middleware('auth')->group(function () {
         ->name('settings.backups.export')
         ->middleware('role:Admin');
 
-}); // <--- End of Auth Group
+});
