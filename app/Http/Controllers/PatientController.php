@@ -12,10 +12,7 @@ class PatientController extends Controller
     // 1. List all patients
     public function index()
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
-            abort(403, 'Unauthorized');
-        }
+        $this->authorize('viewAny', Patient::class);
 
         $patients = DB::table('patients')
             ->join('households', 'patients.household_id', '=', 'households.id')
@@ -45,10 +42,7 @@ class PatientController extends Controller
     // 2. Show the Registration Form
     public function create(Request $request)
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
-            abort(403, 'Unauthorized');
-        }
+        $this->authorize('create', Patient::class);
 
         $selectedHouseholdId = $request->old('household_id') ?? $request->input('household_id');
 
@@ -80,10 +74,7 @@ class PatientController extends Controller
     // 3. Save the New Patient
     public function store(Request $request)
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
-            abort(403, 'Unauthorized');
-        }
+        $this->authorize('create', Patient::class);
 
         // --- 1. ENHANCED VALIDATION ---
         $validated = $request->validate([
@@ -153,21 +144,15 @@ class PatientController extends Controller
     // 4. View Single Patient Profile
     public function show($id)
     {
-        // 1. Find the patient
+        $patient = Patient::findOrFail($id);
+
+        $this->authorize('view', $patient);
+
         $patient = DB::table('patients')
             ->join('households', 'patients.household_id', '=', 'households.id')
             ->where('patients.id', $id)
             ->select('patients.*', 'households.family_name_head', 'households.zone_id')
             ->first();
-
-        if (! $patient) {
-            abort(404, 'Resource not found');
-        }
-
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
-            abort(403, 'Unauthorized');
-        }
 
         // 2. Calculate Age
         $patient->age = Carbon::parse($patient->date_of_birth)->age;
@@ -178,7 +163,7 @@ class PatientController extends Controller
             ->where('patient_id', $id)
             ->select(
                 'consultations.*',
-                DB::raw("CONCAT(health_workers.first_name, ' ', health_workers.last_name) as worker_name"),
+                DB::raw($this->dbConcat(['health_workers.first_name', 'health_workers.last_name']).' as worker_name'),
                 'consultations.nature_of_visit as complaint_name'
             )
             ->orderByDesc('consultations.created_at')

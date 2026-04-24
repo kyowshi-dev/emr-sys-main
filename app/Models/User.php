@@ -3,17 +3,17 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
-
-    private ?string $cachedRoleName = null;
 
     /**
      * The attributes that are mass assignable.
@@ -24,7 +24,6 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        'role_id',
         'is_active',
     ];
 
@@ -51,46 +50,25 @@ class User extends Authenticatable
         ];
     }
 
-    public function roleName(): ?string
+    public function permissions(): BelongsToMany
     {
-        if ($this->cachedRoleName !== null) {
-            return $this->cachedRoleName;
-        }
-
-        if ($this->role_id === null) {
-            return null;
-        }
-
-        $this->cachedRoleName = DB::table('user_roles')
-            ->where('id', $this->role_id)
-            ->value('role_name');
-
-        return $this->cachedRoleName;
+        return $this->belongsToMany(Permission::class, 'users_permissions');
     }
 
-    public function hasRole(string ...$roles): bool
+    public function hasPermission(string $permission): bool
     {
-        $roleName = $this->roleName();
-
-        if ($roleName === null) {
-            return false;
-        }
-
-        return in_array($roleName, $roles, true);
+        return in_array($permission, $this->getPermissionNames(), true);
     }
 
     public function isAdmin(): bool
     {
-        return $this->hasRole('Admin');
+        return $this->hasPermission('users');
     }
 
-    public function isNurse(): bool
+    private function getPermissionNames(): array
     {
-        return $this->hasRole('Nurse');
-    }
-
-    public function isBhw(): bool
-    {
-        return $this->hasRole('BHW');
+        return Cache::remember("user_permissions_{$this->id}", 3600, function () {
+            return $this->permissions->pluck('name')->toArray();
+        });
     }
 }

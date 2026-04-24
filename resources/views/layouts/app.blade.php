@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         :root {
@@ -63,6 +64,11 @@
         .delay-5 { animation-delay: 0.25s; }
         .delay-6 { animation-delay: 0.3s; }
         .opacity-0 { opacity: 0; }
+        .disabled {
+            opacity: 0.5;
+            filter: grayscale(100%);
+            cursor: not-allowed;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -153,7 +159,7 @@
                         </svg>
                     </button>
                     <div x-show="patientCareOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="mt-1 ml-2 pl-3 border-l space-y-0.5" style="border-color: var(--border);">
-                        <a href="{{ route('households.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                        <a href="{{ route('households.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200 @if(!$authUser->hasPermission('household')) disabled @endif" @if(!$authUser->hasPermission('household')) onclick="Swal.fire({title: 'Unauthorized', text: 'Please contact the administrator if you believe this is a mistake.', icon: 'error'}); return false;" @endif>
                             <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M3 10.5 12 3l9 7.5"></path>
                                 <path d="M5 10v11h14V10"></path>
@@ -161,21 +167,21 @@
                             </svg>
                             <span>Households</span>
                         </a>
-                        <a href="{{ url('/patients') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                        <a href="{{ url('/patients') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200 @if(!$authUser->hasPermission('patients')) disabled @endif" @if(!$authUser->hasPermission('patients')) onclick="Swal.fire({title: 'Unauthorized', text: 'Please contact the administrator if you believe this is a mistake.', icon: 'error'}); return false;" @endif>
                             <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
                             </svg>
                             <span>Patients</span>
                         </a>
-                        <a href="{{ route('consultations.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                        <a href="{{ route('consultations.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200 @if(!$authUser->hasPermission('consultations')) disabled @endif" @if(!$authUser->hasPermission('consultations')) onclick="Swal.fire({title: 'Unauthorized', text: 'Please contact the administrator if you believe this is a mistake.', icon: 'error'}); return false;" @endif>
                             <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <path d="M21 21l-4.35-4.35"></path>
                             </svg>
                             <span>Consultations</span>
                         </a>
-                        <a href="{{ route('immunizations.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                        <a href="{{ route('immunizations.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200 @if(!$authUser->hasPermission('immunizations')) disabled @endif" @if(!$authUser->hasPermission('immunizations')) onclick="Swal.fire({title: 'Unauthorized', text: 'Please contact the administrator if you believe this is a mistake.', icon: 'error'}); return false;" @endif>
                             <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M10 3h4v4h4v4h-4v4h-4v-4H6V7h4z"></path>
                             </svg>
@@ -185,7 +191,7 @@
                 </div>
 
                 <!-- Management & Reports Dropdown -->
-                @if ($authUser && ($authUser->hasRole('Admin', 'Nurse') || $authUser->hasRole('Admin', 'BHW', 'Nurse')))
+                @if ($authUser && ($authUser->hasPermission('medicines') || $authUser->hasPermission('reports')))
                     <div>
                         <button @click="managementOpen = !managementOpen" :class="{ 'bg-opacity-100': managementOpen }" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200 hover:opacity-100" style="color: var(--ink-muted);">
                             <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -198,8 +204,8 @@
                             </svg>
                         </button>
                         <div x-show="managementOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="mt-1 ml-2 pl-3 border-l space-y-0.5" style="border-color: var(--border);">
-                            @if ($authUser && $authUser->hasRole('Admin', 'Nurse'))
-                                <a href="{{ route('medicines.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                            @if ($authUser && $authUser->hasPermission('medicines'))
+                                <a href="{{ route('medicines.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200 @if(!$authUser->hasPermission('medicines')) disabled @endif" @if(!$authUser->hasPermission('medicines')) onclick="Swal.fire({title: 'Unauthorized', text: 'Please contact the administrator if you believe this is a mistake.', icon: 'error'}); return false;" @endif>
                                     <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <path d="M10.5 6h2.25v.75h-2.25V6zm0 3h2.25v.75h-2.25V9zm0 3h2.25v.75h-2.25v-.75z"></path>
                                         <path d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"></path>
@@ -207,8 +213,8 @@
                                     <span>Medicines</span>
                                 </a>
                             @endif
-                            @if ($authUser && $authUser->hasRole('Admin', 'BHW', 'Nurse'))
-                                <a href="{{ route('reports.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                            @if ($authUser && $authUser->hasPermission('reports'))
+                                <a href="{{ route('reports.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200 @if(!$authUser->hasPermission('reports')) disabled @endif" @if(!$authUser->hasPermission('reports')) onclick="Swal.fire({title: 'Unauthorized', text: 'Please contact the administrator if you believe this is a mistake.', icon: 'error'}); return false;" @endif>
                                     <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <path d="M3 3v18h18"></path>
                                         <path d="M7 14l2-2 3 3 5-5"></path>
@@ -221,7 +227,7 @@
                 @endif
 
                 <!-- Administration Dropdown (Admin only) -->
-                @if ($authUser && $authUser->isAdmin())
+                @if ($authUser && $authUser->hasPermission('users'))
                     <div>
                         <button @click="adminOpen = !adminOpen" :class="{ 'bg-opacity-100': adminOpen }" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200 hover:opacity-100" style="color: var(--ink-muted);">
                             <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -233,7 +239,7 @@
                             </svg>
                         </button>
                         <div x-show="adminOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="mt-1 ml-2 pl-3 border-l space-y-0.5" style="border-color: var(--border);">
-                            <a href="{{ route('users.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                            <a href="{{ route('users.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200 @if(!$authUser->hasPermission('users')) disabled @endif" @if(!$authUser->hasPermission('users')) onclick="Swal.fire({title: 'Unauthorized', text: 'Please contact the administrator if you believe this is a mistake.', icon: 'error'}); return false;" @endif>
                                 <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                     <circle cx="12" cy="7" r="4"></circle>
@@ -263,7 +269,7 @@
                 <div class="ml-auto flex items-center gap-4">
                     @if ($authUser)
                         @php
-                            $roleName = $authUser->roleName() ?? 'Unassigned';
+                            $roleName = 'User';
                             $username = (string) $authUser->username;
                             $initials = mb_strtoupper(mb_substr($username, 0, 1));
                         @endphp

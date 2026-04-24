@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -9,8 +10,7 @@ class ImmunizationController extends Controller
 {
     public function index()
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
+        if (! auth()->user()->hasPermission('immunizations')) {
             abort(403, 'Unauthorized');
         }
 
@@ -26,7 +26,7 @@ class ImmunizationController extends Controller
                 'patients.first_name',
                 'patients.last_name',
                 'vaccines_lookup.vaccine_name',
-                DB::raw("CONCAT(health_workers.first_name, ' ', health_workers.last_name) as worker_name")
+                DB::raw($this->dbConcat(['health_workers.first_name', 'health_workers.last_name']).' as worker_name')
             )
             ->orderByDesc('immunization_records.date_given')
             ->limit(20)
@@ -44,8 +44,7 @@ class ImmunizationController extends Controller
 
     public function forPatient($id)
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
+        if (! auth()->user()->hasPermission('immunizations')) {
             abort(403, 'Unauthorized');
         }
 
@@ -59,7 +58,7 @@ class ImmunizationController extends Controller
             abort(404, 'Patient not found');
         }
 
-        $patient->age = \Carbon\Carbon::parse($patient->date_of_birth)->age;
+        $patient->age = Carbon::parse($patient->date_of_birth)->age;
 
         $isChild = $patient->age < 18;
         $allowedCategories = $isChild ? ['Child', 'Both'] : ['Adult', 'Both'];
@@ -72,7 +71,7 @@ class ImmunizationController extends Controller
                 'immunization_records.*',
                 'vaccines_lookup.vaccine_name',
                 'vaccines_lookup.vaccine_code',
-                DB::raw("CONCAT(health_workers.first_name, ' ', health_workers.last_name) as administered_by_name")
+                DB::raw($this->dbConcat(['health_workers.first_name', 'health_workers.last_name']).' as administered_by_name')
             )
             ->orderByDesc('immunization_records.date_given')
             ->get();
@@ -95,8 +94,7 @@ class ImmunizationController extends Controller
 
     public function store(Request $request)
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
+        if (! auth()->user()->hasPermission('immunizations')) {
             abort(403, 'Unauthorized');
         }
 
@@ -114,7 +112,7 @@ class ImmunizationController extends Controller
 
         // Get patient and vaccine for age check
         $patient = DB::table('patients')->where('id', $validated['patient_id'])->first();
-        $age = \Carbon\Carbon::parse($patient->date_of_birth)->age;
+        $age = Carbon::parse($patient->date_of_birth)->age;
         $isChild = $age < 18;
         $allowedCategories = $isChild ? ['Child', 'Both'] : ['Adult', 'Both'];
 

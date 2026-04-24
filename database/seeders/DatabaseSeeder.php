@@ -25,8 +25,8 @@ class DatabaseSeeder extends Seeder
         DB::table('users')->insertOrIgnore([
             'username' => 'admin',
             'password' => Hash::make('password'),
-            'role_id' => 1,
             'email' => 'admin@sta-ana.ph',
+            'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -39,6 +39,12 @@ class DatabaseSeeder extends Seeder
             'role' => 'Head Nurse',
             'contact_number' => '09123456789',
         ]);
+
+        // 3. PERMISSIONS
+        $this->call(PermissionSeeder::class);
+        $this->call(AssignInitialPermissionsSeeder::class);
+
+        // 4. DIAGNOSIS (Common PH Diseases for Search Testing)
 
         // 3. DIAGNOSIS (Common PH Diseases for Search Testing)
         $diagnoses = [

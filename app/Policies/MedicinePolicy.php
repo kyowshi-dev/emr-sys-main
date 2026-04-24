@@ -11,7 +11,7 @@ class MedicinePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('Admin', 'Nurse');
+        return $user->hasPermission('medicines');
     }
 
     /**
@@ -19,7 +19,7 @@ class MedicinePolicy
      */
     public function view(User $user): bool
     {
-        return $user->hasRole('Admin', 'Nurse');
+        return $user->hasPermission('medicines');
     }
 
     /**
@@ -27,7 +27,7 @@ class MedicinePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('Admin', 'Nurse');
+        return $user->hasPermission('medicines');
     }
 
     /**
@@ -35,7 +35,7 @@ class MedicinePolicy
      */
     public function update(User $user): bool
     {
-        return $user->hasRole('Admin', 'Nurse');
+        return $user->hasPermission('medicines');
     }
 
     /**
@@ -43,7 +43,7 @@ class MedicinePolicy
      */
     public function delete(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->hasPermission('medicines');
     }
 
     /**
@@ -51,6 +51,6 @@ class MedicinePolicy
      */
     public function import(User $user): bool
     {
-        return $user->hasRole('Admin', 'Nurse');
+        return $user->hasPermission('medicines');
     }
 }

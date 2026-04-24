@@ -11,7 +11,7 @@ class ImmunizationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('Admin', 'Nurse', 'BHW');
+        return $user->hasPermission('immunizations');
     }
 
     /**
@@ -19,7 +19,7 @@ class ImmunizationPolicy
      */
     public function viewPatient(User $user): bool
     {
-        return $user->hasRole('Admin', 'Nurse', 'BHW');
+        return $user->hasPermission('immunizations');
     }
 
     /**
@@ -27,6 +27,6 @@ class ImmunizationPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('Admin', 'Nurse', 'BHW');
+        return $user->hasPermission('immunizations');
     }
 }

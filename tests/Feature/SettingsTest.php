@@ -14,7 +14,6 @@ class SettingsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        \Illuminate\Support\Facades\DB::table('user_roles')->insert(['id' => 1, 'role_name' => 'Admin']);
     }
 
     public function test_guest_cannot_access_settings(): void
@@ -30,7 +29,6 @@ class SettingsTest extends TestCase
             'username' => 'testuser',
             'email' => 'test@example.com',
             'password' => Hash::make('password'),
-            'role_id' => 1,
             'is_active' => true,
         ]);
 
@@ -47,7 +45,6 @@ class SettingsTest extends TestCase
             'username' => 'testuser',
             'email' => 'test@example.com',
             'password' => Hash::make('password'),
-            'role_id' => 1,
             'is_active' => true,
         ]);
 
@@ -61,7 +58,7 @@ class SettingsTest extends TestCase
             'username' => 'testuser',
             'email' => 'test@example.com',
             'password' => Hash::make('oldpass'),
-            'role_id' => 1,
+
             'is_active' => true,
         ]);
 
@@ -84,7 +81,6 @@ class SettingsTest extends TestCase
             'username' => 'testuser',
             'email' => 'test@example.com',
             'password' => Hash::make('oldpass'),
-            'role_id' => 1,
             'is_active' => true,
         ]);
 

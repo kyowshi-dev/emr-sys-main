@@ -12,7 +12,7 @@ class PatientPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('Admin', 'Nurse', 'BHW');
+        return $user->hasPermission('patients');
     }
 
     /**
@@ -20,7 +20,7 @@ class PatientPolicy
      */
     public function view(User $user, Patient $patient): bool
     {
-        return $user->hasRole('Admin', 'Nurse', 'BHW');
+        return $user->hasPermission('patients');
     }
 
     /**
@@ -28,7 +28,7 @@ class PatientPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('Admin', 'Nurse', 'BHW');
+        return $user->hasPermission('patients');
     }
 
     /**
@@ -36,7 +36,7 @@ class PatientPolicy
      */
     public function update(User $user, Patient $patient): bool
     {
-        return $user->hasRole('Admin', 'Nurse');
+        return $user->hasPermission('patients');
     }
 
     /**
@@ -44,7 +44,7 @@ class PatientPolicy
      */
     public function delete(User $user, Patient $patient): bool
     {
-        return $user->hasRole('Admin');
+        return $user->hasPermission('patients');
     }
 
     /**
@@ -52,7 +52,7 @@ class PatientPolicy
      */
     public function restore(User $user, Patient $patient): bool
     {
-        return $user->hasRole('Admin');
+        return $user->hasPermission('patients');
     }
 
     /**
@@ -60,6 +60,6 @@ class PatientPolicy
      */
     public function forceDelete(User $user, Patient $patient): bool
     {
-        return $user->hasRole('Admin');
+        return $user->hasPermission('patients');
     }
 }

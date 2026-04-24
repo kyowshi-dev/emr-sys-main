@@ -9,8 +9,7 @@ class MedicineController extends Controller
 {
     public function index()
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+        if (! auth()->user()->hasPermission('medicines')) {
             abort(403, 'Unauthorized');
         }
 
@@ -26,8 +25,7 @@ class MedicineController extends Controller
 
     public function create()
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+        if (! auth()->user()->hasPermission('medicines')) {
             abort(403, 'Unauthorized');
         }
 
@@ -36,8 +34,7 @@ class MedicineController extends Controller
 
     public function store(Request $request)
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+        if (! auth()->user()->hasPermission('medicines')) {
             abort(403, 'Unauthorized');
         }
 
@@ -64,8 +61,7 @@ class MedicineController extends Controller
 
     public function import(Request $request)
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+        if (! auth()->user()->hasPermission('medicines')) {
             abort(403, 'Unauthorized');
         }
 
@@ -174,8 +170,7 @@ class MedicineController extends Controller
 
     public function show($id)
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+        if (! auth()->user()->hasPermission('medicines')) {
             abort(403, 'Unauthorized');
         }
 
@@ -202,8 +197,7 @@ class MedicineController extends Controller
 
     public function edit($id)
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+        if (! auth()->user()->hasPermission('medicines')) {
             abort(403, 'Unauthorized');
         }
 
@@ -220,8 +214,7 @@ class MedicineController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+        if (! auth()->user()->hasPermission('medicines')) {
             abort(403, 'Unauthorized');
         }
 
@@ -256,7 +249,7 @@ class MedicineController extends Controller
     public function destroy($id)
     {
         // Check authorization
-        if (! auth()->user()->isAdmin()) {
+        if (! auth()->user()->hasPermission('medicines')) {
             abort(403, 'Unauthorized');
         }
 

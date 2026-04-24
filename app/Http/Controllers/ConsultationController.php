@@ -12,8 +12,7 @@ class ConsultationController extends Controller
 {
     public function index(Request $request)
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse', 'BHW')) {
+        if (! auth()->user()->hasPermission('consultations')) {
             abort(403, 'Unauthorized');
         }
 
@@ -37,7 +36,7 @@ class ConsultationController extends Controller
             $query->where(function ($qb) use ($q) {
                 $qb->where('patients.first_name', 'like', '%'.$q.'%')
                     ->orWhere('patients.last_name', 'like', '%'.$q.'%')
-                    ->orWhereRaw('CONCAT(patients.last_name, ", ", patients.first_name) LIKE ?', ['%'.$q.'%']);
+                    ->orWhereRaw($this->dbConcat(['patients.last_name', 'patients.first_name'], ', ').' LIKE ?', ['%'.$q.'%']);
                 if (is_numeric($q)) {
                     $qb->orWhere('patients.id', (int) $q);
                 }
@@ -176,8 +175,7 @@ class ConsultationController extends Controller
     // 3. Show the Doctor's Workspace (View Consultation)
     public function show($id)
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+        if (! auth()->user()->hasPermission('consultations')) {
             abort(403, 'Unauthorized');
         }
 
@@ -231,8 +229,7 @@ class ConsultationController extends Controller
     // 4. Save a Diagnosis (Doctor's Action)
     public function addDiagnosis(Request $request, $id)
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+        if (! auth()->user()->hasPermission('consultations')) {
             abort(403, 'Unauthorized');
         }
 
@@ -267,8 +264,7 @@ class ConsultationController extends Controller
     // 5. Save a Prescription
     public function addPrescription(Request $request, $id)
     {
-        // Check authorization
-        if (! auth()->user()->hasRole('Admin', 'Nurse')) {
+        if (! auth()->user()->hasPermission('consultations')) {
             abort(403, 'Unauthorized');
         }
 

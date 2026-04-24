@@ -4,14 +4,14 @@ namespace App\Policies;
 
 use App\Models\User;
 
-class ConsultationPolicy
+class HouseholdPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermission('consultations');
+        return $user->hasPermission('household');
     }
 
     /**
@@ -19,7 +19,7 @@ class ConsultationPolicy
      */
     public function view(User $user): bool
     {
-        return $user->hasPermission('consultations');
+        return $user->hasPermission('household');
     }
 
     /**
@@ -27,7 +27,7 @@ class ConsultationPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermission('consultations');
+        return $user->hasPermission('household');
     }
 
     /**
@@ -35,22 +35,14 @@ class ConsultationPolicy
      */
     public function update(User $user): bool
     {
-        return $user->hasPermission('consultations');
+        return $user->hasPermission('household');
     }
 
     /**
-     * Determine whether the user can add diagnosis.
+     * Determine whether the user can delete the model.
      */
-    public function addDiagnosis(User $user): bool
+    public function delete(User $user): bool
     {
-        return $user->hasPermission('consultations');
-    }
-
-    /**
-     * Determine whether the user can add prescription.
-     */
-    public function addPrescription(User $user): bool
-    {
-        return $user->hasPermission('consultations');
+        return $user->hasPermission('household');
     }
 }

@@ -45,14 +45,11 @@ Route::middleware('auth')->group(function () {
     // 3. PATIENT MANAGEMENT
     // Households (Census)
     Route::get('/households', [HouseholdController::class, 'index'])
-        ->name('households.index')
-        ->middleware('role:Admin,BHW,Nurse');
+        ->name('households.index');
     Route::get('/households/create', [HouseholdController::class, 'create'])
-        ->name('households.create')
-        ->middleware('role:Admin,BHW,Nurse');
+        ->name('households.create');
     Route::post('/households', [HouseholdController::class, 'store'])
-        ->name('households.store')
-        ->middleware('role:Admin,BHW,Nurse');
+        ->name('households.store');
 
     // Patients
     Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
@@ -74,16 +71,13 @@ Route::middleware('auth')->group(function () {
 
     // Doctor's Workspace (View specific consultation)
     Route::get('/consultations/{id}', [ConsultationController::class, 'show'])
-        ->name('consultations.show')
-        ->middleware('role:Admin,Nurse');
+        ->name('consultations.show');
 
     // Doctor Actions (Diagnosis & Rx)
     Route::post('/consultations/{id}/diagnosis', [ConsultationController::class, 'addDiagnosis'])
-        ->name('consultations.diagnosis')
-        ->middleware('role:Admin,Nurse');
+        ->name('consultations.diagnosis');
     Route::post('/consultations/{id}/prescription', [ConsultationController::class, 'addPrescription'])
-        ->name('consultations.prescription')
-        ->middleware('role:Admin,Nurse');
+        ->name('consultations.prescription');
 
     // 5. IMMUNIZATION
     Route::get('/immunizations', [ImmunizationController::class, 'index'])->name('immunizations.index');
@@ -92,90 +86,69 @@ Route::middleware('auth')->group(function () {
 
     // 6. REPORTS (FHSIS)
     Route::get('/reports', [ReportController::class, 'index'])
-        ->name('reports.index')
-        ->middleware('role:Admin,BHW,Nurse');
+        ->name('reports.index');
     Route::get('/reports/morbidity', [ReportController::class, 'morbidity'])
-        ->name('reports.morbidity')
-        ->middleware('role:Admin,BHW,Nurse');
+        ->name('reports.morbidity');
     Route::get('/reports/consultation-summary', [ReportController::class, 'consultationSummary'])
-        ->name('reports.consultation-summary')
-        ->middleware('role:Admin,BHW,Nurse');
+        ->name('reports.consultation-summary');
 
     // 7. USER MANAGEMENT
     Route::get('/users', [UserManagementController::class, 'index'])
-        ->name('users.index')
-        ->middleware('role:Admin');
+        ->name('users.index');
     Route::get('/users/create', [UserManagementController::class, 'create'])
-        ->name('users.create')
-        ->middleware('role:Admin');
+        ->name('users.create');
     Route::post('/users', [UserManagementController::class, 'store'])
-        ->name('users.store')
-        ->middleware('role:Admin');
+        ->name('users.store');
     Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])
-        ->name('users.edit')
-        ->middleware('role:Admin');
+        ->name('users.edit');
     Route::put('/users/{user}', [UserManagementController::class, 'update'])
-        ->name('users.update')
-        ->middleware('role:Admin');
+        ->name('users.update');
     Route::post('/users/{user}/disable', [UserManagementController::class, 'disable'])
-        ->name('users.disable')
-        ->middleware('role:Admin');
+        ->name('users.disable');
     Route::post('/users/{user}/enable', [UserManagementController::class, 'enable'])
-        ->name('users.enable')
-        ->middleware('role:Admin');
+        ->name('users.enable');
     Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])
-        ->name('users.destroy')
-        ->middleware('role:Admin');
+        ->name('users.destroy');
+
+    // User Permissions
+    Route::get('/users/{user}/permissions', [UserManagementController::class, 'editPermissions'])
+        ->name('users.permissions.edit');
+    Route::put('/users/{user}/permissions', [UserManagementController::class, 'updatePermissions'])
+        ->name('users.permissions.update');
 
     // 7a. Password reset request admin queue
     Route::get('/users/password-reset-requests', [UserManagementController::class, 'passwordResetRequests'])
-        ->name('users.password-reset-requests')
-        ->middleware('role:Admin');
+        ->name('users.password-reset-requests');
     Route::post('/users/password-reset-requests/{passwordResetRequest}/complete', [UserManagementController::class, 'completePasswordResetRequest'])
-        ->name('users.password-reset-requests.complete')
-        ->middleware('role:Admin');
+        ->name('users.password-reset-requests.complete');
 
     // 8. MEDICINE MANAGEMENT
     Route::get('/medicines', [MedicineController::class, 'index'])
-        ->name('medicines.index')
-        ->middleware('role:Admin,Nurse');
+        ->name('medicines.index');
     Route::get('/medicines/create', [MedicineController::class, 'create'])
-        ->name('medicines.create')
-        ->middleware('role:Admin,Nurse');
+        ->name('medicines.create');
     Route::post('/medicines', [MedicineController::class, 'store'])
-        ->name('medicines.store')
-        ->middleware('role:Admin,Nurse');
+        ->name('medicines.store');
     Route::post('/medicines/import', [MedicineController::class, 'import'])
-        ->name('medicines.import')
-        ->middleware('role:Admin,Nurse');
+        ->name('medicines.import');
     Route::get('/medicines/{id}', [MedicineController::class, 'show'])
-        ->name('medicines.show')
-        ->middleware('role:Admin,Nurse');
+        ->name('medicines.show');
     Route::get('/medicines/{id}/edit', [MedicineController::class, 'edit'])
-        ->name('medicines.edit')
-        ->middleware('role:Admin,Nurse');
+        ->name('medicines.edit');
     Route::put('/medicines/{id}', [MedicineController::class, 'update'])
-        ->name('medicines.update')
-        ->middleware('role:Admin,Nurse');
+        ->name('medicines.update');
     Route::delete('/medicines/{id}', [MedicineController::class, 'destroy'])
-        ->name('medicines.destroy')
-        ->middleware('role:Admin');
+        ->name('medicines.destroy');
 
     // 9. SETTINGS
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::get('/settings/account', [SettingsController::class, 'account'])->name('settings.account');
     Route::post('/settings/account', [SettingsController::class, 'updateAccount'])->name('settings.account.update');
     Route::get('/settings/backups', [SettingsController::class, 'backups'])
-        ->name('settings.backups')
-        ->middleware('role:Admin');
+        ->name('settings.backups');
     Route::post('/settings/backups/export', [SettingsController::class, 'exportBackup'])
-        ->name('settings.backups.export')
-        ->middleware('role:Admin');
+        ->name('settings.backups.export');
     Route::post('/settings/backups/import', [SettingsController::class, 'importBackup'])
-        ->name('settings.backups.import')
-        ->middleware('role:Admin');
-    Route::post('/settings/backups/export', [SettingsController::class, 'exportBackup'])
-        ->name('settings.backups.export')
-        ->middleware('role:Admin');
+        ->name('settings.backups.import');
 
 }); // <--- End of Auth Group

@@ -24,7 +24,6 @@
                         <th class="px-3 lg:px-6 py-2 lg:py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Username</th>
                         <th class="px-3 lg:px-6 py-2 lg:py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap hidden md:table-cell">Email</th>
                         <th class="px-3 lg:px-6 py-2 lg:py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap hidden lg:table-cell">Registered At</th>
-                        <th class="px-3 lg:px-6 py-2 lg:py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Role</th>
                         <th class="px-3 lg:px-6 py-2 lg:py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Status</th>
                         <th class="px-3 lg:px-6 py-2 lg:py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Actions</th>
                     </tr>
@@ -41,9 +40,6 @@
                             </td>
                             <td class="px-3 lg:px-6 py-2 lg:py-3 text-sm text-gray-500 hidden lg:table-cell">
                                 {{ $user->created_at?->format('M d, Y') }}
-                            </td>
-                            <td class="px-3 lg:px-6 py-2 lg:py-3 text-sm text-gray-700">
-                                {{ $user->roleName() ?? '—' }}
                             </td>
                             <td class="px-3 lg:px-6 py-2 lg:py-3 text-sm">
                                 @if ($user->is_active)
@@ -62,6 +58,10 @@
                                        class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-full border border-sky-300 text-xs font-semibold text-sky-600 hover:bg-sky-50 transition">
                                         Edit
                                     </a>
+                                    <a href="{{ route('users.permissions.edit', $user) }}"
+                                       class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-full border border-purple-300 text-xs font-semibold text-purple-600 hover:bg-purple-50 transition">
+                                        Permissions
+                                    </a>
                                     @if ($user->is_active && ! $user->isAdmin())
                                         <form action="{{ route('users.disable', $user) }}" method="POST" class="inline">
                                             @csrf
@@ -79,7 +79,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-6 text-center text-sm text-gray-500">
+                            <td colspan="5" class="px-6 py-6 text-center text-sm text-gray-500">
                                 No users found.
                             </td>
                         </tr>

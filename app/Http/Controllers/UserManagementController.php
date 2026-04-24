@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PasswordResetRequest;
+use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -11,11 +14,13 @@ class UserManagementController extends Controller
 {
     public function index(Request $request)
     {
+        if (! auth()->user()->hasPermission('users')) {
+            abort(403, 'Unauthorized');
+        }
+
         $pageSize = auth()->check() && auth()->user()->isAdmin() ? 2 : 15;
 
-        $users = User::query()
-            ->orderBy('username')
-            ->paginate($pageSize);
+        $users = User::with('permissions')->orderBy('username')->paginate($pageSize);
 
         return view('users.index', [
             'users' => $users,
@@ -24,13 +29,19 @@ class UserManagementController extends Controller
 
     public function create()
     {
-        $roles = DB::table('user_roles')->orderBy('role_name')->get();
+        if (! auth()->user()->hasPermission('users')) {
+            abort(403, 'Unauthorized');
+        }
 
-        return view('users.create', ['roles' => $roles]);
+        return view('users.create');
     }
 
     public function store(Request $request)
     {
+        if (! auth()->user()->hasPermission('users')) {
+            abort(403, 'Unauthorized');
+        }
+
         $validated = $request->validate([
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
@@ -38,7 +49,6 @@ class UserManagementController extends Controller
             'username' => ['required', 'string', 'max:255', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role_id' => ['required', 'integer', 'exists:user_roles,id'],
         ]);
 
         DB::transaction(function () use ($validated) {
@@ -46,17 +56,14 @@ class UserManagementController extends Controller
                 'username' => $validated['username'],
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
-                'role_id' => $validated['role_id'],
                 'is_active' => true,
             ]);
-
-            $roleName = DB::table('user_roles')->where('id', $validated['role_id'])->value('role_name');
 
             DB::table('health_workers')->insert([
                 'user_id' => $user->id,
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
-                'role' => $roleName,
+                'role' => 'User',
                 'contact_number' => $validated['contact_number'] ?? null,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -70,18 +77,24 @@ class UserManagementController extends Controller
 
     public function edit(User $user)
     {
-        $roles = DB::table('user_roles')->orderBy('role_name')->get();
+        if (! auth()->user()->hasPermission('users')) {
+            abort(403, 'Unauthorized');
+        }
+
         $healthWorker = DB::table('health_workers')->where('user_id', $user->id)->first();
 
         return view('users.edit', [
             'user' => $user,
-            'roles' => $roles,
             'healthWorker' => $healthWorker,
         ]);
     }
 
     public function update(Request $request, User $user)
     {
+        if (! auth()->user()->hasPermission('users')) {
+            abort(403, 'Unauthorized');
+        }
+
         $validated = $request->validate([
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
@@ -89,14 +102,9 @@ class UserManagementController extends Controller
             'username' => ['required', 'string', 'max:255', 'unique:users,username,'.$user->id],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'role_id' => ['required', 'integer', 'exists:user_roles,id'],
         ]);
 
         DB::transaction(function () use ($user, $validated) {
-            if ($user->role_id !== $validated['role_id']) {
-                $user->role_id = $validated['role_id'];
-            }
-
             if ($user->username !== $validated['username']) {
                 $user->username = $validated['username'];
             }
@@ -111,14 +119,12 @@ class UserManagementController extends Controller
 
             $user->save();
 
-            $roleName = DB::table('user_roles')->where('id', $validated['role_id'])->value('role_name');
-
             DB::table('health_workers')
                 ->where('user_id', $user->id)
                 ->update([
                     'first_name' => $validated['first_name'],
                     'last_name' => $validated['last_name'],
-                    'role' => $roleName,
+                    'role' => 'User',
                     'contact_number' => $validated['contact_number'] ?? null,
                     'updated_at' => now(),
                 ]);
@@ -131,6 +137,10 @@ class UserManagementController extends Controller
 
     public function disable(User $user)
     {
+        if (! auth()->user()->hasPermission('users')) {
+            abort(403, 'Unauthorized');
+        }
+
         if ($user->isAdmin()) {
             return redirect()
                 ->route('users.index')
@@ -153,6 +163,10 @@ class UserManagementController extends Controller
 
     public function enable(Request $request, User $user)
     {
+        if (! auth()->user()->hasPermission('users')) {
+            abort(403, 'Unauthorized');
+        }
+
         // Validate password confirmation
         $request->validate([
             'password' => ['required', 'current_password'],
@@ -174,8 +188,7 @@ class UserManagementController extends Controller
 
     public function destroy(Request $request, User $user)
     {
-        // Only admins can delete users
-        if (! auth()->user()->isAdmin()) {
+        if (! auth()->user()->hasPermission('users')) {
             abort(403, 'Unauthorized');
         }
 
@@ -199,9 +212,48 @@ class UserManagementController extends Controller
             ->with('success', 'User deleted successfully.');
     }
 
+    public function editPermissions(User $user)
+    {
+        if (! auth()->user()->hasPermission('users')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $permissions = Permission::all();
+
+        return view('users.permissions', [
+            'user' => $user,
+            'permissions' => $permissions,
+        ]);
+    }
+
+    public function updatePermissions(Request $request, User $user)
+    {
+        if (! auth()->user()->hasPermission('users')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $request->validate([
+            'permissions' => 'array',
+            'permissions.*' => 'exists:permissions,name',
+        ]);
+
+        $user->permissions()->sync(Permission::whereIn('name', $request->permissions ?? [])->pluck('id'));
+
+        // Clear cache
+        Cache::forget("user_permissions_{$user->id}");
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'User permissions updated successfully.');
+    }
+
     public function passwordResetRequests()
     {
-        $requests = \App\Models\PasswordResetRequest::with('user')
+        if (! auth()->user()->hasPermission('users')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $requests = PasswordResetRequest::with('user')
             ->orderBy('created_at', 'desc')
             ->paginate(12);
 
@@ -210,7 +262,7 @@ class UserManagementController extends Controller
         ]);
     }
 
-    public function completePasswordResetRequest(Request $request, \App\Models\PasswordResetRequest $passwordResetRequest)
+    public function completePasswordResetRequest(Request $request, PasswordResetRequest $passwordResetRequest)
     {
         $passwordResetRequest->update([
             'status' => 'completed',

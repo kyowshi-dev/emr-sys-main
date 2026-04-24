@@ -10,6 +10,10 @@ class HouseholdController extends Controller
 {
     public function index(Request $request): View
     {
+        if (! auth()->user()->hasPermission('household')) {
+            abort(403, 'Unauthorized');
+        }
+
         $households = DB::table('households')
             ->join('zones', 'households.zone_id', '=', 'zones.id')
             ->select('households.*', 'zones.zone_number')
@@ -25,6 +29,10 @@ class HouseholdController extends Controller
 
     public function create(): View
     {
+        if (! auth()->user()->hasPermission('household')) {
+            abort(403, 'Unauthorized');
+        }
+
         $zones = DB::table('zones')
             ->select('id', 'zone_number')
             ->orderBy('zone_number')
@@ -37,6 +45,10 @@ class HouseholdController extends Controller
 
     public function store(Request $request)
     {
+        if (! auth()->user()->hasPermission('household')) {
+            abort(403, 'Unauthorized');
+        }
+
         $data = $request->validate([
             'zone_id' => ['required', 'integer', 'exists:zones,id'],
             'family_name_head' => ['required', 'string', 'max:255'],

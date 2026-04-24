@@ -55,28 +55,6 @@
             </div>
 
             <div>
-                <label for="role_id" class="block text-xs lg:text-sm font-medium text-gray-700 mb-1">
-                    Role <span class="text-red-500">*</span>
-                </label>
-                <select
-                    id="role_id"
-                    name="role_id"
-                    class="block w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-xl border border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 text-sm"
-                    required
-                >
-                    <option value="">Select role...</option>
-                    @foreach ($roles as $role)
-                        <option value="{{ $role->id }}" @selected(old('role_id') == $role->id)>
-                            {{ $role->role_name }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('role_id')
-                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div>
                 <label for="username" class="block text-xs lg:text-sm font-medium text-gray-700 mb-1">
                     Username <span class="text-red-500">*</span>
                 </label>

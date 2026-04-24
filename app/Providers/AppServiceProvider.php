@@ -2,6 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\Immunization;
+use App\Models\Medicine;
+use App\Models\Patient;
+use App\Models\User;
+use App\Policies\ImmunizationPolicy;
+use App\Policies\MedicinePolicy;
+use App\Policies\PatientPolicy;
+use App\Policies\UserPolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,8 +37,10 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function registerPolicies(): void
     {
-        // Use Gate::policy() or register policies through gate facade
-        // In Laravel 11+, policies in app/Policies directory are auto-discovered
-        // But we can be explicit here for clarity
+        Gate::policy(Patient::class, PatientPolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(Medicine::class, MedicinePolicy::class);
+        Gate::policy(Immunization::class, ImmunizationPolicy::class);
+        // Note: Consultation and Household don't have models, so policies are used directly in controllers
     }
 }
