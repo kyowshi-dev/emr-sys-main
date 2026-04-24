@@ -89,14 +89,14 @@
         };
     </script>
 </head>
-<body class="min-h-screen overflow-x-hidden font-sans text-[var(--ink)] antialiased" style="background: var(--bg-page);">
+<body x-data="{ sidebarOpen: false }" :class="{ 'overflow-hidden': sidebarOpen }" class="min-h-screen overflow-x-hidden font-sans text-[var(--ink)] antialiased" style="background: var(--bg-page);">
     <div class="grain fixed inset-0 z-0"></div>
     <div class="absolute inset-0 z-0 opacity-40" style="background: linear-gradient(135deg, var(--teal-soft) 0%, transparent 50%, rgba(196,92,65,0.06) 100%);"></div>
 
-    <div class="relative z-10 flex min-h-screen" x-data="{ sidebarOpen: false }">
+    <div class="relative z-10 flex min-h-screen">
         <div x-show="sidebarOpen" @click="sidebarOpen = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-40 bg-black/40 lg:hidden" style="display: none;"></div>
 
-        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'" class="sticky lg:sticky top-0 h-screen lg:h-screen overflow-y-auto w-64 shrink-0 flex flex-col z-50 transition-transform duration-300 ease-out border-r border-[var(--border)]" style="background: var(--bg-surface-elevated); box-shadow: var(--shadow-md);">
+        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'" class="transform fixed lg:static top-0 h-screen lg:h-screen overflow-y-auto w-64 shrink-0 flex flex-col z-50 transition-transform duration-300 ease-out border-r border-[var(--border)]" style="background: var(--bg-surface-elevated); box-shadow: var(--shadow-md);">
             <div class="flex items-center justify-between p-4 lg:p-5 border-b border-[var(--border)]">
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
                     <span class="flex h-9 w-9 items-center justify-center rounded-lg text-white font-display font-semibold text-sm" style="background: var(--primary);">B</span>

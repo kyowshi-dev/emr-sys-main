@@ -38,47 +38,47 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
         <div class="animate-in opacity-0 delay-2 p-5 lg:p-6 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
              style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);">
             <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: var(--ink-muted);">Total patients</p>
             <p class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">{{ $totalPatients }}</p>
             <div class="mt-4 flex gap-2 flex-wrap">
-                <a href="{{ route('patients.index') }}" class="text-xs font-semibold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: var(--primary);">View all</a>
-                <a href="{{ route('patients.create') }}" class="text-xs font-semibold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: var(--accent);">Register patient</a>
+                <a href="{{ route('patients.index') }}" class="text-xs font-bold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: var(--primary);">View all</a>
+                <a href="{{ route('patients.create') }}" class="text-xs font-bold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: var(--accent);">Register patient</a>
             </div>
         </div>
         <div class="animate-in opacity-0 delay-3 p-4 lg:p-5 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
              style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--accent);">
             <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: var(--ink-muted);">Pending appointments</p>
-            <p class="font-display font-semibold text-xl lg:text-2xl" style="color: var(--ink);">{{ $pendingAppointments }}</p>
+            <p class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">{{ $pendingAppointments }}</p>
             <p class="text-xs mt-2" style="color: var(--ink-muted);">Open queue awaiting review</p>
             <div class="mt-4 flex gap-2 flex-wrap">
-                <a href="{{ route('consultations.index') }}" class="text-xs font-semibold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: var(--primary);">Manage appointments</a>
+                <a href="{{ route('consultations.index') }}" class="text-xs font-bold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: var(--primary);">Manage appointments</a>
             </div>
         </div>
         <div class="animate-in opacity-0 delay-4 p-4 lg:p-5 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
              style="background: #fef2f2; border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid #ef4444;">
             <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: #991b1b;">Overdue immunizations</p>
-            <p class="font-display font-semibold text-xl lg:text-2xl" style="color: #b91c1c;">{{ $overdueImmunizations }}</p>
+            <p class="font-display font-semibold text-2xl lg:text-3xl" style="color: #b91c1c;">{{ $overdueImmunizations }}</p>
             <p class="text-xs mt-2" style="color: #7f1d1d;">Patients needing follow-up</p>
             <div class="mt-4 flex gap-2 flex-wrap">
-                <a href="{{ route('immunizations.index') }}" class="text-xs font-semibold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: #b91c1c;">View chart</a>
+                <a href="{{ route('immunizations.index') }}" class="text-xs font-bold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: #b91c1c;">View chart</a>
             </div>
         </div>
         <div class="animate-in opacity-0 delay-5 p-4 lg:p-5 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
              style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid #f59e0b;">
             <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: var(--ink-muted);">Follow-up today</p>
-            <p class="font-display font-semibold text-xl lg:text-2xl" style="color: var(--ink);">{{ $followUpConsultationsToday }}</p>
+            <p class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">{{ $followUpConsultationsToday }}</p>
             <p class="text-xs mt-2" style="color: var(--ink-muted);">Follow-up visits scheduled</p>
             <div class="mt-4 flex gap-2 flex-wrap">
-                <a href="{{ route('consultations.index') }}" class="text-xs font-semibold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: #f59e0b;">Review follow-up</a>
+                <a href="{{ route('consultations.index') }}" class="text-xs font-bold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: #f59e0b;">Review follow-up</a>
             </div>
         </div>
-        <div class="animate-in opacity-0 delay-4 p-4 lg:p-5 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md sm:col-span-2 lg:col-span-1"
+        <div class="animate-in opacity-0 delay-4 p-4 lg:p-5 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
              style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);">
             <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: var(--ink-muted);">Health workers</p>
-            <p class="font-display font-semibold text-xl lg:text-2xl" style="color: var(--ink);">{{ $doctorsOnDuty }}</p>
+            <p class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">{{ $doctorsOnDuty }}</p>
             <p class="text-xs mt-2" style="color: var(--ink-muted);">Total staff on record</p>
         </div>
         @if($pendingPasswordResets > 0)
@@ -88,7 +88,7 @@
             <p class="font-display font-semibold text-xl lg:text-2xl" style="color: #92400e;">{{ $pendingPasswordResets }}</p>
             <p class="text-xs mt-2" style="color: #78350f;">Users awaiting password reset</p>
             <div class="mt-4 flex gap-2 flex-wrap">
-                <a href="{{ route('users.password-reset-requests') }}" class="text-xs font-semibold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: #f59e0b;">Review requests</a>
+                <a href="{{ route('users.password-reset-requests') }}" class="text-xs font-bold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: #f59e0b;">Review requests</a>
             </div>
         </div>
         @endif
@@ -111,18 +111,21 @@
 
                 <div class="mt-4 grid grid-cols-2 sm:grid-cols-5 gap-3">
                     @foreach ($schedule as $slot)
+                        @php
+                            $isCurrentDay = strtolower($slot['day']) === strtolower($weekdayLabel);
+                        @endphp
                         <div class="rounded-xl border p-3 text-center transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
-                             style="background: var(--bg-surface-elevated); border-color: var(--border); box-shadow: var(--shadow-sm);">
+                             style="background: @if($isCurrentDay) var(--teal-soft) @else var(--bg-surface-elevated) @endif; border-color: @if($isCurrentDay) var(--primary) @else var(--border) @endif; box-shadow: var(--shadow-sm); @if($isCurrentDay) border-width: 2px; @endif">
                             <div class="text-[10px] font-semibold uppercase tracking-wider"
-                                 style="color: var(--ink-muted);">
+                                 style="color: @if($isCurrentDay) var(--primary) @else var(--ink-muted) @endif;">
                                 {{ $slot['day'] }}
                             </div>
-                            <div class="mt-2 flex items-center justify-center" aria-hidden="true" style="color: var(--primary);">
+                            <div class="mt-2 flex items-center justify-center" aria-hidden="true" style="color: @if($isCurrentDay) var(--primary) @else var(--primary) @endif;">
                                 <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M10 3h4v4h4v4h-4v4h-4v-4H6V7h4z"></path>
                                 </svg>
                             </div>
-                            <div class="mt-2 text-xs font-semibold leading-snug" style="color: var(--ink);">
+                            <div class="mt-2 text-xs font-semibold leading-snug" style="color: @if($isCurrentDay) var(--primary) @else var(--ink) @endif;">
                                 {{ $slot['label'] }}
                             </div>
                         </div>
@@ -145,14 +148,30 @@
                         </li>
                     @empty
                         <li class="py-8 px-4 text-center">
-                            <div class="space-y-2">
-                                <div class="text-sm" style="color: var(--ink-muted);">No recent activity yet.</div>
-                                <div class="text-xs" style="color: var(--ink-subtle);">Add a patient to see updates here.</div>
-                                <a href="{{ route('patients.create') }}"
-                                   class="inline-flex items-center justify-center w-full px-3 py-2 rounded-xl text-xs font-semibold transition-[transform,box-shadow,background] duration-200 hover:shadow-md hover:scale-[1.01] active:scale-[0.98]"
-                                   style="background: var(--primary); color: #fff; box-shadow: var(--shadow-sm);">
-                                    Add your first patient
-                                </a>
+                            <div class="space-y-4">
+                                <div class="space-y-2">
+                                    <div class="text-sm font-semibold" style="color: var(--ink);">Quick Actions</div>
+                                    <div class="text-xs" style="color: var(--ink-subtle);">Get started with common tasks</div>
+                                </div>
+                                <div class="grid grid-cols-1 gap-2">
+                                    <a href="{{ route('patients.create') }}"
+                                       class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-bold transition-[transform,box-shadow,background] duration-200 hover:shadow-sm hover:scale-[1.01] active:scale-[0.98]"
+                                       style="background: var(--primary); color: #fff; box-shadow: var(--shadow-sm);">
+                                        Register Patient
+                                    </a>
+                                    <a href="{{ route('consultations.index') }}"
+                                       class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-bold transition-[transform,box-shadow,background] duration-200 hover:shadow-sm hover:scale-[1.01] active:scale-[0.98]"
+                                       style="background: var(--accent); color: #fff; box-shadow: var(--shadow-sm);">
+                                        Log Consultation
+                                    </a>
+                                    <!-- TODO: Connect to vitals logging when available -->
+                                    <button
+                                       class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-bold transition-[transform,box-shadow,background,opacity] duration-200 hover:shadow-sm hover:scale-[1.01] active:scale-[0.98] disabled"
+                                       style="background: var(--border); color: var(--ink-muted); box-shadow: var(--shadow-sm); opacity: 0.5; cursor: not-allowed;"
+                                       title="Feature coming soon">
+                                        Update Vitals
+                                    </button>
+                                </div>
                             </div>
                         </li>
                     @endforelse
@@ -181,10 +200,10 @@
                     <span class="text-xs" style="color: var(--ink-subtle);">Today</span>
                 </div>
 
-                <div class="mt-4 space-y-3">
+                <div class="mt-4 max-h-60 overflow-y-auto space-y-3">
                     @forelse ($onDutyStaff as $staff)
                         <div class="flex items-center gap-3">
-                            <div class="h-9 w-9 rounded-full flex items-center justify-center text-xs font-semibold"
+                            <div class="h-9 w-9 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0"
                                  style="background: var(--teal-soft); color: var(--primary);">
                                 {{ $staff['initials'] }}
                             </div>
