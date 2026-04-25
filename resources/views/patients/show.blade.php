@@ -65,7 +65,7 @@
     <div class="md:col-span-2">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3 lg:mb-4">
             <h2 class="text-lg lg:text-xl font-bold text-gray-800">Consultation History</h2>
-            <a href="{{ route('consultations.create', $patient->id) }}" class="inline-flex items-center justify-center bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-600 hover:to-emerald-600 text-white px-4 py-2 rounded-xl shadow-sm text-xs lg:text-sm font-medium transition">
+            <a href="{{ route('consultations.create', $patient->id) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-xl shadow-sm text-xs lg:text-sm font-medium text-white bg-[var(--primary)] hover:bg-[var(--primary-light)] transition">
                 + New Consultation
             </a>
         </div>

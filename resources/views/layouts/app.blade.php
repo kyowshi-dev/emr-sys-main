@@ -396,6 +396,37 @@
             var current = window.location.pathname.replace(/\/$/, '') || '/';
             if (path === current) link.classList.add('router-link-active');
         });
+
+        // Session timeout check
+        @auth
+        setInterval(function() {
+            fetch('/session/status', {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.active) {
+                    Swal.fire({
+                        title: 'Session Expired',
+                        text: 'Your session has expired due to inactivity. You will be redirected to the login page.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    }).then(() => {
+                        window.location.href = '/login';
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Session check failed:', error);
+            });
+        }, 30000); // Check every 30 seconds
+        @endauth
     </script>
 </body>
 </html>

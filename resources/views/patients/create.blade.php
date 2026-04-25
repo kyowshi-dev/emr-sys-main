@@ -226,8 +226,8 @@
         </div>
 
         <div class="flex flex-wrap justify-end gap-2 lg:gap-3">
-            <a href="{{ route('patients.index') }}" class="px-4 lg:px-6 py-2 rounded-xl border border-gray-300 text-gray-600 hover:bg-gray-100 text-xs lg:text-sm font-medium">Cancel</a>
-            <button type="submit" class="px-5 lg:px-6 py-2 lg:py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-semibold text-xs lg:text-sm shadow-md hover:shadow-lg transition">
+            <a href="{{ route('patients.index') }}" class="px-4 lg:px-6 py-2 rounded-xl border border-gray-300 text-gray-600 hover:bg-[var(--primary-light)] text-xs lg:text-sm font-medium">Cancel</a>
+            <button type="submit" class="px-5 lg:px-6 py-2 lg:py-2.5 rounded-xl bg-[var(--primary)] text-white font-semibold text-xs lg:text-sm shadow-md hover:bg-[var(--primary-light)] transition">
                 Save Patient Record
             </button>
         </div>

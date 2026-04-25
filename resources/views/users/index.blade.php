@@ -11,7 +11,7 @@
         </div>
 
         <a href="{{ route('users.create') }}"
-           class="inline-flex items-center justify-center px-4 lg:px-5 py-2 lg:py-2.5 rounded-xl lg:rounded-2xl bg-gradient-to-r from-sky-500 to-emerald-500 text-xs lg:text-sm font-semibold text-white shadow-md hover:shadow-xl transition">
+           class="inline-flex items-center justify-center px-4 lg:px-5 py-2 lg:py-2.5 rounded-xl lg:rounded-2xl bg-[var(--primary)] text-xs lg:text-sm font-semibold text-white shadow-md hover:bg-[var(--primary-light)] transition">
             + Add User
 </a>
     </div>
