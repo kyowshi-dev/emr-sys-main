@@ -250,6 +250,15 @@
                     </div>
                 @endif
 
+                <!-- Profile Management -->
+                <a href="{{ route('profile.show') }}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
+                    <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Profile</span>
+                </a>
+
                 <!-- Settings -->
                 <a href="{{ route('settings.index') }}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-[background,color] duration-200" style="color: var(--ink-muted);">
                     <svg class="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -311,7 +320,18 @@
                                     <div>{{ $roleName }}</div>
                                 </div>
 
-                                <div class="p-3">
+                                <div class="p-2 space-y-1">
+                                    <a href="{{ route('profile.show') }}" class="block px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 hover:bg-black/5" style="color: var(--ink);">
+                                        My Profile
+                                    </a>
+                                    @if(auth()->user()->hasPermission('users'))
+                                        <a href="{{ route('profile.settings') }}" class="block px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 hover:bg-black/5" style="color: var(--ink);">
+                                            Session Settings
+                                        </a>
+                                    @endif
+                                </div>
+
+                                <div class="p-3 border-t border-[var(--border)]">
                                     <form action="{{ route('logout') }}" method="POST" class="w-full">
                                         @csrf
                                         <button type="submit"

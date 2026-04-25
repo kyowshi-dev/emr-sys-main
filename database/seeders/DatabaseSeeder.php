@@ -44,9 +44,10 @@ class DatabaseSeeder extends Seeder
         $this->call(PermissionSeeder::class);
         $this->call(AssignInitialPermissionsSeeder::class);
 
-        // 4. DIAGNOSIS (Common PH Diseases for Search Testing)
+        // 4. INITIAL USERS (Admin, BHW, Nurse, Doctor)
+        $this->call(CreateInitialUsersSeeder::class);
 
-        // 3. DIAGNOSIS (Common PH Diseases for Search Testing)
+        // 5. DIAGNOSIS (Common PH Diseases for Search Testing)
         $diagnoses = [
             ['diagnosis_code' => 'J00', 'diagnosis_name' => 'Acute Nasopharyngitis (Common Cold)', 'category' => 'Respiratory'],
             ['diagnosis_code' => 'J06.9', 'diagnosis_name' => 'Acute Upper Respiratory Infection (URTI)', 'category' => 'Respiratory'],
@@ -58,7 +59,7 @@ class DatabaseSeeder extends Seeder
         ];
         DB::table('diagnosis_lookup')->insertOrIgnore($diagnoses);
 
-        // 4. MEDICINES (Basic RHU Formulary)
+        // 6. MEDICINES (Basic RHU Formulary)
         $medicines = [
             ['medicine_name' => 'Paracetamol 500mg Tablet'],
             ['medicine_name' => 'Paracetamol 250mg/5mL Syrup'],
@@ -73,7 +74,7 @@ class DatabaseSeeder extends Seeder
         ];
         DB::table('medicines_lookup')->insertOrIgnore($medicines);
 
-        // 5. COMPLAINTS (Chief Complaints)
+        // 7. COMPLAINTS (Chief Complaints)
         $complaints = [
             ['complaint' => 'Cough and Cold'],
             ['complaint' => 'Fever'],
@@ -87,17 +88,17 @@ class DatabaseSeeder extends Seeder
         ];
         DB::table('complaint_lookup')->insertOrIgnore($complaints);
 
-        // 6. ZONES (Barangay Sta. Ana Specific)
+        // 8. ZONES (Barangay Sta. Ana Specific)
         $zones = [];
         for ($i = 1; $i <= 8; $i++) {
             $zones[] = ['zone_number' => "Zone $i"];
         }
         DB::table('zones')->insertOrIgnore($zones);
 
-        // 7. VACCINES (EPI / Immunization lookup)
+        // 9. VACCINES (EPI / Immunization lookup)
         $this->call(VaccineSeeder::class);
 
-        // 8. ICD-10 diagnosis codes (optional: copy icd102019syst_codes.sql to storage/app/ or set BHCIS_ICD_SQL_PATH)
+        // 10. ICD-10 diagnosis codes (optional: copy icd102019syst_codes.sql to storage/app/ or set BHCIS_ICD_SQL_PATH)
         $this->call(IcdDiagnosisSeeder::class);
     }
 }

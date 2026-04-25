@@ -7,6 +7,7 @@ use App\Http\Controllers\HouseholdController;
 use App\Http\Controllers\ImmunizationController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SettingsController;
@@ -150,5 +151,12 @@ Route::middleware('auth')->group(function () {
         ->name('settings.backups.export');
     Route::post('/settings/backups/import', [SettingsController::class, 'importBackup'])
         ->name('settings.backups.import');
+
+    // 10. PROFILE MANAGEMENT
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
+    Route::put('/profile/settings', [ProfileController::class, 'updateSettings'])->name('profile.settings.update');
 
 }); // <--- End of Auth Group
