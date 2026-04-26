@@ -63,16 +63,22 @@
                                         Permissions
                                     </a>
                                     @if ($user->is_active && ! $user->isAdmin())
-                                        <form action="{{ route('users.disable', $user) }}" method="POST" class="inline">
-                                            @csrf
-                                            <button
-                                                type="submit"
-                                                class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-full border border-red-300 text-xs font-semibold text-red-600 hover:bg-red-50 transition"
-                                                onclick="return confirm('Are you sure you want to disable this user?');"
-                                            >
-                                                Disable
-                                            </button>
-                                        </form>
+                                        <button
+                                            type="button"
+                                            onclick="confirmDisableUser({{ $user->id }})"
+                                            class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-full border border-red-300 text-xs font-semibold text-red-600 hover:bg-red-50 transition"
+                                        >
+                                            Disable
+                                        </button>
+                                    @endif
+                                    @if (! $user->is_active)
+                                        <button
+                                            type="button"
+                                            onclick="confirmEnableUser({{ $user->id }})"
+                                            class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-full border border-emerald-300 text-xs font-semibold text-emerald-600 hover:bg-emerald-50 transition"
+                                        >
+                                            Enable
+                                        </button>
                                     @endif
                                 </div>
                             </td>
@@ -93,4 +99,79 @@
         {{ $users->links() }}
     </div>
 </div>
+
+<!-- Hidden Forms for Actions -->
+<form id="disableForm" method="POST" style="display: none;">
+    @csrf
+</form>
+
+<form id="enableForm" method="POST" style="display: none;">
+    @csrf
+</form>
+
+<script>
+    function confirmDisableUser(userId) {
+        Swal.fire({
+            title: 'Disable User?',
+            text: 'Are you sure you want to disable this user? They will no longer be able to access the system.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Yes, Disable',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.getElementById('disableForm');
+                form.action = '/users/' + userId + '/disable';
+                form.submit();
+            }
+        });
+    }
+
+    function confirmEnableUser(userId) {
+        Swal.fire({
+            title: 'Enable User?',
+            text: 'Enter your password to enable this user.',
+            icon: 'info',
+            input: 'password',
+            inputLabel: 'Your Password',
+            inputPlaceholder: 'Enter your password',
+            inputAttributes: {
+                autocapitalize: 'off',
+                autocorrect: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonColor: '#10b981',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Enable User',
+            cancelButtonText: 'Cancel',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Please enter your password';
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.getElementById('enableForm');
+                form.action = '/users/' + userId + '/enable';
+                
+                // Add password field to the form
+                const passwordInput = document.createElement('input');
+                passwordInput.type = 'hidden';
+                passwordInput.name = 'password';
+                passwordInput.value = result.value;
+                
+                // Clear any existing password inputs
+                const existingPassword = form.querySelector('input[name="password"]');
+                if (existingPassword) {
+                    existingPassword.remove();
+                }
+                
+                form.appendChild(passwordInput);
+                form.submit();
+            }
+        });
+    }
+</script>
 @endsection
