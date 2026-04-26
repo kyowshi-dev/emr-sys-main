@@ -373,12 +373,19 @@
                     </div>
                 </div>
             </main>
-
-            <footer class="shrink-0 text-center py-3 text-xs border-t border-[var(--border)]" style="background: var(--bg-surface); color: var(--ink-subtle);">
-                &copy; {{ date('Y') }} Barangay Sta. Ana Health Center
-                <span class="font-medium hidden sm:inline" style="color: var(--primary);"> — Community care</span>
+            
             </footer>
         </div>
+    </div>
+    <footer class="shrink-0 text-center py-3 text-xs border-t border-[var(--border)]" style="background: var(--bg-surface); color: var(--ink-subtle);">
+        &copy; {{ date('Y') }} Barangay Sta. Ana Health Center
+        <span class="font-medium hidden sm:inline" style="color: var(--primary);"> — Community care</span>
+
+    <div id="pageDrawer" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closePageDrawer()"></div>
+        <aside id="pageDrawerPanel" class="absolute inset-y-0 right-0 w-full max-w-md transform translate-x-full overflow-y-auto bg-white shadow-2xl transition-transform duration-300 ease-out">
+            @stack('drawer-content')
+        </aside>
     </div>
 
     <style>
@@ -396,6 +403,30 @@
             var current = window.location.pathname.replace(/\/$/, '') || '/';
             if (path === current) link.classList.add('router-link-active');
         });
+
+        function openPageDrawer() {
+            var drawer = document.getElementById('pageDrawer');
+            var panel = document.getElementById('pageDrawerPanel');
+            if (!drawer || !panel) return;
+            drawer.classList.remove('hidden');
+            panel.classList.remove('translate-x-full');
+            panel.classList.add('translate-x-0');
+        }
+
+        function closePageDrawer() {
+            var drawer = document.getElementById('pageDrawer');
+            var panel = document.getElementById('pageDrawerPanel');
+            if (!drawer || !panel) return;
+            panel.classList.remove('translate-x-0');
+            panel.classList.add('translate-x-full');
+            panel.addEventListener('transitionend', function handleTransitionEnd() {
+                drawer.classList.add('hidden');
+                panel.removeEventListener('transitionend', handleTransitionEnd);
+            }, { once: true });
+        }
+
+        window.openImmunizationDrawer = openPageDrawer;
+        window.closeImmunizationDrawer = closePageDrawer;
 
         // Session timeout check
         @auth
@@ -428,5 +459,7 @@
         }, 30000); // Check every 30 seconds
         @endauth
     </script>
+
+    @stack('scripts')
 </body>
 </html>
