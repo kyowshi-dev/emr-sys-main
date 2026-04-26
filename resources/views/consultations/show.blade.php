@@ -48,11 +48,11 @@
             <h3 class="font-bold text-sky-800 mb-2 lg:mb-3 flex items-center gap-2 text-sm lg:text-base">📊 Vital Signs</h3>
             <div class="grid grid-cols-2 gap-3 lg:gap-4 text-xs lg:text-sm">
                 <div>
-                    <span class="text-sky-600 block text-xs uppercase font-medium">BP</span>
+                    <span class="text-sky-600 block text-xs uppercase font-medium">BP <span class="text-red-500">*</span></span>
                     <span class="font-bold text-gray-700">{{ $vitals->bp_systolic ?? '—' }}/{{ $vitals->bp_diastolic ?? '—' }}</span>
                 </div>
                 <div>
-                    <span class="text-sky-600 block text-xs uppercase font-medium">Temp</span>
+                    <span class="text-sky-600 block text-xs uppercase font-medium">Temp <span class="text-red-500">*</span></span>
                     <span class="font-bold text-gray-700">{{ $vitals->temperature_c !== null && $vitals->temperature_c !== '' ? $vitals->temperature_c.'°C' : '—' }}</span>
                 </div>
                 <div>
@@ -69,6 +69,16 @@
         <div class="bg-white p-4 lg:p-5 rounded-xl lg:rounded-2xl shadow-sm border border-gray-200">
             <h3 class="font-bold text-gray-700 mb-2 text-sm lg:text-base">Chief Complaint</h3>
             <p class="text-xs lg:text-sm text-gray-600 bg-gray-50 p-2 lg:p-3 rounded-xl italic">{{ $consultation->complaint_text ?? 'No complaint recorded' }}</p>
+        </div>
+
+        <div class="bg-amber-50 p-4 lg:p-6 rounded-xl lg:rounded-2xl border border-amber-100">
+            <h3 class="font-bold text-amber-800 mb-2 lg:mb-3 flex items-center gap-2 text-sm lg:text-base">⚡ Common Cases</h3>
+            <div class="space-y-2">
+                <button @click="$dispatch('set-diagnosis-query', { query: 'URI' })" class="w-full text-left px-3 py-2 rounded-lg bg-white hover:bg-amber-100 text-sm font-medium text-gray-700">URI</button>
+                <button @click="$dispatch('set-diagnosis-query', { query: 'Hypertension' })" class="w-full text-left px-3 py-2 rounded-lg bg-white hover:bg-amber-100 text-sm font-medium text-gray-700">Hypertension</button>
+                <button @click="$dispatch('set-diagnosis-query', { query: 'Diarrhea' })" class="w-full text-left px-3 py-2 rounded-lg bg-white hover:bg-amber-100 text-sm font-medium text-gray-700">Diarrhea</button>
+                <button @click="$dispatch('set-diagnosis-query', { query: 'Prenatal Checkup' })" class="w-full text-left px-3 py-2 rounded-lg bg-white hover:bg-amber-100 text-sm font-medium text-gray-700">Prenatal Checkup</button>
+            </div>
         </div>
     </div>
 
@@ -90,10 +100,10 @@
                 </div>
             @endif
 
-            <form action="{{ route('consultations.diagnosis', $consultation->id) }}" method="POST" x-data="diagnosisSearch()" class="space-y-3 lg:space-y-4">
+            <form action="{{ route('consultations.diagnosis', $consultation->id) }}" method="POST" x-data="diagnosisSearch()" @set-diagnosis-query.window="setQuery($event.detail.query)" class="space-y-3 lg:space-y-4">
                 @csrf
                 <div class="relative">
-                    <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-1">Search ICD-10 / Disease name</label>
+                    <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-1">Search ICD-10 / Disease name <span class="text-red-500">*</span></label>
                     <input type="text" x-model="query" @input.debounce.300ms="search()"
                            placeholder="e.g. Dengue, Hypertension..."
                            class="w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none text-sm" autocomplete="off">
@@ -216,6 +226,10 @@
                 this.query = item.text;
                 this.selectedId = item.id;
                 this.results = [];
+            },
+            setQuery(term) {
+                this.query = term;
+                this.search();
             }
         };
     }

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="space-y-5 lg:space-y-6">
+<div class="space-y-5 lg:space-y-6" x-data="{ blurSensitive: true }">
     <div>
         <h1 class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">Consultation history</h1>
         <p class="text-sm mt-1" style="color: var(--ink-muted);">View and search past consultations.</p>
@@ -35,6 +35,13 @@
         </div>
     </form>
 
+    <div class="flex justify-end">
+        <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" x-model="blurSensitive" class="rounded border" style="border-color: var(--border);">
+            <span class="text-sm" style="color: var(--ink-muted);">Blur Sensitive Info</span>
+        </label>
+    </div>
+
     <div class="space-y-3 lg:space-y-4">
         @forelse ($consultations as $consultation)
             @php
@@ -46,7 +53,7 @@
                     <div class="flex flex-wrap items-start justify-between gap-2">
                         <div class="flex-1 min-w-0">
                             <div class="flex flex-wrap items-center gap-2 mb-1 lg:mb-2">
-                                <span class="font-semibold text-sm lg:text-base" style="color: var(--ink);">
+                                <span class="font-semibold text-sm lg:text-base" :class="{ 'blur-sensitive': blurSensitive }" style="color: var(--ink);">
                                     {{ $consultation->patient_last_name }}, {{ $consultation->patient_first_name }}
                                     <span class="font-medium" style="color: var(--primary);">(PT{{ str_pad($consultation->patient_id, 3, '0', STR_PAD_LEFT) }})</span>
                                 </span>
@@ -66,7 +73,7 @@
                             <span class="font-medium" style="color: var(--ink-muted);">Diagnosis:</span>
                             <span class="flex flex-wrap gap-1 mt-1">
                                 @foreach ($diagnoses as $d)
-                                    <span class="inline-block px-2 py-0.5 rounded-lg text-xs font-medium" style="background: var(--teal-soft); color: var(--primary);">{{ $d }}</span>
+                                    <span class="inline-block px-2 py-0.5 rounded-lg text-xs font-medium" :class="{ 'blur-sensitive': blurSensitive }" style="background: var(--teal-soft); color: var(--primary);">{{ $d }}</span>
                                 @endforeach
                             </span>
                         </p>
@@ -98,4 +105,14 @@
         </div>
     </div>
 </div>
+
+<style>
+.blur-sensitive {
+    filter: blur(4px);
+    transition: filter 0.2s ease;
+}
+.blur-sensitive:hover {
+    filter: none;
+}
+</style>
 @endsection
