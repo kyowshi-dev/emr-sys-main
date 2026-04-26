@@ -12,35 +12,42 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         :root {
-            --font-display: 'Poppins', Georgia, serif;
-            --font-body: 'Source Sans 3', system-ui, sans-serif;
-            --bg-page: #f5f0e8;
-            --bg-surface: #fdfcfa;
-            --bg-surface-elevated: #ffffff;
-            --ink: #1a1f1c;
-            --ink-muted: #000000;
-            --ink-subtle: #8a928d;
-            --border: rgba(26, 31, 28, 0.12);
-            
-            /* Primary Colors (Dark Green, Hue: 166) */
-            --primary: #0d4a3c;
-            --primary-hover: #0a3d32;
-            --teal-soft: rgba(13, 74, 60, 0.08);
+    /* Fonts */
+    --font-display: 'Poppins', system-ui, sans-serif;
+    --font-body: 'Source Sans 3', system-ui, sans-serif;
 
-            /* Accent Colors (Lighter Green, Exact same Hue: 166) */
-            --accent: #0d4a3c; 
-            --accent-hover: #0a3d32;
-        --accent-soft: rgba(31, 181, 146, 0.12);
-            
-            /* Shadows & UI Settings */
-            --shadow-sm: 0 1px 2px rgba(26, 31, 28, 0.06);
-            --shadow-md: 0 4px 12px rgba(26, 31, 28, 0.08);
-            --shadow-lg: 0 12px 32px rgba(26, 31, 28, 0.1);
-            --radius: 0.5rem;
-            --radius-lg: 0.75rem;
-            --radius-xl: 1rem;
-            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+    /* Base Palette (Slate & Crisp White) */
+    --bg-page: #f0f4f8; 
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #ffffff;
+    
+    /* Text / Ink Colors */
+    --ink: #0f172a; 
+    --ink-muted: #475569; 
+    --ink-subtle: #94a3b8;
+    --border: rgba(15, 23, 42, 0.08); 
+
+    /* Primary Colors (Dark Green) */
+    --primary: #0d4a3c;
+    --primary-hover: #0a3d32;
+    --teal-soft: rgba(13, 74, 60, 0.08);
+
+    /* Accent Colors (Lighter Green) */
+    --accent: #1fb592; 
+    --accent-hover: #189a7a;
+    --accent-soft: rgba(31, 181, 146, 0.12);
+    
+    /* Shadows & UI Settings (Updated to match Slate Ink) */
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+    --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.08);
+    
+    /* Radii & Animation */
+    --radius: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
         .grain::before {
             content: '';
