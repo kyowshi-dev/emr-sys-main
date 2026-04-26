@@ -6,12 +6,12 @@
     <title>Login - BHCIS Sta. Ana</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            --font-display: 'Fraunces', Georgia, serif;
-            --font-body: 'Source Sans 3', system-ui, sans-serif;
+            --font-display: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            --font-body: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
             --bg-page: #f5f0e8;
             --bg-surface: #fdfcfa;
             --bg-card: #ffffff;
@@ -60,10 +60,19 @@
             content: '';
             position: absolute;
             inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-image: 
+                radial-gradient(circle, rgba(13, 74, 60, 0.06) 1.5px, transparent 1.5px),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 32px 32px, auto;
             pointer-events: none;
             z-index: 0;
         }
+        /* Compact form adjustments */
+        .card-compact { padding: 1.25rem; border-radius: 1rem; }
+        .logo-mark { width:56px; height:56px; border-radius:14px; overflow:hidden; display:inline-flex; align-items:center; justify-content:center; background: var(--bg-surface); zoom: 200%;}
+        .logo-mark img { width: 100%; height: 100%; object-fit:cover; }
+        .muted-xs { font-size:0.78rem; color:var(--ink-muted); }
+        @media (min-width: 1024px) { .card-compact { padding:1.75rem 2rem; } }
         @keyframes fadeSlideUp {
             from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
@@ -75,41 +84,47 @@
     <div class="grain fixed inset-0 z-0"></div>
     <div class="absolute inset-0 z-0 opacity-50" style="background: linear-gradient(145deg, var(--teal-soft) 0%, transparent 40%, rgba(196,92,65,0.06) 100%);"></div>
 
-    <div class="relative z-10 w-full max-w-md mx-4">
-        <div class="rounded-2xl border p-8 lg:p-10 animate-in opacity-0" style="background: var(--bg-card); border-color: var(--border); box-shadow: var(--shadow-lg);">
-            <div class="text-center mb-8">
-                
-                <h1 class="font-display font-semibold text-2xl lg:text-3xl mb-2" style="color: var(--ink); font-family: var(--font-display);">BHCIS</h1>
-                <p class="text-sm" style="color: var(--ink-muted);">Sta. Ana Health Center — sign in to continue</p>
+    <div class="relative z-10 w-full max-w-sm mx-4">
+        <div class="rounded-2xl border card-compact animate-in opacity-0" style="background: var(--bg-card); border-color: var(--border); font-family: var(--font-display);">
+            <div class="text-center mb-6">
+                <div class="flex items-center justify-center gap-3">
+                    <div class="logo-mark">
+                        <img src="{{ asset('img/sta-ana-logo.png') }}" alt="Santa Ana logo">
+                    </div>
+                    <div class="text-left">
+                        <h1 class="font-semibold text-lg leading-snug mb-0" style="color: var(--ink);">BHCIS</h1>
+                        <p class="muted-xs leading-tight">Sta. Ana Health Center</p>
+                    </div>
+                </div>
+                <p class="text-xs mt-4 muted-xs leading-relaxed">Sign in to access patient records and services</p>
             </div>
 
             <form action="{{ route('login.process') }}" method="POST">
                 @csrf
 
                 @if ($errors->any())
-                    <div class="mb-6 p-4 rounded-lg border-l-4 text-sm" style="background: rgba(196, 92, 65, 0.08); border-color: var(--accent); color: var(--accent-hover);">
-                        <p class="font-semibold">Login failed</p>
-                        <p class="mt-1">{{ $errors->first() }}</p>
+                    <div class="mb-4 p-3 rounded-lg text-sm" style="background: rgba(196, 92, 65, 0.08); border-left:4px solid var(--accent); color: var(--accent-strong);">
+                        <p class="font-medium text-sm">Login failed — {{ $errors->first() }}</p>
                     </div>
                 @endif
 
-                <div class="mb-5">
-                    <label for="username" class="block text-sm font-medium mb-2" style="color: var(--ink);">Username</label>
+                <div class="mb-4">
+                    <label for="username" class="block text-sm font-medium mb-2.5" style="color: var(--ink);">Username</label>
                     <input type="text" name="username" id="username" value="{{ old('username') }}"
-                           class="w-full px-4 py-3 rounded-lg border text-[var(--ink)] placeholder-[var(--ink-muted)] focus:outline-none focus:ring-2 transition"
+                           class="w-full px-3 py-2 rounded-md border text-[var(--ink)] placeholder-[var(--ink-muted)] focus:outline-none focus:ring-2 transition text-sm"
                            style="border-color: var(--border); --tw-ring-color: var(--primary);"
-                           placeholder="Enter your username" required autofocus>
+                           placeholder="e.g bhw_maria" required autofocus>
                 </div>
 
-                <div class="mb-6">
-                    <label for="password" class="block text-sm font-medium mb-2" style="color: var(--ink);">Password</label>
+                <div class="mb-5">
+                    <label for="password" class="block text-sm font-medium mb-2.5" style="color: var(--ink);">Password</label>
                     <input type="password" name="password" id="password"
-                           class="w-full px-4 py-3 rounded-lg border text-[var(--ink)] placeholder-[var(--ink-muted)] focus:outline-none focus:ring-2 transition"
+                           class="w-full px-3 py-2 rounded-md border text-[var(--ink)] placeholder-[var(--ink-muted)] focus:outline-none focus:ring-2 transition text-sm"
                            style="border-color: var(--border); --tw-ring-color: var(--primary);"
-                           placeholder="Enter your password" required>
+                           placeholder="Your password" required>
                 </div>
 
-                <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center justify-between mb-5 text-sm">
                     <label class="flex items-center text-sm cursor-pointer" style="color: var(--ink-muted);">
                         <input type="checkbox" name="remember" class="mr-2 h-4 w-4 rounded border-[var(--border)]" style="accent-color: var(--primary);">
                         Remember me
@@ -119,12 +134,12 @@
                     </a>
                 </div>
 
-                <button type="submit" class="w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.99] accent-button">
+                <button type="submit" class="w-full py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 active:scale-[0.99] accent-button">
                     Sign in
                 </button>
             </form>
 
-            <p class="text-center text-xs mt-8" style="color: var(--ink-muted);">
+            <p class="text-center text-xs mt-6" style="color: var(--ink-muted);">
                 &copy; {{ date('Y') }} Barangay Sta. Ana Health Center
             </p>
         </div>

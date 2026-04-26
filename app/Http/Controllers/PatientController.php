@@ -33,7 +33,7 @@ class PatientController extends Controller
                 'latest_consultations.last_visit'
             )
             ->orderByDesc('patients.created_at')
-            ->paginate(5)
+            ->paginate(20)
             ->withQueryString();
 
         return view('patients.index', compact('patients'));
