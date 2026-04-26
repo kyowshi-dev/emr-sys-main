@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\PdfService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -145,5 +146,39 @@ class ReportController extends Controller
             'year' => (int) $year,
             'growthPercent' => $growthPercent,
         ]);
+    }
+
+    /**
+     * Download FHSIS Morbidity Report as PDF
+     */
+    public function downloadMorbidityPdf(Request $request, PdfService $pdfService)
+    {
+        $month = $request->input('month', now()->month);
+        $year = $request->input('year', now()->year);
+        $start = Carbon::createFromDate($year, $month, 1)->startOfDay();
+        $end = $start->copy()->endOfMonth();
+
+        $rows = DB::table('diagnosis_records')
+            ->join('consultations', 'diagnosis_records.consultation_id', '=', 'consultations.id')
+            ->join('diagnosis_lookup', 'diagnosis_records.diagnosis_id', '=', 'diagnosis_lookup.id')
+            ->whereBetween('consultations.created_at', [$start, $end])
+            ->select(
+                'diagnosis_lookup.diagnosis_code',
+                'diagnosis_lookup.diagnosis_name',
+                'diagnosis_lookup.category',
+                DB::raw('COUNT(*) as case_count')
+            )
+            ->groupBy('diagnosis_lookup.id', 'diagnosis_lookup.diagnosis_code', 'diagnosis_lookup.diagnosis_name', 'diagnosis_lookup.category')
+            ->orderByDesc('case_count')
+            ->get();
+
+        $totalCases = $rows->sum('case_count');
+        $reportDate = $start->format('F Y');
+
+        $pdf = $pdfService->generateMorbidityReport($rows, $totalCases, $reportDate, $month, $year);
+
+        $filename = "Morbidity_Report_Sta_Ana_{$month}_{$year}.pdf";
+
+        return $pdf->download($filename);
     }
 }

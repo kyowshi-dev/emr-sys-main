@@ -17,6 +17,12 @@
             <input type="number" name="year" value="{{ $year }}" min="2020" max="{{ date('Y') + 1 }}" class="w-16 lg:w-20 rounded-lg border border-gray-300 text-xs lg:text-sm py-1.5 lg:py-2">
             <button type="submit" class="px-2 lg:px-3 py-1.5 lg:py-2 rounded-lg bg-sky-600 text-white text-xs lg:text-sm font-medium">Go</button>
         </form>
+        <button
+            x-on:click="downloadPdf()"
+            class="px-3 lg:px-4 py-1.5 lg:py-2 rounded-lg bg-green-600 text-white text-xs lg:text-sm font-medium hover:bg-green-700 transition-colors"
+        >
+            Download PDF
+        </button>
     </div>
 
     <div class="bg-white rounded-xl lg:rounded-2xl border border-gray-200 overflow-hidden print:shadow-none">
@@ -60,4 +66,13 @@
         @endif
     </div>
 </div>
+
+<script>
+function downloadPdf() {
+    const url = new URL('{{ route("reports.morbidity.download") }}', window.location.origin);
+    url.searchParams.set('month', {{ $month }});
+    url.searchParams.set('year', {{ $year }});
+    window.open(url.toString(), '_blank');
+}
+</script>
 @endsection

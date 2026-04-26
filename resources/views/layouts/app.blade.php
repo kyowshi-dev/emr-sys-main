@@ -76,6 +76,9 @@
             filter: grayscale(100%);
             cursor: not-allowed;
         }
+        .logo-mark { width:37px; height:37px; border-radius:14px; overflow:hidden; display:inline-flex; align-items:center; justify-content:center; background: var(--bg-surface); zoom: 200%;}
+        .logo-mark img { width: 100%; height: 100%; object-fit:cover; }
+        .muted-xs { font-size:0.78rem; color:var(--ink-muted); }
     </style>
     <script>
         tailwind.config = {
@@ -106,7 +109,9 @@
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'" class="transform fixed lg:static top-0 h-screen lg:h-screen overflow-y-auto w-64 shrink-0 flex flex-col z-50 transition-transform duration-300 ease-out border-r border-[var(--border)]" style="background: var(--bg-surface-elevated); box-shadow: var(--shadow-md);">
             <div class="flex items-center justify-between p-4 lg:p-5 border-b border-[var(--border)]">
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
-                    <span class="flex h-9 w-9 items-center justify-center rounded-lg text-white font-display font-semibold text-sm" style="background: var(--primary);">B</span>
+                    <div class="logo-mark">
+                        <img src="{{ asset('img/sta-ana-logo.png') }}" alt="Santa Ana logo">
+                    </div>
                     <span class="font-display font-semibold text-lg" style="color: var(--ink);">BHCIS</span>
                     <span class="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded" style="background: var(--teal-soft); color: var(--primary);">Sta. Ana</span>
                 </a>

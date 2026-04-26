@@ -90,6 +90,8 @@ Route::middleware('auth')->group(function () {
         ->name('reports.index');
     Route::get('/reports/morbidity', [ReportController::class, 'morbidity'])
         ->name('reports.morbidity');
+    Route::get('/reports/morbidity/download', [ReportController::class, 'downloadMorbidityPdf'])
+        ->name('reports.morbidity.download');
     Route::get('/reports/consultation-summary', [ReportController::class, 'consultationSummary'])
         ->name('reports.consultation-summary');
 
