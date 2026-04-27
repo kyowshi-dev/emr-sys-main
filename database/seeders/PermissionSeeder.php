@@ -17,6 +17,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'patients', 'description' => 'Access to Patients module'],
             ['name' => 'consultations', 'description' => 'Access to Consultations module'],
             ['name' => 'immunizations', 'description' => 'Access to Immunizations module'],
+            ['name' => 'lab_requests', 'description' => 'Access to Lab Requests module'],
             ['name' => 'medicines', 'description' => 'Access to Medicines module'],
             ['name' => 'reports', 'description' => 'Access to Reports module'],
             ['name' => 'users', 'description' => 'Access to User Management'],

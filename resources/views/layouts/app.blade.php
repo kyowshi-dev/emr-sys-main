@@ -199,6 +199,16 @@
                             </svg>
                             <span>Immunization</span>
                         </a>
+                        <a href="{{ route('lab_requests.index') }}" class="nav-link nav-submenu flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-[background,color] duration-200 @if(!$authUser->hasPermission('lab_requests')) disabled @endif" @if(!$authUser->hasPermission('lab_requests')) onclick="Swal.fire({title: 'Unauthorized', text: 'Please contact the administrator if you believe this is a mistake.', icon: 'error'}); return false;" @endif>
+                            <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M9 12l2 2 4-4"></path>
+                                <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"></path>
+                                <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"></path>
+                                <path d="M12 3c0 1-1 3-3 3s-3-2-3-3 1-3 3-3 3 2 3 3"></path>
+                                <path d="M12 21c0-1 1-3 3-3s3 2 3 3-1 3-3 3-3-2-3-3"></path>
+                            </svg>
+                            <span>Lab Requests</span>
+                        </a>
                     </div>
                 </div>
 

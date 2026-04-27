@@ -29,13 +29,13 @@ class AssignInitialPermissionsSeeder extends Seeder
             $normalizedRole = strtolower($roleName);
 
             if (str_contains($normalizedRole, 'admin') || str_contains($normalizedRole, 'head nurse')) {
-                $permissions = ['household', 'patients', 'consultations', 'immunizations', 'medicines', 'reports', 'users'];
+                $permissions = ['household', 'patients', 'consultations', 'immunizations', 'lab_requests', 'medicines', 'reports', 'users'];
             } elseif (str_contains($normalizedRole, 'nurse')) {
-                $permissions = ['patients', 'consultations', 'medicines'];
+                $permissions = ['patients', 'consultations', 'lab_requests', 'medicines'];
             } elseif (str_contains($normalizedRole, 'bhw')) {
-                $permissions = ['household', 'patients', 'consultations', 'reports'];
+                $permissions = ['household', 'patients', 'consultations', 'lab_requests', 'reports'];
             } elseif (str_contains($normalizedRole, 'midwife')) {
-                $permissions = ['patients', 'consultations', 'immunizations', 'reports'];
+                $permissions = ['patients', 'consultations', 'immunizations', 'lab_requests', 'reports'];
             }
 
             if (! empty($permissions)) {

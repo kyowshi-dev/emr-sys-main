@@ -5,6 +5,7 @@ use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HouseholdController;
 use App\Http\Controllers\ImmunizationController;
+use App\Http\Controllers\LabRequestController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
@@ -85,7 +86,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/patients/{id}/immunizations', [ImmunizationController::class, 'forPatient'])->name('immunizations.patient');
     Route::post('/immunizations', [ImmunizationController::class, 'store'])->name('immunizations.store');
 
-    // 6. REPORTS (FHSIS)
+    // 6. LAB REQUESTS
+    Route::get('/lab-requests', [LabRequestController::class, 'index'])->name('lab_requests.index');
+    Route::get('/lab-requests/create', [LabRequestController::class, 'create'])->name('lab_requests.create');
+    Route::post('/lab-requests', [LabRequestController::class, 'store'])->name('lab_requests.store');
+    Route::get('/lab-requests/{labRequest}', [LabRequestController::class, 'show'])->name('lab_requests.show');
+    Route::get('/lab-requests/{labRequest}/edit', [LabRequestController::class, 'edit'])->name('lab_requests.edit');
+    Route::put('/lab-requests/{labRequest}', [LabRequestController::class, 'update'])->name('lab_requests.update');
+
+    // 7. REPORTS (FHSIS)
     Route::get('/reports', [ReportController::class, 'index'])
         ->name('reports.index');
     Route::get('/reports/morbidity', [ReportController::class, 'morbidity'])

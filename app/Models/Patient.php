@@ -3,8 +3,35 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Patient extends Model
 {
-    //
+    protected $fillable = [
+        'household_id',
+        'last_name',
+        'first_name',
+        'middle_name',
+        'suffix',
+        'sex',
+        'date_of_birth',
+        'birth_place',
+        'blood_type',
+        'civil_status',
+        'educational_attainment',
+        'employment_status',
+        'has_4ps',
+        'has_nhts',
+    ];
+
+    protected $casts = [
+        'date_of_birth' => 'date',
+        'has_4ps' => 'boolean',
+        'has_nhts' => 'boolean',
+    ];
+
+    public function labRequests(): HasMany
+    {
+        return $this->hasMany(LabRequest::class);
+    }
 }

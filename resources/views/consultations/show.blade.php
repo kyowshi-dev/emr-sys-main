@@ -77,14 +77,14 @@
                 <button @click="$dispatch('set-diagnosis-query', { query: 'URI' })" class="w-full text-left px-3 py-2 rounded-lg bg-white hover:bg-amber-100 text-sm font-medium text-gray-700">URI</button>
                 <button @click="$dispatch('set-diagnosis-query', { query: 'Hypertension' })" class="w-full text-left px-3 py-2 rounded-lg bg-white hover:bg-amber-100 text-sm font-medium text-gray-700">Hypertension</button>
                 <button @click="$dispatch('set-diagnosis-query', { query: 'Diarrhea' })" class="w-full text-left px-3 py-2 rounded-lg bg-white hover:bg-amber-100 text-sm font-medium text-gray-700">Diarrhea</button>
-                <button @click="$dispatch('set-diagnosis-query', { query: 'Prenatal Checkup' })" class="w-full text-left px-3 py-2 rounded-lg bg-white hover:bg-amber-100 text-sm font-medium text-gray-700">Prenatal Checkup</button>
+                <button @click="$dispatch('set-diagnosis-query', { query: 'Flu' })" class="w-full text-left px-3 py-2 rounded-lg bg-white hover:bg-amber-100 text-sm font-medium text-gray-700">Flu</button>
             </div>
         </div>
     </div>
 
     <div class="md:col-span-2 space-y-4 lg:space-y-6">
         <div class="bg-white p-4 lg:p-6 rounded-xl lg:rounded-2xl shadow-sm border border-gray-200">
-            <h3 class="font-bold text-base lg:text-lg mb-3 lg:mb-4 text-gray-800 border-b border-gray-100 pb-2 lg:pb-3">🩺 Medical Diagnosis</h3>
+            <h3 class="font-bold text-base lg:text-lg mb-3 lg:mb-4 text-gray-800 border-b border-gray-100 pb-2 lg:pb-3"> Medical Diagnosis</h3>
 
             @if(isset($diagnoses) && $diagnoses->count() > 0)
                 <div class="mb-4 lg:mb-6 space-y-2">
