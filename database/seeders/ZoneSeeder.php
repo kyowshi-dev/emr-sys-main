@@ -4,7 +4,7 @@ public function run(): void
     for ($i = 1; $i <= 8; $i++) {
         $zones[] = [
             'id' => $i,
-            'zone_number' => (string)$i, // Matches the migration column
+            'zone_number' => $i,
             'created_at' => now(),
             'updated_at' => now(),
         ];

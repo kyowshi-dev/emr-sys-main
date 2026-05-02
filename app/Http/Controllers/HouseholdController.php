@@ -52,7 +52,7 @@ class HouseholdController extends Controller
         $households = $query
             ->orderBy('zones.zone_number')
             ->orderBy('households.family_name_head')
-            ->paginate(10)
+            ->paginate(500)
             ->withQueryString();
 
         // Get all zones for filter dropdown

@@ -15,7 +15,7 @@
 
         <a href="{{ route('households.create') }}"
            class="inline-flex items-center justify-center px-4 lg:px-5 py-2 lg:py-2.5 rounded-xl text-xs lg:text-sm font-semibold text-white transition"
-           style="background: var(--accent); box-shadow: var(--shadow-sm);">
+           style="background: var(--primary); box-shadow: var(--shadow-sm);">
             + Add household
         </a>
     </div>
@@ -137,7 +137,7 @@
             <button type="button" onclick="submitBulkAction('csvExportForm')"
                     class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-semibold transition"
                     style="background: var(--bg-surface); border: 1px solid var(--border); color: var(--ink);">
-                📥 Export CSV
+                Export CSV
             </button>
         </form>
         <form id="pdfExportForm" method="POST" action="{{ route('households.export.pdf') }}" style="display: inline;">
@@ -145,13 +145,13 @@
             <button type="button" onclick="submitBulkAction('pdfExportForm')"
                     class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-semibold transition"
                     style="background: var(--bg-surface); border: 1px solid var(--border); color: var(--ink);">
-                📄 Export PDF
+                Export PDF
             </button>
         </form>
         <button type="button" onclick="openZoneModal()"
                 class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-semibold transition"
                 style="background: var(--primary); color: white;">
-                🔄 Reassign Zone
+                Reassign Zone
         </button>
         <button type="button" onclick="clearSelection()"
                 class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-semibold transition"

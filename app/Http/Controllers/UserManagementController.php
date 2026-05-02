@@ -18,7 +18,7 @@ class UserManagementController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $pageSize = auth()->check() && auth()->user()->isAdmin() ? 2 : 15;
+        $pageSize = auth()->check() && auth()->user()->isAdmin() ? 10 : 15;
 
         $users = User::with('permissions')->orderBy('username')->paginate($pageSize);
 

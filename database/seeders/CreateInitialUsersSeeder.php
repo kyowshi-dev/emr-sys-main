@@ -26,7 +26,7 @@ class CreateInitialUsersSeeder extends Seeder
                 'contact_number' => '09171234567',
             ],
             [
-                'username' => 'bhw_maria',
+                'username' => 'bhw',
                 'email' => 'bhw@bhcis.local',
                 'password' => Hash::make('password123'),
                 'first_name' => 'Maria',
@@ -35,7 +35,7 @@ class CreateInitialUsersSeeder extends Seeder
                 'contact_number' => '09171234568',
             ],
             [
-                'username' => 'nurse_john',
+                'username' => 'nurse',
                 'email' => 'nurse@bhcis.local',
                 'password' => Hash::make('password123'),
                 'first_name' => 'John',
@@ -44,7 +44,7 @@ class CreateInitialUsersSeeder extends Seeder
                 'contact_number' => '09171234569',
             ],
             [
-                'username' => 'doctor_garcia',
+                'username' => 'doctor',
                 'email' => 'doctor@bhcis.local',
                 'password' => Hash::make('password123'),
                 'first_name' => 'Dr. Carlos',

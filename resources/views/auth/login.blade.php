@@ -113,7 +113,7 @@
                     <input type="text" name="username" id="username" value="{{ old('username') }}"
                            class="w-full px-3 py-2 rounded-md border text-[var(--ink)] placeholder-[var(--ink-muted)] focus:outline-none focus:ring-2 transition text-sm"
                            style="border-color: var(--border); --tw-ring-color: var(--primary);"
-                           placeholder="e.g bhw_maria" required autofocus>
+                           placeholder="Your Username" required autofocus>
                 </div>
 
                 <div class="mb-5">

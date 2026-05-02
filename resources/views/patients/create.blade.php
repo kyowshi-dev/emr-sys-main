@@ -148,7 +148,7 @@
                                     @foreach ($zones as $zone)
                                         <option value="{{ $zone->id }}" 
                                                 {{ old('new_household_zone_id') == $zone->id ? 'selected' : '' }}>
-                                            Zone {{ $zone->zone_number }}
+                                            {{ $zone->zone_number }}
                                         </option>
                                     @endforeach
                                 </select>
