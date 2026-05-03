@@ -55,6 +55,18 @@ class PatientController extends Controller
             ->select(['id', 'family_name_head'])
             ->first();
 
+        // Ensure transient household exists
+        if (! $transientHousehold) {
+            $transientId = DB::table('households')->insertGetId([
+                'zone_id' => 1,
+                'family_name_head' => 'Transient/Unmapped',
+                'contact_number' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            $transientHousehold = (object) ['id' => $transientId, 'family_name_head' => 'Transient/Unmapped'];
+        }
+
         $selectedHousehold = null;
         if (! empty($selectedHouseholdId)) {
             $selectedHousehold = DB::table('households')

@@ -35,8 +35,8 @@ class StorePatientWithHouseholdRequest extends FormRequest
             ],
 
             // New household fields (only if creating)
-            'new_household_zone_id' => ['required_if:create_new_household,1', 'integer', 'exists:zones,id'],
-            'new_household_family_name_head' => ['required_if:create_new_household,1', 'string', 'max:255'],
+            'new_household_zone_id' => ['nullable', 'required_if:create_new_household,1', 'integer', 'exists:zones,id'],
+            'new_household_family_name_head' => ['nullable', 'required_if:create_new_household,1', 'string', 'max:255'],
             'new_household_contact_number' => ['nullable', 'string', 'max:32', 'regex:/^[0-9+\-\s()]*$/'],
 
             // Patient data
@@ -81,10 +81,24 @@ class StorePatientWithHouseholdRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         // Convert checkbox values to 1 or 0
+        $createNew = $this->boolean('create_new_household') ? 1 : 0;
         $this->merge([
-            'create_new_household' => $this->boolean('create_new_household') ? 1 : 0,
+            'create_new_household' => $createNew,
             'has_4ps' => $this->boolean('has_4ps') ? 1 : 0,
             'has_nhts' => $this->boolean('has_nhts') ? 1 : 0,
         ]);
+
+        // Only set new household fields if creating new household
+        if ($createNew === 1) {
+            $this->merge([
+                'new_household_zone_id' => $this->input('new_household_zone_id') ? (int) $this->input('new_household_zone_id') : null,
+            ]);
+        } else {
+            $this->merge([
+                'new_household_zone_id' => null,
+                'new_household_family_name_head' => null,
+                'new_household_contact_number' => null,
+            ]);
+        }
     }
 }
