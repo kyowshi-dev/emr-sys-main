@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Hash;
 
 class CreateInitialUsersSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         // Define users with their roles and details
