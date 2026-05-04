@@ -27,6 +27,54 @@ Laravel has the most extensive and thorough [documentation](https://laravel.com/
 
 If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
+## Docker Setup
+
+This application includes Docker support for easy development and deployment.
+
+### Prerequisites
+
+- Docker
+- Docker Compose
+
+### Getting Started
+
+1. Clone the repository and navigate to the project directory
+2. Copy `.env.example` to `.env` and configure your environment variables
+3. Run the following commands:
+
+```bash
+# Build and start the containers
+sudo docker compose up --build
+
+# Or run in background
+sudo docker compose up -d --build
+```
+
+4. Access the application at `http://localhost:8000`
+
+### Services
+
+- **App**: Laravel application (PHP 8.2 + Apache) on port 8000
+- **DB**: MySQL 8.0 database on port 3306
+- **Redis**: Redis cache/session store on port 6379
+
+### Useful Commands
+
+```bash
+# Stop containers
+docker-compose down
+
+# View logs
+docker-compose logs -f
+
+# Run artisan commands
+docker-compose exec app php artisan migrate
+docker-compose exec app php artisan db:seed
+
+# Access container shell
+docker-compose exec app bash
+```
+
 ## Laravel Sponsors
 
 We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).

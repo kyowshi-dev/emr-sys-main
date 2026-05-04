@@ -1,0 +1,53 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bhcis-app
+    restart: unless-stopped
+    working_dir: /var/www
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - /var/www/vendor
+      - /var/www/node_modules
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/public
+    depends_on:
+      - db
+      - redis
+    networks:
+      - bhcis
+
+  db:
+    image: mysql:8.0
+    container_name: bhcis-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: bhcis_db
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/bhcis_db.sql:/docker-entrypoint-initdb.d/bhcis_db.sql
+    networks:
+      - bhcis
+
+  redis:
+    image: redis:alpine
+    container_name: bhcis-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - bhcis
+
+volumes:
+  db_data:
+
+networks:
+  bhcis:
+    driver: bridge
