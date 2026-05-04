@@ -84,7 +84,7 @@
             @endif
         </div>
         <div class="animate-in opacity-0 delay-4 p-3 lg:p-4 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
-             style="background: {{ $overdueImmunizations > 0 ? '#fef2f2' : 'var(--bg-surface)' }}; border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid {{ $overdueImmunizations > 0 ? '#ef4444' : '#10b981' }};"
+             style="background: {{ $overdueImmunizations > 0 ? '#fef2f2' : 'var(--bg-surface)' }}; border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid {{ $overdueImmunizations > 0 ? '#ef4444' : '#10b981' }};">
             <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: {{ $overdueImmunizations > 0 ? '#991b1b' : 'var(--ink-muted)' }};">Overdue immunizations</p>
             @if ($overdueImmunizations === 0)
                 <div class="space-y-3">
