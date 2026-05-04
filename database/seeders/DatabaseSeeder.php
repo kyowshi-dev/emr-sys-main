@@ -100,5 +100,8 @@ class DatabaseSeeder extends Seeder
 
         // 10. ICD-10 diagnosis codes (optional: copy icd102019syst_codes.sql to storage/app/ or set BHCIS_ICD_SQL_PATH)
         $this->call(IcdDiagnosisSeeder::class);
+
+        // 11. Sample Audit Logs
+        $this->call(AuditLogSeeder::class);
     }
 }

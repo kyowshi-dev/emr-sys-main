@@ -197,31 +197,17 @@
                             {{ $activity }}
                         </li>
                     @empty
-                        <li class="py-8 px-4 text-center">
-                            <div class="space-y-4">
-                                <div class="space-y-2">
-                                    <div class="text-sm font-semibold" style="color: var(--ink);">Quick Actions</div>
-                                    <div class="text-xs" style="color: var(--ink-subtle);">Get started with common tasks</div>
-                                </div>
-                                <div class="grid grid-cols-1 gap-2">
-                                    <a href="{{ route('patients.create') }}"
-                                       class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-bold transition-[transform,box-shadow,background] duration-200 hover:shadow-sm hover:scale-[1.01] active:scale-[0.98]"
-                                       style="background: var(--primary); color: #fff; box-shadow: var(--shadow-sm);">
-                                        Register Patient
-                                    </a>
-                                    <a href="{{ route('consultations.index') }}"
-                                       class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-bold transition-[transform,box-shadow,background] duration-200 hover:shadow-sm hover:scale-[1.01] active:scale-[0.98]"
-                                       style="background: var(--accent); color: #fff; box-shadow: var(--shadow-sm);">
-                                        Log Consultation
-                                    </a>
-                                    <!-- TODO: Connect to vitals logging when available -->
-                                    <button
-                                       class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-bold transition-[transform,box-shadow,background,opacity] duration-200 hover:shadow-sm hover:scale-[1.01] active:scale-[0.98] disabled"
-                                       style="background: var(--border); color: var(--ink-muted); box-shadow: var(--shadow-sm); opacity: 0.5; cursor: not-allowed;"
-                                       title="Feature coming soon">
-                                        Update Vitals
-                                    </button>
-                                </div>
+                        <li class="py-8 px-4 text-center space-y-4">
+                            <div class="space-y-2">
+                                <div class="text-sm font-semibold" style="color: var(--ink);">No recent activity</div>
+                                <div class="text-xs" style="color: var(--ink-subtle);">Activity from patient registrations, consultations, and updates will appear here</div>
+                            </div>
+                            <div class="pt-2">
+                                <a href="{{ route('patients.create') }}"
+                                   class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-bold transition-[transform,box-shadow,background] duration-200 hover:shadow-sm hover:scale-[1.01] active:scale-[0.98]"
+                                   style="background: var(--primary); color: #fff; box-shadow: var(--shadow-sm);">
+                                    Get started
+                                </a>
                             </div>
                         </li>
                     @endforelse

@@ -50,13 +50,18 @@ class DashboardController extends Controller
             ->all();
 
         $recentActivity = DB::table('audit_logs')
-            ->orderByDesc('created_at')
+            ->leftJoin('users', 'audit_logs.user_id', '=', 'users.id')
+            ->select('audit_logs.*', 'users.username')
+            ->orderByDesc('audit_logs.created_at')
             ->limit(5)
             ->get()
             ->map(function ($log) {
                 $time = Carbon::parse($log->created_at)->format('M d, Y H:i');
+                $user = $log->username ?: 'System';
+                $action = ucfirst($log->action);
+                $table = ucfirst(str_replace('_', ' ', $log->table_name));
 
-                return "{$time} – {$log->action} on {$log->table_name} #{$log->record_id}";
+                return "{$time} – {$user} {$action} {$table} #{$log->record_id}";
             })
             ->all();
 

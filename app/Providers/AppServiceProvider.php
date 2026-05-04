@@ -3,10 +3,14 @@
 namespace App\Providers;
 
 use App\Models\ApplicationSetting;
+use App\Models\Consultation;
 use App\Models\Immunization;
 use App\Models\Medicine;
 use App\Models\Patient;
 use App\Models\User;
+use App\Observers\ConsultationObserver;
+use App\Observers\PatientObserver;
+use App\Observers\UserObserver;
 use App\Policies\ImmunizationPolicy;
 use App\Policies\MedicinePolicy;
 use App\Policies\PatientPolicy;
@@ -38,6 +42,11 @@ class AppServiceProvider extends ServiceProvider
             // Table might not exist during migrations or tests
             Config::set('session.lifetime', 120);
         }
+
+        // Register model observers for audit logging
+        Patient::observe(PatientObserver::class);
+        User::observe(UserObserver::class);
+        Consultation::observe(ConsultationObserver::class);
 
         // Register authorization policies
         $this->registerPolicies();
