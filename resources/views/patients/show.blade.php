@@ -28,6 +28,22 @@
                     <span class="font-medium">{{ $patient->blood_type ?? 'N/A' }}</span>
                 </div>
                 <div class="flex justify-between">
+                    <span class="text-gray-500">Mother's Name:</span>
+                    <span class="font-medium">{{ $patient->mother_name }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Spouse's Name:</span>
+                    <span class="font-medium">{{ $patient->spouse_name }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Relationship:</span>
+                    <span class="font-medium">{{ $patient->family_relationship }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Residential Address:</span>
+                    <span class="font-medium">{{ $patient->residential_address }}</span>
+                </div>
+                <div class="flex justify-between">
                     <span class="text-gray-500">Zone:</span>
                     <span class="font-medium">Zone {{ $patient->zone_id }}</span>
                 </div>
@@ -49,6 +65,32 @@
                     @if(!$patient->has_4ps && !$patient->has_nhts)
                         <span class="text-gray-400 text-xs italic">No active programs</span>
                     @endif
+                </div>
+            </div>
+
+            <div class="mt-4 lg:mt-6 pt-3 lg:pt-4 border-t">
+                <h4 class="text-xs font-bold text-gray-400 uppercase mb-2">Membership</h4>
+                <div class="space-y-2 text-xs lg:text-sm text-gray-600">
+                    <div class="flex justify-between">
+                        <span>PhilHealth Member</span>
+                        <span class="font-medium">{{ $patient->is_philhealth_member === 'y' ? 'Yes' : 'No' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>PhilHealth No.</span>
+                        <span class="font-medium">{{ $patient->philhealth_no ?? 'N/A' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Category</span>
+                        <span class="font-medium">{{ $patient->membership_category ?? 'N/A' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Status Type</span>
+                        <span class="font-medium">{{ $patient->status_type ?? 'N/A' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>PCB Member</span>
+                        <span class="font-medium">{{ $patient->is_pcb_member === 'y' ? 'Yes' : 'No' }}</span>
+                    </div>
                 </div>
             </div>
 

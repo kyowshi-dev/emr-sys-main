@@ -19,13 +19,15 @@ class PatientSeeder extends Seeder
 
         $patients = [];
         $households = [];
+        $zoneNumbers = DB::table('zones')->pluck('zone_number', 'id')->toArray();
 
         // Generate Dummy Patients
         for ($i = 0; $i < 693; $i++) {
 
             // 1. Create a Household First (Required by database schema)
+            $zoneId = rand(1, 8);
             $householdId = DB::table('households')->insertGetId([
-                'zone_id' => rand(1, 8),
+                'zone_id' => $zoneId,
                 'family_name_head' => $lastNames[array_rand($lastNames)],
                 'contact_number' => '09'.rand(100000000, 999999999),
                 'created_at' => now(),
@@ -39,6 +41,11 @@ class PatientSeeder extends Seeder
 
             // Random birth date between 1950 and 2023
             $birthDate = Carbon::createFromDate(rand(1950, 2023), rand(1, 12), rand(1, 28));
+            $civilStatus = rand(0, 1) ? 'Single' : 'Married';
+            $isPhilhealthMember = rand(0, 1) === 1;
+            $isPcbMember = rand(0, 1) === 1;
+            $zoneNumber = $zoneNumbers[$zoneId] ?? $zoneId;
+            $relationshipOptions = ['Father', 'Son', 'Mother', 'Daughter', 'Others'];
 
             $patients[] = [
                 'household_id' => $householdId,
@@ -50,9 +57,20 @@ class PatientSeeder extends Seeder
                 'date_of_birth' => $birthDate->format('Y-m-d'),
                 'birth_place' => 'Sta. Ana, Tagoloan',
                 'blood_type' => ['A+', 'B+', 'O+', 'AB+'][rand(0, 3)],
-                'civil_status' => rand(0, 1) ? 'Single' : 'Married',
+                'civil_status' => $civilStatus,
                 'educational_attainment' => 'High School Graduate',
                 'employment_status' => 'Unemployed',
+                'mother_name' => $firstNamesFemale[array_rand($firstNamesFemale)] . ' ' . $lastNames[array_rand($lastNames)],
+                'spouse_name' => $civilStatus === 'Married'
+                    ? ($isMale ? $firstNamesFemale[array_rand($firstNamesFemale)] : $firstNamesMale[array_rand($firstNamesMale)]) . ' ' . $lastNames[array_rand($lastNames)]
+                    : 'N/A',
+                'family_relationship' => $relationshipOptions[array_rand($relationshipOptions)],
+                'residential_address' => $zoneNumber . ' Sta. Ana, Tagoloan',
+                'is_philhealth_member' => $isPhilhealthMember ? 'y' : 'n',
+                'status_type' => $isPhilhealthMember ? (rand(0, 1) ? 'Member' : 'Dependent') : null,
+                'philhealth_no' => $isPhilhealthMember ? sprintf('%02d-%09d-%d', rand(10, 99), rand(100000000, 999999999), rand(0, 9)) : null,
+                'membership_category' => $isPhilhealthMember ? ['FE - Private', 'FE - Government', 'IE', 'Others'][rand(0, 3)] : null,
+                'is_pcb_member' => $isPcbMember ? 'y' : 'n',
                 'has_4ps' => rand(0, 1),
                 'has_nhts' => rand(0, 1),
                 'created_at' => now(),

@@ -112,6 +112,13 @@ class PatientController extends Controller
             ]);
         }
 
+        $zoneNumber = DB::table('households')
+            ->join('zones', 'households.zone_id', '=', 'zones.id')
+            ->where('households.id', $householdId)
+            ->value('zones.zone_number');
+
+        $residentialAddress = trim($zoneNumber) . ' Sta. Ana, Tagoloan';
+
         // --- 2. DUPLICATE CHECK ---
         // Prevents double-entry of the same person
         $exists = DB::table('patients')
@@ -145,6 +152,16 @@ class PatientController extends Controller
             'civil_status' => $validated['civil_status'],
             'educational_attainment' => $validated['educational_attainment'],
             'employment_status' => $validated['employment_status'],
+
+            'mother_name' => $validated['mother_name'],
+            'spouse_name' => $validated['spouse_name'],
+            'family_relationship' => $validated['family_relationship'],
+            'residential_address' => $residentialAddress,
+            'is_philhealth_member' => $validated['is_philhealth_member'],
+            'status_type' => $validated['status_type'],
+            'philhealth_no' => $validated['philhealth_no'],
+            'membership_category' => $validated['membership_category'],
+            'is_pcb_member' => $validated['is_pcb_member'],
 
             'has_4ps' => $validated['has_4ps'],
             'has_nhts' => $validated['has_nhts'],

@@ -221,6 +221,33 @@
                 </div>
             </div>
 
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4 mb-3 lg:mb-4">
+                <div>
+                    <label class="block text-xs uppercase text-gray-500 font-bold mb-1">Mother's Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="mother_name" value="{{ old('mother_name') }}"
+                           class="w-full px-3 lg:px-4 py-2 rounded-xl border @error('mother_name') border-red-500 bg-red-50 @else border-gray-300 @enderror focus:ring-sky-500 focus:border-sky-500 text-sm"
+                           placeholder="e.g. Maria Santos">
+                    @error('mother_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-gray-500 font-bold mb-1">Spouse's Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="spouse_name" value="{{ old('spouse_name') }}"
+                           class="w-full px-3 lg:px-4 py-2 rounded-xl border @error('spouse_name') border-red-500 bg-red-50 @else border-gray-300 @enderror focus:ring-sky-500 focus:border-sky-500 text-sm"
+                           placeholder="e.g. Jose Reyes">
+                    @error('spouse_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-gray-500 font-bold mb-1">Family Relationship <span class="text-red-500">*</span></label>
+                    <select name="family_relationship" class="w-full px-3 lg:px-4 py-2 rounded-xl border @error('family_relationship') border-red-500 @else border-gray-300 @enderror focus:ring-sky-500 focus:border-sky-500 text-sm">
+                        <option value="">Select relationship</option>
+                        @foreach(['Father', 'Son', 'Mother', 'Daughter', 'Others'] as $relationship)
+                            <option value="{{ $relationship }}" {{ old('family_relationship') === $relationship ? 'selected' : '' }}>{{ $relationship }}</option>
+                        @endforeach
+                    </select>
+                    @error('family_relationship') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-3 lg:mb-4">
                 <div>
                     <label class="block text-xs uppercase text-gray-500 font-bold mb-1">Suffix</label>
@@ -285,6 +312,70 @@
                     <label class="block text-xs uppercase text-gray-500 font-bold mb-1">Employment</label>
                     <input type="text" name="employment_status" value="{{ old('employment_status') }}" 
                            placeholder="None If Unemployed" class="w-full px-3 lg:px-4 py-2 rounded-xl border border-gray-300 focus:ring-sky-500 focus:border-sky-500 text-sm">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4 mb-4">
+                <div>
+                    <label class="block text-xs uppercase text-gray-500 font-bold mb-1">PhilHealth Member?</label>
+                    <div class="flex items-center gap-4">
+                        <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                            <input type="radio" name="is_philhealth_member" value="y" {{ old('is_philhealth_member') === 'y' ? 'checked' : '' }} class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500">
+                            <span>Yes</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                            <input type="radio" name="is_philhealth_member" value="n" {{ old('is_philhealth_member', 'n') === 'n' ? 'checked' : '' }} class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500">
+                            <span>No</span>
+                        </label>
+                    </div>
+                    @error('is_philhealth_member') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-gray-500 font-bold mb-1">PhilHealth Number</label>
+                    <input type="text" name="philhealth_no" value="{{ old('philhealth_no') }}"
+                           placeholder="12-123456789-0"
+                           class="w-full px-3 lg:px-4 py-2 rounded-xl border @error('philhealth_no') border-red-500 bg-red-50 @else border-gray-300 @enderror focus:ring-sky-500 focus:border-sky-500 text-sm">
+                    @error('philhealth_no') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4 mb-4">
+                <div>
+                    <label class="block text-xs uppercase text-gray-500 font-bold mb-1">Membership Category</label>
+                    <select name="membership_category" class="w-full px-3 lg:px-4 py-2 rounded-xl border @error('membership_category') border-red-500 @else border-gray-300 @enderror focus:ring-sky-500 focus:border-sky-500 text-sm">
+                        <option value="">Select category</option>
+                        @foreach(['FE - Private', 'FE - Government', 'IE', 'Others'] as $category)
+                            <option value="{{ $category }}" {{ old('membership_category') === $category ? 'selected' : '' }}>{{ $category }}</option>
+                        @endforeach
+                    </select>
+                    @error('membership_category') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-gray-500 font-bold mb-1">PhilHealth Status</label>
+                    <select name="status_type" class="w-full px-3 lg:px-4 py-2 rounded-xl border @error('status_type') border-red-500 @else border-gray-300 @enderror focus:ring-sky-500 focus:border-sky-500 text-sm">
+                        <option value="">Select status</option>
+                        @foreach(['Member', 'Dependent'] as $status)
+                            <option value="{{ $status }}" {{ old('status_type') === $status ? 'selected' : '' }}>{{ $status }}</option>
+                        @endforeach
+                    </select>
+                    @error('status_type') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4 mb-4">
+                <div>
+                    <label class="block text-xs uppercase text-gray-500 font-bold mb-1">PCB Member</label>
+                    <div class="flex items-center gap-4">
+                        <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                            <input type="radio" name="is_pcb_member" value="y" {{ old('is_pcb_member') === 'y' ? 'checked' : '' }} class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500">
+                            <span>Yes</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                            <input type="radio" name="is_pcb_member" value="n" {{ old('is_pcb_member', 'n') === 'n' ? 'checked' : '' }} class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500">
+                            <span>No</span>
+                        </label>
+                    </div>
+                    @error('is_pcb_member') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>
 

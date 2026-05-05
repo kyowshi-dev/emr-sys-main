@@ -53,6 +53,15 @@ class StorePatientWithHouseholdRequest extends FormRequest
             'educational_attainment' => 'nullable|string',
             'employment_status' => 'nullable|string|max:100',
 
+            'mother_name' => ['required', 'string', 'max:255'],
+            'spouse_name' => ['required', 'string', 'max:255'],
+            'family_relationship' => ['required', 'in:Father,Son,Mother,Daughter,Others'],
+            'status_type' => ['nullable', 'in:Member,Dependent'],
+            'is_philhealth_member' => ['required', 'in:y,n'],
+            'philhealth_no' => ['nullable', 'required_if:is_philhealth_member,y', 'regex:/^[0-9]{2}-[0-9]{9}-[0-9]{1}$/'],
+            'membership_category' => ['nullable', 'in:FE - Private,FE - Government,IE,Others'],
+            'is_pcb_member' => ['required', 'in:y,n'],
+
             'suffix' => 'nullable|string|max:50',
             'has_4ps' => 'nullable|boolean',
             'has_nhts' => 'nullable|boolean',
@@ -80,12 +89,14 @@ class StorePatientWithHouseholdRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        // Convert checkbox values to 1 or 0
+        // Convert checkbox values to expected payloads
         $createNew = $this->boolean('create_new_household') ? 1 : 0;
         $this->merge([
             'create_new_household' => $createNew,
             'has_4ps' => $this->boolean('has_4ps') ? 1 : 0,
             'has_nhts' => $this->boolean('has_nhts') ? 1 : 0,
+            'is_philhealth_member' => in_array($this->input('is_philhealth_member'), ['y', 'yes', '1'], true) ? 'y' : 'n',
+            'is_pcb_member' => in_array($this->input('is_pcb_member'), ['y', 'yes', '1'], true) ? 'y' : 'n',
         ]);
 
         // Only set new household fields if creating new household
