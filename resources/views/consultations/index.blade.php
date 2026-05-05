@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="space-y-5 lg:space-y-6" x-data="{ blurSensitive: true }">
+<div class="space-y-5 lg:space-y-6" x-data="{ blurSensitive: false }">
     <div>
         <h1 class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">Consultation history</h1>
         <p class="text-sm mt-1" style="color: var(--ink-muted);">View and search past consultations.</p>
@@ -29,6 +29,15 @@
                     <label for="date_to" class="block text-xs font-medium mb-1" style="color: var(--ink-muted);">To</label>
                     <input type="text" id="date_to" name="date_to" value="{{ request('date_to') }}" placeholder="dd/mm/yyyy"
                            class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 transition" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);">
+                </div>
+                <div class="flex-1 min-w-[120px]">
+                    <label for="sort" class="block text-xs font-medium mb-1" style="color: var(--ink-muted);">Sort by</label>
+                    <select id="sort" name="sort" class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 transition" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);">
+                        <option value="newest" @selected($currentSort === 'newest')>Newest First</option>
+                        <option value="oldest" @selected($currentSort === 'oldest')>Oldest First</option>
+                        <option value="patient_name" @selected($currentSort === 'patient_name')>Patient Name (A-Z)</option>
+                        <option value="status" @selected($currentSort === 'status')>Status</option>
+                    </select>
                 </div>
                 <button type="submit" class="px-4 py-2 rounded-xl text-white text-sm font-semibold transition whitespace-nowrap" style="background: var(--primary);">Search</button>
             </div>
@@ -65,7 +74,14 @@
                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" style="@if ($consultation->status === 'completed') background: var(--teal-soft); color: var(--primary); @elseif ($consultation->status === 'referred') background: var(--accent-soft); color: var(--accent); @else background: rgba(0,0,0,0.06); color: var(--ink-muted); @endif">
                                 {{ ucfirst(str_replace('_', ' ', $consultation->status)) }}
                             </span>
-                            <a href="{{ route('consultations.show', $consultation->id) }}" class="inline-flex items-center gap-1 text-xs lg:text-sm font-semibold whitespace-nowrap transition hover:underline" style="color: var(--primary);">View</a>
+                            <div class="flex items-center gap-1">
+                                <a href="{{ route('consultations.show', $consultation->id) }}" class="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition hover:opacity-80" style="background: var(--primary-soft); color: var(--primary);">👁 View</a>
+                                <a href="{{ route('consultations.edit', $consultation->id) }}" class="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition hover:opacity-80" style="background: var(--amber-soft); color: var(--amber);">✎ Edit</a>
+                                <form action="{{ route('consultations.export', $consultation->id) }}" method="POST" class="inline" style="display: inline;">
+                                    @csrf
+                                    <button type="submit" class="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition hover:opacity-80" style="background: var(--teal-soft); color: var(--teal); border: none; cursor: pointer;">📄 PDF</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     @if (!empty($diagnoses))

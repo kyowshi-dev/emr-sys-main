@@ -28,8 +28,27 @@ class ConsultationController extends Controller
                 'patients.last_name as patient_last_name',
                 'health_workers.first_name as worker_first_name',
                 'health_workers.last_name as worker_last_name'
-            )
-            ->orderByDesc('consultations.created_at');
+            );
+
+        // Apply sorting based on sort parameter
+        $sort = $request->input('sort', 'newest');
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('consultations.created_at');
+                break;
+            case 'patient_name':
+                $query->orderBy('patients.last_name')
+                    ->orderBy('patients.first_name');
+                break;
+            case 'status':
+                $query->orderBy('consultations.status')
+                    ->orderByDesc('consultations.created_at');
+                break;
+            case 'newest':
+            default:
+                $query->orderByDesc('consultations.created_at');
+                break;
+        }
 
         if ($request->filled('query')) {
             $q = $request->input('query');
@@ -104,6 +123,7 @@ class ConsultationController extends Controller
             'totalConsultations' => $totalConsultations,
             'thisWeekCount' => $thisWeekCount,
             'completedCount' => $completedCount,
+            'currentSort' => $sort,
         ]);
     }
 
@@ -288,5 +308,97 @@ class ConsultationController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Prescription added successfully.');
+    }
+
+    // Edit Consultation (Quick edit for notes/treatments)
+    public function edit($id)
+    {
+        if (! auth()->user()->hasPermission('consultations')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $consultation = DB::table('consultations')->find($id);
+
+        if (! $consultation) {
+            abort(404, 'Consultation not found');
+        }
+
+        // Get patient info
+        $patient = DB::table('patients')->find($consultation->patient_id);
+        
+        // Get diagnoses
+        $diagnoses = DB::table('diagnosis_records')
+            ->join('diagnosis_lookup', 'diagnosis_records.diagnosis_id', '=', 'diagnosis_lookup.id')
+            ->where('diagnosis_records.consultation_id', $id)
+            ->select('diagnosis_records.id', 'diagnosis_lookup.diagnosis_name', 'diagnosis_records.remarks')
+            ->get();
+
+        // Get prescriptions
+        $prescriptions = DB::table('prescriptions')
+            ->join('medicines_lookup', 'prescriptions.medicine_id', '=', 'medicines_lookup.id')
+            ->where('prescriptions.consultation_id', $id)
+            ->select('prescriptions.id', 'medicines_lookup.medicine_name', 'prescriptions.dosage', 'prescriptions.frequency', 'prescriptions.duration', 'prescriptions.quantity')
+            ->get();
+
+        return view('consultations.edit', [
+            'consultation' => $consultation,
+            'patient' => $patient,
+            'diagnoses' => $diagnoses,
+            'prescriptions' => $prescriptions,
+        ]);
+    }
+
+    // Export Consultation to PDF
+    public function export($id)
+    {
+        if (! auth()->user()->hasPermission('consultations')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $consultation = DB::table('consultations')
+            ->join('patients', 'consultations.patient_id', '=', 'patients.id')
+            ->join('health_workers', 'consultations.worker_id', '=', 'health_workers.id')
+            ->where('consultations.id', $id)
+            ->select(
+                'consultations.*',
+                'patients.first_name as patient_first_name',
+                'patients.last_name as patient_last_name',
+                'patients.date_of_birth as patient_dob',
+                'patients.sex as patient_sex',
+                'health_workers.first_name as worker_first_name',
+                'health_workers.last_name as worker_last_name',
+                'health_workers.position as worker_position'
+            )
+            ->first();
+
+        if (! $consultation) {
+            abort(404, 'Consultation not found');
+        }
+
+        // Get diagnoses
+        $diagnoses = DB::table('diagnosis_records')
+            ->join('diagnosis_lookup', 'diagnosis_records.diagnosis_id', '=', 'diagnosis_lookup.id')
+            ->where('diagnosis_records.consultation_id', $id)
+            ->select('diagnosis_lookup.diagnosis_name', 'diagnosis_records.remarks')
+            ->get();
+
+        // Get prescriptions
+        $prescriptions = DB::table('prescriptions')
+            ->join('medicines_lookup', 'prescriptions.medicine_id', '=', 'medicines_lookup.id')
+            ->where('prescriptions.consultation_id', $id)
+            ->select('medicines_lookup.medicine_name', 'prescriptions.dosage', 'prescriptions.frequency', 'prescriptions.duration', 'prescriptions.quantity')
+            ->get();
+
+        // Get vitals
+        $vitals = DB::table('vitals')->where('consultation_id', $id)->first();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.consultation_summary', [
+            'consultation' => $consultation,
+            'diagnoses' => $diagnoses,
+            'prescriptions' => $prescriptions,
+            'vitals' => $vitals,
+        ]);
+
+        return $pdf->stream('consultation-' . $consultation->id . '.pdf');
     }
 }

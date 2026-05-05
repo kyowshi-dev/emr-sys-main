@@ -81,6 +81,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/patients/{id}/consultations/create', [ConsultationController::class, 'create'])->name('consultations.create');
     Route::post('/patients/{id}/consultations', [ConsultationController::class, 'store'])->name('consultations.store');
 
+    // Quick Edit & Export for Consultations
+    Route::get('/consultations/{id}/edit', [ConsultationController::class, 'edit'])->name('consultations.edit');
+    Route::post('/consultations/{id}/export', [ConsultationController::class, 'export'])->name('consultations.export');
+
     // Doctor's Workspace (View specific consultation)
     Route::get('/consultations/{id}', [ConsultationController::class, 'show'])
         ->name('consultations.show');
@@ -101,6 +105,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/lab-requests/create', [LabRequestController::class, 'create'])->name('lab_requests.create');
     Route::post('/lab-requests', [LabRequestController::class, 'store'])->name('lab_requests.store');
     Route::get('/lab-requests/{labRequest}', [LabRequestController::class, 'show'])->name('lab_requests.show');
+    Route::get('/lab-requests/{labRequest}/pdf', [LabRequestController::class, 'pdf'])->name('lab_requests.pdf');
     Route::get('/lab-requests/{labRequest}/edit', [LabRequestController::class, 'edit'])->name('lab_requests.edit');
     Route::put('/lab-requests/{labRequest}', [LabRequestController::class, 'update'])->name('lab_requests.update');
 

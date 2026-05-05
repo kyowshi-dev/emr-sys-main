@@ -18,10 +18,10 @@
             <h1 class="text-xl lg:text-2xl font-extrabold text-sky-700">Edit Lab Request</h1>
             <p class="text-xs lg:text-sm text-gray-600 mt-1">LR{{ str_pad($labRequest->id, 3, '0', STR_PAD_LEFT) }} - {{ $labRequest->patient->last_name }}, {{ $labRequest->patient->first_name }}</p>
         </div>
-        <a href="{{ route('lab_requests.show', $labRequest) }}" class="text-xs lg:text-sm font-medium text-gray-600 hover:text-sky-600">← Back</a>
+        <a href="{{ route('lab_requests.show', $labRequest->id) }}" class="text-xs lg:text-sm font-medium text-gray-600 hover:text-sky-600">← Back</a>
     </div>
 
-    <form action="{{ route('lab_requests.update', $labRequest) }}" method="POST" class="bg-white p-4 lg:p-6 xl:p-8 rounded-xl lg:rounded-lg shadow-sm border border-gray-200 space-y-6 lg:space-y-8">
+    <form action="{{ route('lab_requests.update', $labRequest->id) }}" method="POST" class="bg-white p-4 lg:p-6 xl:p-8 rounded-xl lg:rounded-lg shadow-sm border border-gray-200 space-y-6 lg:space-y-8">
         @csrf
         @method('PUT')
 
@@ -70,7 +70,7 @@
         </div>
 
         <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-            <a href="{{ route('lab_requests.show', $labRequest) }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition">Cancel</a>
+            <a href="{{ route('lab_requests.show', $labRequest->id) }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition">Cancel</a>
             <button type="submit" class="px-6 py-2 text-sm font-semibold text-white bg-sky-600 hover:bg-sky-700 rounded-xl transition">Update Lab Request</button>
         </div>
     </form>

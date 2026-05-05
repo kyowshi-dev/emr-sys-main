@@ -16,7 +16,9 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
             <h1 class="text-xl lg:text-2xl font-extrabold text-sky-700">New Lab Request</h1>
-            @if ($patient)
+            @if ($consultation)
+                <p class="text-xs lg:text-sm text-gray-600 mt-1">Associated with consultation <span class="font-semibold text-gray-800">#{{ $consultation->id }}</span> for <span class="font-semibold text-gray-800">{{ $consultation->patient->last_name }}, {{ $consultation->patient->first_name }}</span></p>
+            @elseif ($patient)
                 <p class="text-xs lg:text-sm text-gray-600 mt-1">For <span class="font-semibold text-gray-800">{{ $patient->last_name }}, {{ $patient->first_name }}</span> (PT{{ str_pad($patient->id, 3, '0', STR_PAD_LEFT) }})</p>
             @endif
         </div>
@@ -33,20 +35,26 @@
                 <div>
                     <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-1">Patient <span class="text-red-500">*</span></label>
                     <select name="patient_id" class="w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm" required>
-                        @if ($patient)
-                            <option value="{{ $patient->id }}" selected>{{ $patient->last_name }}, {{ $patient->first_name }} (PT{{ str_pad($patient->id, 3, '0', STR_PAD_LEFT) }})</option>
-                        @else
-                            <option value="">Select patient...</option>
-                        @endif
+                        <option value="">Select patient...</option>
+                        @foreach ($patients as $patientOption)
+                            <option value="{{ $patientOption->id }}" @if(old('patient_id', $patientId) == $patientOption->id) selected @endif>
+                                {{ $patientOption->last_name }}, {{ $patientOption->first_name }} (PT{{ str_pad($patientOption->id, 3, '0', STR_PAD_LEFT) }})
+                            </option>
+                        @endforeach
                     </select>
+                    <p class="text-xs text-gray-500 mt-2">
+                        Need a new patient? <a href="{{ route('patients.create') }}" class="text-sky-600 hover:text-sky-700">Create one first.</a>
+                    </p>
                 </div>
 
                 <div>
                     <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-1">Consultation (optional)</label>
                     <select name="consultation_id" class="w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm">
                         <option value="">Not associated with a consultation</option>
-                        @if ($consultationId)
-                            <option value="{{ $consultationId }}" selected>Consultation #{{ $consultationId }}</option>
+                        @if ($consultation)
+                            <option value="{{ $consultation->id }}" @if(old('consultation_id', $consultationId) == $consultation->id) selected @endif>
+                                Consultation #{{ $consultation->id }}
+                            </option>
                         @endif
                     </select>
                 </div>

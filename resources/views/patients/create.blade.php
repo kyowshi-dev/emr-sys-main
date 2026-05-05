@@ -14,7 +14,7 @@
     @endif
 
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h1 class="text-xl lg:text-2xl font-bold text-gray-800">Register New Patient</h1>
+        <h1 class="text-xl lg:text-2xl font-bold text-gray-800">PATIENT ENROLLMENT RECORD </h1>
     </div>
 
     <form action="{{ route('patients.store') }}" method="POST" class="bg-white p-4 lg:p-6 xl:p-8 rounded-xl lg:rounded-lg shadow-sm border border-gray-200 space-y-6 lg:space-y-8" x-data="patientCreateTabs()" x-init="init()">

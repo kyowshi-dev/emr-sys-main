@@ -13,7 +13,7 @@
             </p>
         </div>
 
-        <a href="{{ route('households.create') }}"
+        <a href="{{ route('patients.create') }}"
            class="inline-flex items-center justify-center px-4 lg:px-5 py-2 lg:py-2.5 rounded-xl text-xs lg:text-sm font-semibold text-white transition"
            style="background: var(--primary); box-shadow: var(--shadow-sm);">
             + Add household
@@ -279,7 +279,6 @@
                     @endforeach
                 </select>
             </div>
-            <input type="hidden" id="zoneHouseholdIds" name="household_ids">
             <div class="flex gap-2 justify-end">
                 <button type="button" onclick="closeZoneModal()"
                         class="px-4 py-2 rounded-lg text-sm font-semibold transition"
@@ -362,34 +361,25 @@ function openZoneModal() {
         alert('Please select at least one household.');
         return;
     }
+
+    const form = document.getElementById('zoneReassignForm');
+    form.querySelectorAll('input[name="household_ids[]"]').forEach(el => el.remove());
+
     const ids = Array.from(checkboxes).map(cb => cb.value);
-    document.getElementById('zoneHouseholdIds').value = JSON.stringify(ids);
+    ids.forEach(id => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'household_ids[]';
+        input.value = id;
+        form.appendChild(input);
+    });
+
     document.getElementById('zoneModal').classList.remove('hidden');
 }
 
 function closeZoneModal() {
     document.getElementById('zoneModal').classList.add('hidden');
 }
-
-document.getElementById('zoneReassignForm').addEventListener('submit', function(e) {
-    const idsInput = document.getElementById('zoneHouseholdIds');
-    const ids = JSON.parse(idsInput.value);
-    idsInput.name = 'household_ids';
-    const hiddenInputs = this.querySelectorAll('input[name*="household_ids"]');
-    hiddenInputs.forEach(el => {
-        if (el !== idsInput) el.remove();
-    });
-    
-    // Convert to proper array format
-    ids.forEach(id => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'household_ids[]';
-        input.value = id;
-        this.appendChild(input);
-    });
-    idsInput.remove();
-});
 
 window.addEventListener('click', function(event) {
     const modal = document.getElementById('zoneModal');

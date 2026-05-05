@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Consultation;
 use App\Models\LabRequest;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -37,13 +41,24 @@ class LabRequestController extends Controller
         $patientId = $request->input('patient_id');
         $consultationId = $request->input('consultation_id');
 
-        // Get patient info if provided
         $patient = null;
-        if ($patientId) {
-            $patient = DB::table('patients')->where('id', $patientId)->first();
+        $consultation = null;
+
+        if ($consultationId) {
+            $consultation = Consultation::with('patient')->find($consultationId);
+            if ($consultation) {
+                $patient = $consultation->patient;
+                $patientId = $consultation->patient_id;
+            }
         }
 
-        return view('lab_requests.create', compact('patient', 'patientId', 'consultationId'));
+        if ($patientId && ! $patient) {
+            $patient = Patient::find($patientId);
+        }
+
+        $patients = Patient::orderBy('last_name')->orderBy('first_name')->get(['id', 'first_name', 'last_name']);
+
+        return view('lab_requests.create', compact('patient', 'patientId', 'consultationId', 'consultation', 'patients'));
     }
 
     public function store(Request $request)
@@ -100,6 +115,14 @@ class LabRequestController extends Controller
             )
             ->first();
 
+        // Convert date strings to Carbon instances for proper formatting
+        if ($labRequest) {
+            $labRequest->requested_date = Carbon::parse($labRequest->requested_date);
+            if ($labRequest->completed_date) {
+                $labRequest->completed_date = Carbon::parse($labRequest->completed_date);
+            }
+        }
+
         return view('lab_requests.show', compact('labRequest'));
     }
 
@@ -126,5 +149,38 @@ class LabRequestController extends Controller
         $labRequest->update($validated);
 
         return redirect()->route('lab_requests.show', $labRequest)->with('success', 'Lab request updated successfully!');
+    }
+
+    public function pdf(LabRequest $labRequest)
+    {
+        $this->authorize('view', $labRequest);
+
+        $labRequest = DB::table('lab_requests')
+            ->join('patients', 'lab_requests.patient_id', '=', 'patients.id')
+            ->leftJoin('consultations', 'lab_requests.consultation_id', '=', 'consultations.id')
+            ->leftJoin('health_workers', 'lab_requests.requested_by', '=', 'health_workers.id')
+            ->where('lab_requests.id', $labRequest->id)
+            ->select(
+                'lab_requests.*',
+                'patients.first_name as patient_first_name',
+                'patients.last_name as patient_last_name',
+                'patients.id as patient_id',
+                'consultations.id as consultation_id',
+                'health_workers.first_name as requester_first_name',
+                'health_workers.last_name as requester_last_name'
+            )
+            ->first();
+
+        // Convert date strings to Carbon instances for proper formatting
+        if ($labRequest) {
+            $labRequest->requested_date = Carbon::parse($labRequest->requested_date);
+            if ($labRequest->completed_date) {
+                $labRequest->completed_date = Carbon::parse($labRequest->completed_date);
+            }
+        }
+
+        $pdf = Pdf::loadView('pdfs.lab_request_slip', compact('labRequest'));
+
+        return $pdf->download('Lab-Request-LR' . str_pad($labRequest->id, 3, '0', STR_PAD_LEFT) . '.pdf');
     }
 }
