@@ -158,9 +158,9 @@ class PatientController extends Controller
             'family_relationship' => $validated['family_relationship'],
             'residential_address' => $residentialAddress,
             'is_philhealth_member' => $validated['is_philhealth_member'],
-            'status_type' => $validated['status_type'],
-            'philhealth_no' => $validated['philhealth_no'],
-            'membership_category' => $validated['membership_category'],
+            'status_type' => $validated['status_type'] ?? null,
+            'philhealth_no' => $validated['philhealth_no'] ?? null,
+            'membership_category' => $validated['membership_category'] ?? null,
             'is_pcb_member' => $validated['is_pcb_member'],
 
             'has_4ps' => $validated['has_4ps'],
