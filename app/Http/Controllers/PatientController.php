@@ -137,7 +137,7 @@ class PatientController extends Controller
         }
 
         // --- 3. INSERT PATIENT DATA (Sanitized) ---
-        DB::table('patients')->insert([
+        $patientId = DB::table('patients')->insertGetId([
             'household_id' => $householdId,
             // Auto-Capitalize Names
             'first_name' => ucwords(strtolower($validated['first_name'])),
@@ -170,7 +170,7 @@ class PatientController extends Controller
             'updated_at' => now(),
         ]);
 
-        return redirect()->route('patients.index')->with('success', 'Patient registered successfully!');
+        return redirect()->route('patients.index')->with('success', 'Patient registered successfully!')->with('new_patient_id', $patientId);
     }
 
     // 4. View Single Patient Profile

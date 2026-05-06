@@ -108,6 +108,31 @@
     }
 </script>
 
+@if(session('success') && session('new_patient_id'))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const patientId = {{ session('new_patient_id') }};
+        Swal.fire({
+            title: 'Patient Registered Successfully!',
+            text: 'What would you like to do next?',
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonText: 'Proceed to Consultation',
+            cancelButtonText: 'Back to Home',
+            confirmButtonColor: '#0d4a3c',
+            cancelButtonColor: '#6b7280',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/patients/${patientId}/consultations/create`;
+            } else {
+                // Stay on the current page (patients index)
+            }
+        });
+    });
+</script>
+@endif>
+
 <style>
 .blur-sensitive {
     filter: blur(4px);
