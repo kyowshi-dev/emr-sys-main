@@ -43,7 +43,7 @@ class BreadcrumbHelper
             case 'patients.create':
                 $breadcrumbs = [
                     ['name' => 'Dashboard', 'url' => route('dashboard')],
-                    ['name' => 'Patients', 'url' => route('patients.index')],
+                    ['name' => 'Individual Health Records', 'url' => route('patients.index')],
                     ['name' => 'Patient Enrollment Form', 'url' => null],
                 ];
                 break;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Consultation;
+use App\Models\Patient;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -130,11 +131,14 @@ class ConsultationController extends Controller
     // 1. Show the Admission Form (Triage)
     public function create($patientId)
     {
-        $patient = DB::table('patients')->find($patientId);
+        $patient = Patient::find($patientId);
 
         if (! $patient) {
             abort(404, 'Patient not found');
         }
+
+        // Calculate age for display
+        $patient->age = Carbon::parse($patient->date_of_birth)->age;
 
         return view('consultations.create', compact('patient'));
     }
@@ -143,6 +147,8 @@ class ConsultationController extends Controller
     public function store(Request $request, $patientId)
     {
         $validated = $request->validate([
+            'mode_of_transaction' => ['required', 'string', 'max:255'],
+            'referred_from' => ['nullable', 'string', 'max:255'],
             'nature_of_visit' => ['required', 'string', 'max:255'],
             'chief_complaint' => ['nullable', 'string', 'max:1000'],
             'bp_systolic' => ['nullable', 'numeric', 'min:0', 'max:300'],
@@ -150,6 +156,9 @@ class ConsultationController extends Controller
             'temperature' => ['required', 'numeric', 'min:30', 'max:45'],
             'weight' => ['nullable', 'numeric', 'min:0', 'max:500'],
             'height' => ['nullable', 'numeric', 'min:0', 'max:300'],
+            'refer_to_higher_facility' => ['nullable', 'boolean'],
+            'referred_to' => ['nullable', 'string', 'max:255'],
+            'referral_reason' => ['nullable', 'string', 'max:1000'],
         ], [
             'temperature.required' => 'Temperature is required.',
             'temperature.min' => 'Temperature must be at least 30°C.',
@@ -170,6 +179,11 @@ class ConsultationController extends Controller
                 'worker_id' => $workerId,
                 'status' => 'pending_doctor',
                 'nature_of_visit' => $validated['nature_of_visit'],
+                'mode_of_transaction' => $validated['mode_of_transaction'],
+                'referred_from' => $validated['referred_from'] ?? null,
+                'refer_to_higher_facility' => $validated['refer_to_higher_facility'] ?? false,
+                'referred_to' => $validated['referred_to'] ?? null,
+                'referral_reason' => $validated['referral_reason'] ?? null,
                 'chief_complaint_id' => null,
                 'complaint_text' => $validated['chief_complaint'] ?? null,
                 'created_at' => now(),

@@ -9,12 +9,12 @@
         </div>
         <a href="{{ url('/patients/create') }}"
            class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:opacity-95 active:scale-[0.98] shrink-0"
-           style="background: var(--accent); box-shadow: 0 2px 8px rgba(196, 92, 65, 0.25);">
-            + Register new patient
+           style="background: #0d4a3c; box-shadow: 0 2px 8px rgba(196, 92, 65, 0.25);">
+            Enrol New Patient 
         </a>
     </div>
 
-    <div class="rounded-xl border p-4" style="background: var(--bg-surface); border-color: var(--border);" x-data="patientSearch()">
+    <div class="rounded-xl" x-data="patientSearch()">
         <div class="relative">
             <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none" style="color: var(--ink-subtle);">🔍</span>
             <input type="text" x-model="query" @input.debounce.300ms="search()"
