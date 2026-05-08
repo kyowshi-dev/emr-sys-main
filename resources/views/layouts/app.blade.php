@@ -216,14 +216,14 @@
                            class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 text-ink-muted hover:bg-black/5 {{ !$authUser->hasPermission('household') ? 'disabled' : '' }}" 
                            {!! !$authUser->hasPermission('household') ? 'onclick="'.$swalError.'"' : '' !!}>
                             <i class="fa-solid fa-house-chimney text-sm opacity-70" aria-hidden="true"></i>
-                            <span>Household Registry</span>
+                            <span>Household</span>
                         </a>
 
                         <a href="{{ url('/patients') }}" 
                            class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 text-ink-muted hover:bg-black/5 {{ !$authUser->hasPermission('patients') ? 'disabled' : '' }}" 
                            {!! !$authUser->hasPermission('patients') ? 'onclick="'.$swalError.'"' : '' !!}>
                             <i class="fa-solid fa-user-injured text-sm opacity-70" aria-hidden="true"></i>
-                            <span>Individual Health Records</span>
+                            <span>Patients</span>
                         </a>
 
                         <a href="{{ route('consultations.index') }}" 
@@ -237,14 +237,14 @@
                            class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 text-ink-muted hover:bg-black/5 {{ !$authUser->hasPermission('immunizations') ? 'disabled' : '' }}" 
                            {!! !$authUser->hasPermission('immunizations') ? 'onclick="'.$swalError.'"' : '' !!}>
                             <i class="fa-solid fa-syringe text-sm opacity-70" aria-hidden="true"></i>
-                            <span>EPI / Vaccinations</span>
+                            <span>Immunizations</span>
                         </a>
 
                         <a href="{{ route('lab_requests.index') }}" 
                            class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 text-ink-muted hover:bg-black/5 {{ !$authUser->hasPermission('lab_requests') ? 'disabled' : '' }}" 
                            {!! !$authUser->hasPermission('lab_requests') ? 'onclick="'.$swalError.'"' : '' !!}>
                             <i class="fa-solid fa-vials text-sm opacity-70" aria-hidden="true"></i>
-                            <span>Diagnostics</span>
+                            <span>Labs / Tests</span>
                         </a>
                     </div>
                 </div>
@@ -327,7 +327,7 @@
                             <button type="button"
                                     @click="profileOpen = !profileOpen"
                                     @click.away="profileOpen = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2 hover:shadow-sm transition-all duration-200 bg-white/10 border border-white/20 hover:bg-white/15 text-white">
+                                    class="flex items-center gap-3 rounded-xl px-3 py-2 hover:shadow-sm transition-all duration-200  border border-white/20 hover:bg-white/15 text-white">
                                 <span class="h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold bg-white/20 text-white">
                                     {{ $initials }}
                                 </span>

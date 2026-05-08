@@ -10,7 +10,7 @@
         <a href="{{ url('/patients/create') }}"
            class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:opacity-95 active:scale-[0.98] shrink-0"
            style="background: #0d4a3c; box-shadow: 0 2px 8px rgba(196, 92, 65, 0.25);">
-            Enrol New Patient 
+            Add New Patient 
         </a>
     </div>
 
@@ -133,7 +133,7 @@
         });
     });
 </script>
-@endif>
+@endif
 
 <style>
 .blur-sensitive {
