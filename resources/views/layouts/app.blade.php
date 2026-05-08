@@ -20,6 +20,8 @@
             --bg-page: #ffffff;
             --bg-surface: #ffffff;
             --bg-surface-elevated: #ffffff;
+            --bg-sidebar: #0d4a3c;
+            --bg-header: #0a3d32;
             
             /* Text / Ink Colors */
             --ink: #0f172a; 
@@ -79,6 +81,29 @@
             zoom: 200%;
         }
         .logo-mark img { width: 100%; height: 100%; object-fit: cover; }
+
+        .app-sidebar,
+        .app-header {
+            color: #ffffff;
+        }
+
+        .app-sidebar .text-ink,
+        .app-sidebar .text-ink-muted,
+        .app-sidebar .text-primary,
+        .app-sidebar .nav-link,
+        .app-sidebar button {
+            color: rgba(255, 255, 255, 0.92) !important;
+        }
+
+        .app-sidebar .border-border {
+            border-color: rgba(255, 255, 255, 0.18) !important;
+        }
+
+        .app-sidebar .nav-link:hover,
+        .app-sidebar button:hover {
+            background: rgba(255, 255, 255, 0.14) !important;
+            color: #ffffff !important;
+        }
     </style>
 
     <script>
@@ -134,7 +159,8 @@
         </div>
 
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'" 
-               class="transform fixed lg:sticky top-0 h-screen overflow-y-auto w-64 shrink-0 flex flex-col z-50 transition-transform duration-300 ease-out border-r border-border bg-surface-elevated shadow-md">
+               class="app-sidebar transform fixed lg:sticky top-0 h-screen overflow-y-auto w-64 shrink-0 flex flex-col z-50 transition-transform duration-300 ease-out border-r border-border shadow-md"
+               style="background: var(--bg-sidebar);">
             
             <div class="flex items-center justify-between p-4 lg:p-5 border-b border-border">
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
@@ -169,8 +195,8 @@
                     $swalError = "Swal.fire({title: 'Unauthorized', text: 'Please contact the administrator if you believe this is a mistake.', icon: 'error'}); return false;";
                 @endphp
 
-                <a href="{{ route('dashboard') }}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 text-ink-muted hover:bg-black/5">
-                    <i class="fa-solid fa-house text-base opacity-70" aria-hidden="true"></i>
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 text-ink-muted hover:bg-black/5">
+                    <i class="fa-solid fa-house texhovert-base opacity-70" aria-hidden="true"></i>
                     <span>Dashboard</span>
                 </a>
 
@@ -282,8 +308,9 @@
 
         <div class="flex-1 flex flex-col min-w-0" x-data="{ headerSticky: false }" @scroll.window="headerSticky = window.scrollY > 275">
             
-            <header :class="{ 'sticky top-0': headerSticky }" class="z-40 shrink-0 flex justify-between items-center px-4 lg:px-6 py-1 border-b border-border bg-surface transition-all duration-200">
-                <button @click="sidebarOpen = true" class="lg:hidden p-2 rounded-lg hover:bg-black/5 transition-colors text-ink-muted">
+            <header :class="{ 'sticky top-0': headerSticky }" class="app-header z-40 shrink-0 flex justify-between items-center px-4 lg:px-6 py-1 border-b border-border transition-all duration-200"
+                    style="background: var(--bg-header);">
+                <button @click="sidebarOpen = true" class="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors text-white/90">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
                 
@@ -299,15 +326,15 @@
                             <button type="button"
                                     @click="profileOpen = !profileOpen"
                                     @click.away="profileOpen = false"
-                                    class="flex items-center gap-3 rounded-xl px-3 py-2 hover:shadow-sm transition-all duration-200 bg-surface border border-transparent hover:border-border text-ink-muted">
-                                <span class="h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold bg-teal-soft text-primary">
+                                    class="flex items-center gap-3 rounded-xl px-3 py-2 hover:shadow-sm transition-all duration-200 bg-white/10 border border-white/20 hover:bg-white/15 text-white">
+                                <span class="h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold bg-white/20 text-white">
                                     {{ $initials }}
                                 </span>
                                 <span class="hidden sm:block text-left leading-tight">
-                                    <span class="block text-sm font-semibold text-ink">
+                                    <span class="block text-sm font-semibold text-white">
                                         {{ $username }}
                                     </span>
-                                    <span class="inline-flex mt-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-teal-soft text-primary">
+                                    <span class="inline-flex mt-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-white/20 text-white">
                                         {{ $roleName }}
                                     </span>
                                 </span>
