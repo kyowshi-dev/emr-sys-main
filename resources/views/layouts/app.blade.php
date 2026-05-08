@@ -13,12 +13,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-    /* Fonts */
+
     --font-display: 'Poppins', system-ui, sans-serif;
     --font-body: 'Source Sans 3', system-ui, sans-serif;
 
     /* Base Palette (Slate & Crisp White) */
-    --bg-page: #f0f4f8; 
+    --bg-page: #ffff
     --bg-surface: #ffffff;
     --bg-surface-elevated: #ffffff;
     
@@ -311,13 +311,13 @@
                 </div>
             </header>
 
-            <main class="flex-1 px-4 lg:px-6 py-6 lg:py-8 overflow-auto">
+            <main class="flex-1 px-2 lg:px-2 py-2 lg:py-2 overflow-auto">
                 <div class="max-w-5xl mx-auto">
                     @php
                         $breadcrumbs = \App\Helpers\BreadcrumbHelper::getBreadcrumbs();
                     @endphp
                     @if(count($breadcrumbs) > 1)
-                        <nav class="flex items-center gap-2 mb-3 animate-in opacity-0 delay-1" aria-label="Breadcrumb">
+                        <nav class="flex items-center gap-2 mb-3 animate-in opacity-0 delay-1" aria-label="Breadcrumb" style="margin-left: 20px; position: relative; top: -12px;">
                             @foreach($breadcrumbs as $index => $crumb)
                                 @if($index > 0)
                                     <svg class="w-4 h-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -332,7 +332,7 @@
                             @endforeach
                         </nav>
                     @endif
-                    <div class="rounded-2xl p-5 lg:p-8 border border-[var(--border)] animate-in opacity-0 delay-2" style="background: var(--bg-surface-elevated); box-shadow: var(--shadow-sm);">
+                    <div class="rounded-2xl p-5 lg:p-8 animate-in opacity-0 delay-2" style="background: var(--bg-surface-elevated); box-shadow: var(--shadow-sm);">
                         @yield('content')
                     </div>
                 </div>

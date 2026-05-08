@@ -9,13 +9,88 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
+        $healthWorker = DB::table('health_workers')->where('user_id', $user->id)->first();
+        $today = Carbon::today();
+
+        // Check if user is BHW
+        if ($healthWorker && strtolower($healthWorker->role) === 'bhw') {
+            $totalPatients = DB::table('patients')->count();
+
+            $consultationsToday = DB::table('consultations')
+                ->whereDate('created_at', $today)
+                ->count();
+
+            $pendingConsultations = DB::table('consultations')
+                ->whereIn('status', ['triage', 'pending_doctor'])
+                ->count();
+
+            return view('dashboard_bhw', [
+                'totalPatients' => $totalPatients,
+                'consultationsToday' => $consultationsToday,
+                'pendingConsultations' => $pendingConsultations,
+            ]);
+        }
+
+        // Dashboard for doctor and nurse roles
+        if ($healthWorker && in_array(strtolower($healthWorker->role), ['doctor', 'nurse'], true)) {
+            $consultationsToday = DB::table('consultations')
+                ->whereDate('created_at', $today)
+                ->count();
+
+            $pendingConsultations = DB::table('consultations')
+                ->whereIn('status', ['triage', 'pending_doctor'])
+                ->count();
+
+            $completedConsultationsToday = DB::table('consultations')
+                ->whereDate('updated_at', $today)
+                ->where('status', 'completed')
+                ->count();
+
+            $followUpConsultationsToday = DB::table('consultations')
+                ->whereDate('created_at', $today)
+                ->where('nature_of_visit', 'Follow-up')
+                ->count();
+
+            $recentQueue = DB::table('consultations')
+                ->leftJoin('patients', 'consultations.patient_id', '=', 'patients.id')
+                ->select(
+                    'consultations.id',
+                    'consultations.status',
+                    'consultations.created_at',
+                    'patients.first_name',
+                    'patients.last_name'
+                )
+                ->whereIn('consultations.status', ['triage', 'pending_doctor'])
+                ->orderByDesc('consultations.created_at')
+                ->limit(5)
+                ->get()
+                ->map(function ($row) {
+                    return [
+                        'id' => $row->id,
+                        'patient_name' => trim("{$row->first_name} {$row->last_name}"),
+                        'status' => str_replace('_', ' ', (string) $row->status),
+                        'time' => Carbon::parse($row->created_at)->diffForHumans(),
+                    ];
+                })
+                ->all();
+
+            return view('dashboard_clinical', [
+                'consultationsToday' => $consultationsToday,
+                'pendingConsultations' => $pendingConsultations,
+                'completedConsultationsToday' => $completedConsultationsToday,
+                'followUpConsultationsToday' => $followUpConsultationsToday,
+                'recentQueue' => $recentQueue,
+                'roleLabel' => ucfirst((string) $healthWorker->role),
+            ]);
+        }
+
+        // Regular dashboard for other users
         $totalPatients = DB::table('patients')->count();
 
         $pendingAppointments = DB::table('consultations')
             ->whereIn('status', ['triage', 'pending_doctor'])
             ->count();
-
-        $today = Carbon::today();
 
         // FIXED: Using distinct() chained with count() for proper Laravel Query Builder syntax
         $overdueImmunizations = DB::table('immunization_records')
