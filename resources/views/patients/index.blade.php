@@ -16,9 +16,11 @@
 
     <div class="rounded-xl" x-data="patientSearch()">
         <div class="relative">
-            <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none" style="color: var(--ink-subtle);">🔍</span>
+            <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none" style="color: var(--ink-subtle);">
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </span>
             <input type="text" x-model="query" @input.debounce.300ms="search()"
-                   placeholder="Search by patient name or ID..."
+                   placeholder="Search"
                    class="w-full pl-10 pr-4 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2 transition"
                    style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);"
                    autocomplete="off">
