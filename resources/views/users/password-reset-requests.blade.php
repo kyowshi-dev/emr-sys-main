@@ -50,7 +50,11 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-3 py-4 text-center text-gray-500">No password reset requests at this time.</td>
+                        <td colspan="5" class="px-3 py-12 text-center">
+                            <div class="flex justify-center mb-3"><i class="fa-solid fa-key text-3xl" style="color: var(--ink-subtle);"></i></div>
+                            <p class="text-sm font-medium" style="color: var(--ink);">No pending requests</p>
+                            <p class="text-xs mt-1" style="color: var(--ink-muted);">Password reset requests will appear here when users request them</p>
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
