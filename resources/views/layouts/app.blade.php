@@ -296,6 +296,12 @@
                                 <i class="fa-solid fa-users text-sm opacity-70" aria-hidden="true"></i>
                                 <span>User Management</span>
                             </a>
+                            <a href="{{ route('zones.index') }}" 
+                           class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 text-ink-muted hover:bg-black/5 {{ !$authUser->hasPermission('zones') ? 'disabled' : '' }}" 
+                           {!! !$authUser->hasPermission('zones') ? 'onclick="'.$swalError.'"' : '' !!}>
+                            <i class="fa-solid fa-map-marker-alt text-sm opacity-70" aria-hidden="true"></i>
+                            <span>Manage Purok</span>
+                        </a>
                         </div>
                     </div>
                 @endif
@@ -420,11 +426,10 @@
                 </div>
             </main>
 
+            <footer class="shrink-0 text-center py-3 text-xs border-t border-[var(--border)]" style="background: var(--bg-surface); color: var(--ink-subtle);">
+                &copy; {{ date('Y') }} Barangay Sta. Ana Health Center. All rights reserved.
         </div>
     </div>
-    <footer class="shrink-0 text-center py-3 text-xs border-t border-[var(--border)]" style="background: var(--bg-surface); color: var(--ink-subtle);">
-        &copy; {{ date('Y') }} Barangay Sta. Ana Health Center
-        <span class="font-medium hidden sm:inline" style="color: var(--primary);"> — Community care</span>
 
     <div id="pageDrawer" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closePageDrawer()"></div>
