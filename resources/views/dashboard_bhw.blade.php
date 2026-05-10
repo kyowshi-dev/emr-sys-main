@@ -44,50 +44,6 @@
     </div>
 
     <div>
-        <h2 class="font-display font-semibold text-lg lg:text-xl mb-3" style="color: var(--ink);">Quick Actions</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <a href="{{ route('reports.index') }}" class="block p-4 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
-           style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm);">
-            <div class="flex items-center gap-3">
-                <div class="p-2 rounded-lg" style="background: var(--teal-soft);">
-                    <i class="fa-solid fa-file-lines text-lg" style="color: var(--primary);" aria-hidden="true"></i>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-sm" style="color: var(--ink);">Reports</h3>
-                    <p class="text-xs mt-1" style="color: var(--ink-muted);">View and generate reports</p>
-                </div>
-            </div>
-        </a>
-
-        <a href="{{ route('patients.index') }}" class="block p-4 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
-           style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm);">
-            <div class="flex items-center gap-3">
-                <div class="p-2 rounded-lg" style="background: var(--teal-soft);">
-                    <i class="fa-solid fa-users text-lg" style="color: var(--primary);" aria-hidden="true"></i>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-sm" style="color: var(--ink);">Patient Records</h3>
-                    <p class="text-xs mt-1" style="color: var(--ink-muted);">Manage patient information</p>
-                </div>
-            </div>
-        </a>
-
-        <a href="{{ route('consultations.index') }}" class="block p-4 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
-           style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm);">
-            <div class="flex items-center gap-3">
-                <div class="p-2 rounded-lg" style="background: var(--teal-soft);">
-                    <i class="fa-solid fa-stethoscope text-lg" style="color: var(--primary);" aria-hidden="true"></i>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-sm" style="color: var(--ink);">Consultations</h3>
-                    <p class="text-xs mt-1" style="color: var(--ink-muted);">View check-ups and visits</p>
-                </div>
-            </div>
-        </a>
-        </div>
-    </div>
-
-    <div>
         <h2 class="font-display font-semibold text-lg lg:text-xl mb-3" style="color: var(--ink);">Overview</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="p-4 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
