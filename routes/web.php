@@ -13,6 +13,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\ZoneController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -156,7 +157,23 @@ Route::middleware('auth')->group(function () {
     Route::post('/users/password-reset-requests/{passwordResetRequest}/complete', [UserManagementController::class, 'completePasswordResetRequest'])
         ->name('users.password-reset-requests.complete');
 
-    // 8. MEDICINE MANAGEMENT
+    // 8. ZONE MANAGEMENT
+    Route::get('/zones', [ZoneController::class, 'index'])
+        ->name('zones.index');
+    Route::get('/zones/create', [ZoneController::class, 'create'])
+        ->name('zones.create');
+    Route::post('/zones', [ZoneController::class, 'store'])
+        ->name('zones.store');
+    Route::get('/zones/{id}', [ZoneController::class, 'show'])
+        ->name('zones.show');
+    Route::get('/zones/{id}/edit', [ZoneController::class, 'edit'])
+        ->name('zones.edit');
+    Route::put('/zones/{id}', [ZoneController::class, 'update'])
+        ->name('zones.update');
+    Route::delete('/zones/{id}', [ZoneController::class, 'destroy'])
+        ->name('zones.destroy');
+
+    // 9. MEDICINE MANAGEMENT
     Route::get('/medicines', [MedicineController::class, 'index'])
         ->name('medicines.index');
     Route::get('/medicines/create', [MedicineController::class, 'create'])
@@ -174,7 +191,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/medicines/{id}', [MedicineController::class, 'destroy'])
         ->name('medicines.destroy');
 
-    // 9. SETTINGS
+    // 10. SETTINGS
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::get('/settings/account', [SettingsController::class, 'account'])->name('settings.account');
     Route::post('/settings/account', [SettingsController::class, 'updateAccount'])->name('settings.account.update');
@@ -185,7 +202,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/settings/backups/import', [SettingsController::class, 'importBackup'])
         ->name('settings.backups.import');
 
-    // 10. PROFILE MANAGEMENT
+    // 11. PROFILE MANAGEMENT
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
