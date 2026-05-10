@@ -8,9 +8,12 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class ConsultationController extends Controller
 {
+    private ?bool $supportsVersionedVitals = null;
+
     public function index(Request $request)
     {
         if (! auth()->user()->hasPermission('consultations')) {
@@ -190,7 +193,7 @@ class ConsultationController extends Controller
                 'updated_at' => now(),
             ]);
 
-            DB::table('vitals')->insert([
+            $vitalsPayload = [
                 'consultation_id' => $consultationId,
                 'bp_systolic' => $validated['bp_systolic'] ?? null,
                 'bp_diastolic' => $validated['bp_diastolic'] ?? null,
@@ -199,7 +202,14 @@ class ConsultationController extends Controller
                 'temperature_c' => $validated['temperature'],
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]);
+            ];
+
+            if ($this->vitalsSupportVersioning()) {
+                $vitalsPayload['phase'] = 'triage';
+                $vitalsPayload['captured_by'] = $workerId;
+            }
+
+            DB::table('vitals')->insert($vitalsPayload);
         });
 
         return redirect()->route('patients.show', $patientId)
@@ -229,7 +239,31 @@ class ConsultationController extends Controller
 
         $patient = DB::table('patients')->find($consultation->patient_id);
 
-        $vitals = DB::table('vitals')->where('consultation_id', $id)->first();
+        $vitalsQuery = DB::table('vitals')
+            ->where('vitals.consultation_id', $id)
+            ->orderBy('vitals.created_at')
+            ->orderBy('vitals.id');
+
+        if ($this->vitalsSupportVersioning()) {
+            $vitalsQuery
+                ->leftJoin('health_workers', 'vitals.captured_by', '=', 'health_workers.id')
+                ->select(
+                    'vitals.*',
+                    'health_workers.first_name as captured_by_first_name',
+                    'health_workers.last_name as captured_by_last_name',
+                    'health_workers.role as captured_by_role'
+                );
+        } else {
+            $vitalsQuery->select('vitals.*');
+        }
+
+        $allVitals = $vitalsQuery->get();
+
+        $triageVitals = $this->vitalsSupportVersioning()
+            ? ($allVitals->firstWhere('phase', 'triage') ?? $allVitals->first())
+            : $allVitals->first();
+        $latestVitals = $allVitals->last();
+        $vitals = $latestVitals;
         if (! $vitals) {
             $vitals = (object) [
                 'bp_systolic' => null,
@@ -237,8 +271,15 @@ class ConsultationController extends Controller
                 'temperature_c' => null,
                 'weight_kg' => null,
                 'height_cm' => null,
+                'phase' => 'triage',
             ];
         }
+
+        $currentUserRole = DB::table('health_workers')
+            ->where('user_id', Auth::id())
+            ->value('role');
+
+        $canReferExternally = in_array(strtolower((string) $currentUserRole), ['doctor', 'nurse'], true);
 
         // 2. Fetch Existing Records (History)
         $existingDiagnoses = DB::table('diagnosis_records')
@@ -261,11 +302,152 @@ class ConsultationController extends Controller
             'consultation' => $consultation,
             'patient' => $patient,
             'vitals' => $vitals,
+            'triageVitals' => $triageVitals,
+            'latestVitals' => $latestVitals,
+            'allVitals' => $allVitals,
             'diagnoses' => $existingDiagnoses,
             'prescriptions' => $existingPrescriptions,
             'diagnosisOptions' => $diagnosisOptions,
             'medicineOptions' => $medicineOptions,
+            'canReferExternally' => $canReferExternally,
         ]);
+    }
+
+    public function retakeVitals(Request $request, $id)
+    {
+        if (! auth()->user()->hasPermission('consultations')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'bp_systolic' => ['nullable', 'numeric', 'min:0', 'max:300'],
+            'bp_diastolic' => ['nullable', 'numeric', 'min:0', 'max:200'],
+            'temperature' => ['nullable', 'numeric', 'min:30', 'max:45'],
+            'weight' => ['nullable', 'numeric', 'min:0', 'max:500'],
+            'height' => ['nullable', 'numeric', 'min:0', 'max:300'],
+            'notes' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $consultation = DB::table('consultations')->where('id', $id)->first();
+        if (! $consultation) {
+            abort(404, 'Consultation not found');
+        }
+
+        $workerId = DB::table('health_workers')
+            ->where('user_id', Auth::id())
+            ->value('id');
+
+        if ($workerId === null) {
+            abort(403, 'No health worker profile is linked to this user.');
+        }
+
+        $vitalsPayload = [
+            'consultation_id' => $id,
+            'bp_systolic' => $validated['bp_systolic'] ?? null,
+            'bp_diastolic' => $validated['bp_diastolic'] ?? null,
+            'weight_kg' => $validated['weight'] ?? null,
+            'height_cm' => $validated['height'] ?? null,
+            'temperature_c' => $validated['temperature'] ?? null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+
+        if ($this->vitalsSupportVersioning()) {
+            $vitalsPayload['phase'] = 'clinical';
+            $vitalsPayload['captured_by'] = $workerId;
+            $vitalsPayload['notes'] = $validated['notes'] ?? null;
+        }
+
+        DB::table('vitals')->insert($vitalsPayload);
+
+        DB::table('consultations')
+            ->where('id', $id)
+            ->update(['status' => 'in_progress', 'updated_at' => now()]);
+
+        return redirect()->route('consultations.show', $id)
+            ->with('success', 'Clinical vitals saved as a new version.');
+    }
+
+    public function updateVitalVersion(Request $request, $consultationId, $vitalId)
+    {
+        if (! auth()->user()->hasPermission('consultations')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'bp_systolic' => ['nullable', 'numeric', 'min:0', 'max:300'],
+            'bp_diastolic' => ['nullable', 'numeric', 'min:0', 'max:200'],
+            'temperature' => ['nullable', 'numeric', 'min:30', 'max:45'],
+            'weight' => ['nullable', 'numeric', 'min:0', 'max:500'],
+            'height' => ['nullable', 'numeric', 'min:0', 'max:300'],
+            'notes' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $vital = DB::table('vitals')
+            ->where('id', $vitalId)
+            ->where('consultation_id', $consultationId)
+            ->first();
+
+        if (! $vital) {
+            abort(404, 'Vitals version not found for this consultation.');
+        }
+
+        $updatePayload = [
+            'bp_systolic' => $validated['bp_systolic'] ?? null,
+            'bp_diastolic' => $validated['bp_diastolic'] ?? null,
+            'weight_kg' => $validated['weight'] ?? null,
+            'height_cm' => $validated['height'] ?? null,
+            'temperature_c' => $validated['temperature'] ?? null,
+            'updated_at' => now(),
+        ];
+
+        if (Schema::hasColumn('vitals', 'notes')) {
+            $updatePayload['notes'] = $validated['notes'] ?? null;
+        }
+
+        DB::table('vitals')
+            ->where('id', $vitalId)
+            ->where('consultation_id', $consultationId)
+            ->update($updatePayload);
+
+        return redirect()->route('consultations.show', $consultationId)
+            ->with('success', 'Vitals version updated successfully.');
+    }
+
+    public function deleteVitalVersion($consultationId, $vitalId)
+    {
+        if (! auth()->user()->hasPermission('consultations')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $versions = DB::table('vitals')
+            ->where('consultation_id', $consultationId)
+            ->orderBy('created_at')
+            ->orderBy('id')
+            ->get();
+
+        if ($versions->count() <= 1) {
+            return redirect()->route('consultations.show', $consultationId)
+                ->withErrors(['vitals' => 'Cannot delete the only vitals version.']);
+        }
+
+        $vital = $versions->firstWhere('id', (int) $vitalId);
+        if (! $vital) {
+            abort(404, 'Vitals version not found for this consultation.');
+        }
+
+        if ($this->vitalsSupportVersioning() && ($vital->phase ?? null) === 'triage') {
+            return redirect()->route('consultations.show', $consultationId)
+                ->withErrors(['vitals' => 'Triage baseline vitals cannot be deleted.']);
+        }
+
+        DB::table('vitals')
+            ->where('id', $vitalId)
+            ->where('consultation_id', $consultationId)
+            ->delete();
+
+        return redirect()->route('consultations.show', $consultationId)
+            ->with('success', 'Vitals version deleted successfully.');
     }
 
     // 4. Save a Diagnosis (Doctor's Action)
@@ -275,7 +457,7 @@ class ConsultationController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'diagnosis_id' => 'required|exists:diagnosis_lookup,id',
             'remarks' => 'nullable|string',
         ]);
@@ -290,17 +472,78 @@ class ConsultationController extends Controller
 
         DB::table('diagnosis_records')->insert([
             'consultation_id' => $id,
-            'diagnosis_id' => $request->diagnosis_id,
-            'remarks' => $request->remarks,
+            'diagnosis_id' => $validated['diagnosis_id'],
+            'remarks' => $validated['remarks'] ?? null,
             'diagnosed_by' => $workerId,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        // Update status to completed
-        DB::table('consultations')->where('id', $id)->update(['status' => 'completed']);
+        DB::table('consultations')->where('id', $id)->update([
+            'status' => 'in_progress',
+            'updated_at' => now(),
+        ]);
 
         return redirect()->back()->with('success', 'Diagnosis added successfully!');
+    }
+
+    public function finalizeConsultation(Request $request, $id)
+    {
+        if (! auth()->user()->hasPermission('consultations')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'refer_to_higher_facility' => ['nullable', 'boolean'],
+            'referred_to' => ['nullable', 'string', 'max:255'],
+            'referral_reason' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $consultation = DB::table('consultations')->where('id', $id)->first();
+        if (! $consultation) {
+            abort(404, 'Consultation not found');
+        }
+
+        $diagnosisCount = DB::table('diagnosis_records')
+            ->where('consultation_id', $id)
+            ->count();
+
+        if ($diagnosisCount < 1) {
+            return redirect()->route('consultations.show', $id)
+                ->withErrors(['diagnosis' => 'Add at least one diagnosis before finalizing consultation.']);
+        }
+
+        $updates = [
+            'status' => 'completed',
+            'updated_at' => now(),
+        ];
+
+        $requestedReferral = (bool) ($validated['refer_to_higher_facility'] ?? false);
+        if ($requestedReferral) {
+            $currentWorkerRole = strtolower((string) DB::table('health_workers')
+                ->where('id', $workerId)
+                ->value('role'));
+
+            if (! in_array($currentWorkerRole, ['doctor', 'nurse'], true)) {
+                return redirect()->back()->withErrors([
+                    'refer_to_higher_facility' => 'Only Doctor or Nurse roles can trigger external referral.',
+                ])->withInput();
+            }
+
+            $updates['status'] = 'referred';
+            $updates['refer_to_higher_facility'] = true;
+            $updates['referred_to'] = $validated['referred_to'] ?? null;
+            $updates['referral_reason'] = $validated['referral_reason'] ?? null;
+        }
+
+        DB::table('consultations')
+            ->where('id', $id)
+            ->update($updates);
+
+        return redirect()->route('consultations.show', $id)
+            ->with('success', $requestedReferral
+                ? 'Consultation finalized and marked as referred.'
+                : 'Consultation finalized successfully.');
     }
 
     // 5. Save a Prescription
@@ -355,7 +598,7 @@ class ConsultationController extends Controller
 
         // Get patient info
         $patient = DB::table('patients')->find($consultation->patient_id);
-        
+
         // Get diagnoses
         $diagnoses = DB::table('diagnosis_records')
             ->join('diagnosis_lookup', 'diagnosis_records.diagnosis_id', '=', 'diagnosis_lookup.id')
@@ -378,5 +621,15 @@ class ConsultationController extends Controller
         ]);
     }
 
-}
+    private function vitalsSupportVersioning(): bool
+    {
+        if ($this->supportsVersionedVitals !== null) {
+            return $this->supportsVersionedVitals;
+        }
 
+        $this->supportsVersionedVitals = Schema::hasColumn('vitals', 'phase')
+            && Schema::hasColumn('vitals', 'captured_by');
+
+        return $this->supportsVersionedVitals;
+    }
+}
