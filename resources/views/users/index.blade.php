@@ -85,8 +85,11 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-6 text-center text-sm text-gray-500">
-                                No users found.
+                            <td colspan="5" class="px-6 py-12 text-center">
+                                <div class="flex justify-center mb-3"><i class="fa-solid fa-users text-3xl" style="color: var(--ink-subtle);"></i></div>
+                                <p class="text-sm font-medium" style="color: var(--ink);">No users found</p>
+                                <p class="text-xs mt-1 mb-3" style="color: var(--ink-muted);">Start by adding a user to manage system access</p>
+                                <a href="{{ route('users.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition hover:opacity-90" style="background: var(--primary);"><i class="fa-solid fa-plus"></i> Add first user</a>
                             </td>
                         </tr>
                     @endforelse

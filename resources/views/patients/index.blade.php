@@ -37,8 +37,10 @@
                 </template>
             </ul>
         </div>
-        <div x-show="query.length > 1 && results.length === 0 && !loading" class="mt-2 text-xs" style="display: none; color: var(--ink-muted);">
-            No patient found. You may register a new record.
+        <div x-show="query.length > 1 && results.length === 0 && !loading" class="mt-3 rounded-lg border p-6 text-center" style="display: none; border-color: var(--border); background: var(--bg-surface);">
+            <i class="fa-solid fa-magnifying-glass text-2xl" style="color: var(--ink-subtle);"></i>
+            <p class="text-sm font-medium mt-2" style="color: var(--ink);">No results found</p>
+            <p class="text-xs mt-1" style="color: var(--ink-muted);">Try a different search term or patient ID</p>
         </div>
     </div>
 
@@ -77,7 +79,14 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-4 py-8 text-center text-sm" style="color: var(--ink-muted);">No patients found.</td>
+                            <td colspan="8" class="px-4 py-12">
+                                <div class="text-center">
+                                    <div class="mb-3 flex justify-center"><i class="fa-solid fa-clipboard-list text-3xl" style="color: var(--ink-subtle);"></i></div>
+                                    <p class="text-sm font-medium" style="color: var(--ink);">No patient records yet</p>
+                                    <p class="text-xs mt-1 mb-3" style="color: var(--ink-muted);">Start by registering a patient to track their health data</p>
+                                    <a href="{{ url('/patients/create') }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-white transition hover:opacity-90" style="background: var(--primary);"><i class="fa-solid fa-plus"></i> Register first patient</a>
+                                </div>
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
