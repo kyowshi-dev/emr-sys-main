@@ -5,7 +5,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
             <h1 class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">Dashboard</h1>
-            <p class="text-sm mt-1" style="color: var(--ink-muted);">Search a patient to start a new consultation or register a new one.</p>
+            <p class="text-sm mt-1">Search a patient to start a new consultation or register a new one.</p>
         </div>
     </div>
 
@@ -35,8 +35,11 @@
                 </template>
             </ul>
         </div>
-        <div x-show="query.length > 1 && results.length === 0 && !loading" class="mt-2 text-xs" style="display: none; color: var(--ink-muted);">
-            No patient found. <a href="{{ url('/patients/create') }}" class="font-semibold" style="color: var(--primary);">Register a new patient</a>.
+        <div x-show="query.length > 1 && results.length === 0 && !loading" class="mt-3 rounded-lg border p-6 text-center" style="display: none; border-color: var(--border); background: var(--bg-surface);">
+            <div class="flex justify-center mb-2"><i class="fa-solid fa-user-plus text-3xl" style="color: var(--ink-subtle);"></i></div>
+            <p class="text-sm font-medium" style="color: var(--ink);">No patient found</p>
+            <p class="text-xs mt-1 mb-3" style="color: var(--ink-muted);">Try searching with a different name or ID</p>
+            <a href="{{ url('/patients/create') }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-white transition hover:opacity-90" style="background: var(--primary);"><i class="fa-solid fa-plus"></i> Register a new patient</a>
         </div>
     </div>
 
