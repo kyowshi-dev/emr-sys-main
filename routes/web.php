@@ -91,6 +91,14 @@ Route::middleware('auth')->group(function () {
     // Doctor Actions (Diagnosis & Rx)
     Route::post('/consultations/{id}/diagnosis', [ConsultationController::class, 'addDiagnosis'])
         ->name('consultations.diagnosis');
+    Route::post('/consultations/{id}/finalize', [ConsultationController::class, 'finalizeConsultation'])
+        ->name('consultations.finalize');
+    Route::post('/consultations/{id}/vitals/retake', [ConsultationController::class, 'retakeVitals'])
+        ->name('consultations.vitals.retake');
+    Route::put('/consultations/{consultationId}/vitals/{vitalId}', [ConsultationController::class, 'updateVitalVersion'])
+        ->name('consultations.vitals.update');
+    Route::delete('/consultations/{consultationId}/vitals/{vitalId}', [ConsultationController::class, 'deleteVitalVersion'])
+        ->name('consultations.vitals.delete');
     Route::post('/consultations/{id}/prescription', [ConsultationController::class, 'addPrescription'])
         ->name('consultations.prescription');
 

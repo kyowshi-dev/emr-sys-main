@@ -58,7 +58,7 @@
             </div>
 
             <div class="bg-white p-4 lg:p-6 rounded-xl lg:rounded-2xl shadow-sm border border-gray-200">
-                <h3 class="font-bold text-gray-800 mb-3 lg:mb-4 pb-2 border-b border-gray-100 text-sm lg:text-base">2. Vital signs</h3>
+                <h3 class="font-bold text-gray-800 mb-3 lg:mb-4 pb-2 border-b border-gray-100 text-sm lg:text-base">2. Triage baseline vitals</h3>
 
                 <div class="grid grid-cols-2 gap-3 lg:gap-4">
                     <div class="col-span-2">
@@ -89,28 +89,10 @@
         </div>
 
         <div class="bg-white p-4 lg:p-6 rounded-xl lg:rounded-2xl shadow-sm border border-gray-200">
-            <h3 class="font-bold text-gray-800 mb-3 lg:mb-4 pb-2 border-b border-gray-100 text-sm lg:text-base">3. Disposition</h3>
-
-            <div class="space-y-3 lg:space-y-4">
-                <div class="flex items-center">
-                    <input type="checkbox" name="refer_to_higher_facility" id="refer_to_higher_facility" value="1" @checked(old('refer_to_higher_facility')) class="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded">
-                    <label for="refer_to_higher_facility" class="ml-2 block text-sm font-medium text-gray-700">
-                        Refer to higher facility?
-                    </label>
-                </div>
-
-                <div id="referral_details" style="display: none;" class="space-y-3 lg:space-y-4">
-                    <div>
-                        <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-1">Referred to</label>
-                        <input type="text" name="referred_to" value="{{ old('referred_to') }}" class="w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-xl border border-gray-300 focus:ring-sky-500 focus:border-sky-500 text-sm" placeholder="e.g. District Hospital, Provincial Hospital">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs lg:text-sm font-medium text-gray-700 mb-1">Reason for referral</label>
-                        <textarea name="referral_reason" rows="3" class="w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-xl border border-gray-300 focus:ring-sky-500 focus:border-sky-500 text-sm" placeholder="Explain why referral is needed">{{ old('referral_reason') }}</textarea>
-                    </div>
-                </div>
-            </div>
+            <h3 class="font-bold text-gray-800 mb-2 pb-2 border-b border-gray-100 text-sm lg:text-base">3. Next clinical step</h3>
+            <p class="text-xs lg:text-sm text-gray-600">
+                Disposition and external referral will be handled during Diagnosis/Prescription by Nurse or Doctor roles.
+            </p>
         </div>
 
         <div class="flex flex-wrap items-center justify-end gap-2 lg:gap-3">
@@ -127,8 +109,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const modeOfTransaction = document.getElementById('mode_of_transaction');
     const referredFromContainer = document.getElementById('referred_from_container');
-    const referCheckbox = document.getElementById('refer_to_higher_facility');
-    const referralDetails = document.getElementById('referral_details');
 
     // Handle mode of transaction change
     function toggleReferredFrom() {
@@ -139,21 +119,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Handle referral checkbox change
-    function toggleReferralDetails() {
-        if (referCheckbox.checked) {
-            referralDetails.style.display = 'block';
-        } else {
-            referralDetails.style.display = 'none';
-        }
-    }
-
     // Initial check on page load
     toggleReferredFrom();
-    toggleReferralDetails();
 
     // Event listeners
     modeOfTransaction.addEventListener('change', toggleReferredFrom);
-    referCheckbox.addEventListener('change', toggleReferralDetails);
 });
 </script>
