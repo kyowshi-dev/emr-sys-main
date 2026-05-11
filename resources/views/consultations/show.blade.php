@@ -17,7 +17,7 @@
         </div>
     @endif
 
-    <div class="rounded-xl border bg-emerald-50 p-4 lg:p-5" style="border-color: var(--border); box-shadow: var(--shadow-sm);">
+    <div class="rounded-xl border bg-gray-100 p-4 lg:p-5" style="border-color: var(--border); box-shadow: var(--shadow-sm);">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <h1 class="font-display text-2xl font-semibold lg:text-3xl" style="color: var(--ink);">Consultation Details</h1>
             <div class="text-right text-xs lg:text-sm" style="color: var(--ink-muted);">
@@ -38,7 +38,7 @@
     ])
 
     <main class="space-y-4">
-        <section class="rounded-xl border bg-emerald-50 p-4 lg:p-5" style="border-color: var(--border);">
+        <section class="rounded-xl border bg-gray-100 p-4 lg:p-5" style="border-color: var(--border);">
             <details>
                 <summary class="list-none cursor-pointer">
                     <div class="flex flex-wrap items-center justify-between gap-2">
@@ -134,7 +134,7 @@
             </details>
         </section>
 
-        <section class="rounded-xl border bg-emerald-50 p-4 lg:p-5" style="border-color: var(--border);">
+        <section class="rounded-xl border bg-gray-100 p-4 lg:p-5" style="border-color: var(--border);">
             <div class="flex items-center justify-between gap-2">
                 <h3 class="font-display font-semibold text-lg" style="color: var(--ink);">Medical Diagnosis</h3>
                 @if(isset($diagnoses) && $diagnoses->count() > 0)
@@ -145,9 +145,15 @@
             @if(isset($diagnoses) && $diagnoses->count() > 0)
                 <div class="mt-3 space-y-2">
                     @foreach($diagnoses as $d)
-                        <div class="rounded-lg border p-2 text-sm" style="border-color: var(--border);">
-                            <span class="font-semibold" style="color: var(--ink);">{{ $d->diagnosis_code }}</span>
-                            <span style="color: var(--ink-muted);">- {{ $d->diagnosis_name }}</span>
+                        <div class="rounded-lg border p-2 text-sm flex items-center justify-between" style="border-color: var(--border);">
+                            <div>
+                                <span class="font-semibold" style="color: var(--ink);">{{ $d->diagnosis_code }}</span>
+                                <span style="color: var(--ink-muted);">- {{ $d->diagnosis_name }}</span>
+                            </div>
+
+                            <button type="button" class="text-red-600 hover:text-red-800 transition" title="Delete diagnosis">
+                                <i class="fas fa-trash-can"></i>
+                            </button>
                         </div>
                     @endforeach
                 </div>
@@ -187,7 +193,7 @@
             </form>
         </section>
 
-        <section class="rounded-xl border bg-emerald-50 p-4 lg:p-5" style="border-color: var(--border);">
+        <section class="rounded-xl border bg-gray-100 p-4 lg:p-5" style="border-color: var(--border);">
             <div class="flex items-center justify-between gap-2">
                 <h3 class="font-display font-semibold text-lg" style="color: var(--ink);">Prescription (Rx)</h3>
                 @if(isset($prescriptions) && $prescriptions->count() > 0)
@@ -270,7 +276,7 @@
             </form>
         </section>
 
-        <section class="rounded-xl border bg-emerald-50 p-4 lg:p-5" style="border-color: var(--border);">
+        <section class="rounded-xl border bg-gray-100 p-4 lg:p-5" style="border-color: var(--border);">
             <h3 class="font-display text-lg font-semibold" style="color: var(--ink);">Final Disposition</h3>
             <p class="mt-1 text-xs" style="color: var(--ink-muted);">Use this section to decide referral before ending the consultation session.</p>
 

@@ -215,7 +215,7 @@
                                 {{ $household->zone_number }}
                             </td>
                             <td class="px-3 lg:px-4 py-2.5 lg:py-3 font-medium" style="color: var(--ink);">
-                                {{ $household->family_name_head }}
+                                {{ ucfirst($household->family_name_head) }}
                             </td>
                             <td class="px-3 lg:px-4 py-2.5 lg:py-3" style="color: var(--ink-muted);">
                                 {{ $household->contact_number ?: '—' }}

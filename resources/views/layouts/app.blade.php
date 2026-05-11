@@ -205,7 +205,7 @@
                     <button @click="patientCareOpen = !patientCareOpen" 
                             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 text-ink-muted hover:bg-black/5 hover:opacity-100">
                         <i class="fa-solid fa-user-doctor text-base opacity-70" aria-hidden="true"></i>
-                        <span class="flex-1 text-left">Medical Services</span>
+                        <span class="flex-1 text-left">Services</span>
                         <i class="fa-solid fa-chevron-down text-sm transition-transform duration-200" :class="{ 'rotate-180': patientCareOpen }" aria-hidden="true"></i>
                     </button>
                     <div x-show="patientCareOpen" 
@@ -425,17 +425,18 @@
 
                 </div>
             </main>
-
+            
             <footer class="shrink-0 text-center py-3 text-xs border-t border-[var(--border)]" style="background: var(--bg-surface); color: var(--ink-subtle);">
                 &copy; {{ date('Y') }} Barangay Sta. Ana Health Center. All rights reserved.
+            </footer>
         </div>
     </div>
 
-    <div id="pageDrawer" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closePageDrawer()"></div>
-        <aside id="pageDrawerPanel" class="absolute inset-y-0 right-0 w-full max-w-md transform translate-x-full overflow-y-auto bg-white shadow-2xl transition-transform duration-300 ease-out">
-            @stack('drawer-content')
-        </aside>
+    <div id="pageModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closePageModal()"></div>
+        <div id="pageModalPanel" class="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl transform scale-95 opacity-0 transition-all duration-300 ease-out">
+            @stack('modal-content')
+        </div>
     </div>
 
     <style>
@@ -470,28 +471,35 @@
         });
 
         function openPageDrawer() {
-            var drawer = document.getElementById('pageDrawer');
-            var panel = document.getElementById('pageDrawerPanel');
-            if (!drawer || !panel) return;
-            drawer.classList.remove('hidden');
-            panel.classList.remove('translate-x-full');
-            panel.classList.add('translate-x-0');
+            var modal = document.getElementById('pageModal');
+            var panel = document.getElementById('pageModalPanel');
+            if (!modal || !panel) return;
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                panel.classList.remove('scale-95', 'opacity-0');
+                panel.classList.add('scale-100', 'opacity-100');
+            });
         }
 
         function closePageDrawer() {
-            var drawer = document.getElementById('pageDrawer');
-            var panel = document.getElementById('pageDrawerPanel');
-            if (!drawer || !panel) return;
-            panel.classList.remove('translate-x-0');
-            panel.classList.add('translate-x-full');
+            var modal = document.getElementById('pageModal');
+            var panel = document.getElementById('pageModalPanel');
+            if (!modal || !panel) return;
+            panel.classList.remove('scale-100', 'opacity-100');
+            panel.classList.add('scale-95', 'opacity-0');
             panel.addEventListener('transitionend', function handleTransitionEnd() {
-                drawer.classList.add('hidden');
+                modal.classList.add('hidden');
                 panel.removeEventListener('transitionend', handleTransitionEnd);
             }, { once: true });
         }
 
-        window.openImmunizationDrawer = openPageDrawer;
-        window.closeImmunizationDrawer = closePageDrawer;
+        function openPageModal() {
+            openPageDrawer();
+        }
+
+        function closePageModal() {
+            closePageDrawer();
+        }
 
         // Session timeout check
         @auth

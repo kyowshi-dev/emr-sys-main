@@ -11,8 +11,8 @@
         </div>
 
         <a href="{{ route('users.index') }}"
-           class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl border border-gray-300 bg-white text-xs lg:text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
-            ← Back
+           class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl border border-gray-300 bg-gray-100 text-xs lg:text-sm font-medium text-gray-700 hover:bg-gray-200 transition">
+            Back
         </a>
     </div>
 
@@ -139,7 +139,7 @@
             <a href="{{ route('users.index') }}" class="px-4 lg:px-5 py-2 lg:py-2.5 rounded-xl border border-gray-300 text-gray-700 font-medium text-xs lg:text-sm hover:bg-gray-50">Cancel</a>
             <button
                 type="submit"
-                class="px-5 lg:px-6 py-2 lg:py-2.5 rounded-xl text-xs lg:text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-emerald-500 shadow-md hover:shadow-xl transition"
+                class="px-5 lg:px-6 py-2 lg:py-2.5 rounded-xl text-xs lg:text-sm font-semibold text-white bg-emerald-900 hover:shadow-xl transition"
             >
                 Save User
             </button>

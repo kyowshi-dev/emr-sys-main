@@ -29,11 +29,11 @@
             <ul>
                 <template x-for="patient in results" :key="patient.id">
                     <li class="border-b last:border-0 transition-colors hover:bg-black/[0.03]">
-                        <a :href="patientUrl(patient.id)" @click.prevent="openFromSearch(patient)" class="block px-4 py-2.5">
+                        <a :href="patientUrl(patient.id)" class="block px-4 py-2.5">
                             <div class="font-medium text-sm" style="color: var(--ink);" x-text="patient.text"></div>
                             <div class="text-xs mt-0.5" style="color: var(--ink-muted);">
                                 <span x-text="patient.subtext"></span>
-                                <span class="font-semibold" style="color: var(--primary);"> - Open immunizations</span>
+                                <span class="font-semibold" style="color: var(--primary);"> - View immunization history</span>
                             </div>
                         </a>
                     </li>
@@ -264,13 +264,6 @@
                 return this.patientRouteTemplate.replace('__PATIENT_ID__', patientId);
             },
             openFromSearch(patient) {
-                if (this.parent && typeof this.parent.openPatient === 'function') {
-                    this.parent.openPatient(patient.id, patient.text);
-                    this.results = [];
-                    this.query = '';
-                    return;
-                }
-
                 window.location.href = this.patientUrl(patient.id);
             },
             async search() {

@@ -7,7 +7,7 @@
             <h1 class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">Edit Consultation</h1>
             <p class="text-sm mt-1" style="color: var(--ink-muted);">PT{{ str_pad($consultation->patient_id, 3, '0', STR_PAD_LEFT) }} - {{ $patient->last_name }}, {{ $patient->first_name }}</p>
         </div>
-        <a href="{{ route('consultations.show', $consultation->id) }}" class="px-4 py-2 rounded-xl text-white text-sm font-semibold transition" style="background: var(--primary);">← Back to View</a>
+        <a href="{{ route('consultations.show', $consultation->id) }}" class="px-4 py-2 rounded-xl text-white text-sm font-semibold transition" style="background: var(--primary);">Back to View</a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6">

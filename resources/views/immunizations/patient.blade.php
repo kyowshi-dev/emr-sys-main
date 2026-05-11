@@ -12,7 +12,7 @@
         </div>
 
         <div class="flex items-center justify-end">
-            <button type="button" onclick="openPageDrawer()" class="px-4 py-2 rounded-xl text-sm font-semibold text-white transition duration-200 hover:shadow-md" style="background: var(--accent);">
+            <button type="button" onclick="openPageModal()" class="px-4 py-2 rounded-xl text-sm font-semibold text-white transition duration-200 hover:shadow-md" style="background-color: #0e4a3c;">
                 Add immunization record
             </button>
         </div>
@@ -74,13 +74,13 @@
 
     </div>
 
-    @push('drawer-content')
+    @push('modal-content')
         <div class="flex items-center justify-between border-b border-[var(--border)] p-5">
             <div>
                 <h2 class="font-display font-semibold text-lg" style="color: var(--ink);">Add immunization record</h2>
-                <p class="text-sm mt-1" style="color: var(--ink-muted);">Keep the history table visible while entering the new dose.</p>
+                <p class="text-sm mt-1" style="color: var(--ink-muted);"></p>
             </div>
-            <button type="button" onclick="closePageDrawer()" class="text-sm font-medium text-gray-600 hover:text-gray-900">Close</button>
+            <button type="button" onclick="closePageModal()" class="text-sm font-medium text-gray-600 hover:text-gray-900">Close</button>
         </div>
 
         <div class="p-5">
@@ -127,8 +127,8 @@
                     </div>
                 </div>
                 <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" onclick="closePageDrawer()" class="px-4 py-2 rounded-xl text-sm font-medium border border-gray-200 text-gray-700 hover:bg-gray-50">Cancel</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl text-sm font-semibold text-white" style="background: var(--accent);">Save immunization record</button>
+                    <button type="button" onclick="closePageModal()" class="px-4 py-2 rounded-xl text-sm font-medium border border-gray-200 text-gray-700 hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl text-sm font-semibold text-white" style="background: #0e4a3c;">Save immunization record</button>
                 </div>
             </form>
         </div>
@@ -138,10 +138,10 @@
         <script>
             @if ($errors->any())
                 document.addEventListener('DOMContentLoaded', function () {
-                    openPageDrawer();
+                    openPageModal();
                 });
             @endif
         </script>
     @endpush
+    @endsection
 </div>
-@endsection

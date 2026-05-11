@@ -64,7 +64,7 @@
                         <tr class="transition-colors hover:bg-black/[0.02]">
                             <td class="px-4 py-2.5 font-medium whitespace-nowrap" style="color: var(--ink);">PT{{ str_pad($patient->id, 3, '0', STR_PAD_LEFT) }}</td>
                             <td class="px-4 py-2.5" style="color: var(--ink);">
-                                <div class="font-medium" :class="{ 'blur-sensitive': blurSensitive }">{{ $patient->last_name }}, {{ $patient->first_name }}</div>
+                                <div class="font-medium" :class="{ 'blur-sensitive': blurSensitive }">{{ ucfirst($patient->last_name) }}, {{ ucfirst($patient->first_name) }}</div>
                                 <div class="text-xs sm:hidden" style="color: var(--ink-muted);">{{ $patient->sex }}</div>
                             </td>
                             <td class="px-4 py-2.5 whitespace-nowrap" style="color: var(--ink-muted);">{{ \Carbon\Carbon::parse($patient->date_of_birth)->age }}</td>

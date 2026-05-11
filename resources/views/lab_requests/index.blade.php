@@ -62,7 +62,12 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-4 py-8 text-center text-sm" style="color: var(--ink-muted);">No lab requests found.</td>
+                            <td colspan="7" class="px-4 py-12 text-center">
+                                <div class="flex justify-center mb-3"><i class="fa-solid fa-flask text-3xl" style="color: var(--ink-subtle);"></i></div>
+                                <p class="text-sm font-medium" style="color: var(--ink);">No lab requests yet</p>
+                                <p class="text-xs mt-1 mb-3" style="color: var(--ink-muted);">Create a new lab request to send tests for patient analysis</p>
+                                <a href="{{ route('lab_requests.create') }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-white transition hover:opacity-90" style="background: var(--accent);"><i class="fa-solid fa-plus"></i> New lab request</a>
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
