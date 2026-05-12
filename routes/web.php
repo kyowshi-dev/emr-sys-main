@@ -85,6 +85,7 @@ Route::middleware('auth')->group(function () {
 
     // Quick Edit for Consultations
     Route::get('/consultations/{id}/edit', [ConsultationController::class, 'edit'])->name('consultations.edit');
+    Route::put('/consultations/{id}', [ConsultationController::class, 'update'])->name('consultations.update');
 
     // Doctor's Workspace (View specific consultation)
     Route::get('/consultations/{id}', [ConsultationController::class, 'show'])
@@ -103,6 +104,10 @@ Route::middleware('auth')->group(function () {
         ->name('consultations.vitals.delete');
     Route::post('/consultations/{id}/prescription', [ConsultationController::class, 'addPrescription'])
         ->name('consultations.prescription');
+    Route::delete('/consultations/{consultationId}/diagnoses/{diagnosisId}', [ConsultationController::class, 'deleteDiagnosis'])
+        ->name('consultations.diagnosis.delete');
+    Route::delete('/consultations/{consultationId}/prescriptions/{prescriptionId}', [ConsultationController::class, 'deletePrescription'])
+        ->name('consultations.prescription.delete');
 
     // 5. IMMUNIZATION
     Route::get('/immunizations', [ImmunizationController::class, 'index'])->name('immunizations.index');

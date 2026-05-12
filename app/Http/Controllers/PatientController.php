@@ -7,15 +7,30 @@ use App\Models\Patient;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class PatientController extends Controller
 {
     // 1. List all patients
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Patient::class);
 
-        $patients = DB::table('patients')
+        $request->validate([
+            'sort' => ['sometimes', Rule::in(['name', 'age', 'last_visit', 'created'])],
+            'dir' => ['sometimes', Rule::in(['asc', 'desc'])],
+        ]);
+
+        $sort = $request->input('sort', 'created');
+        $dir = $request->input('dir');
+        if (! in_array($dir, ['asc', 'desc'], true)) {
+            $dir = match ($sort) {
+                'name' => 'asc',
+                default => 'desc',
+            };
+        }
+
+        $query = DB::table('patients')
             ->join('households', 'patients.household_id', '=', 'households.id')
             ->leftJoinSub(
                 DB::table('consultations')
@@ -32,12 +47,28 @@ class PatientController extends Controller
                 'households.zone_id',
                 'households.contact_number',
                 'latest_consultations.last_visit'
-            )
-            ->orderByDesc('patients.created_at')
-            ->paginate(20)
-            ->withQueryString();
+            );
 
-        return view('patients.index', compact('patients'));
+        match ($sort) {
+            'name' => $query
+                ->orderBy('patients.last_name', $dir)
+                ->orderBy('patients.first_name', $dir),
+            'age' => $dir === 'asc'
+                ? $query->orderByDesc('patients.date_of_birth')
+                : $query->orderBy('patients.date_of_birth', 'asc'),
+            'last_visit' => $query
+                ->orderByRaw('latest_consultations.last_visit IS NULL ASC')
+                ->orderBy('latest_consultations.last_visit', $dir),
+            default => $query->orderBy('patients.created_at', $dir),
+        };
+
+        $patients = $query->paginate(20)->withQueryString();
+
+        return view('patients.index', [
+            'patients' => $patients,
+            'patientSort' => $sort,
+            'patientDir' => $dir,
+        ]);
     }
 
     // 2. Show the Registration Form
@@ -117,7 +148,7 @@ class PatientController extends Controller
             ->where('households.id', $householdId)
             ->value('zones.zone_number');
 
-        $residentialAddress = trim($zoneNumber) . ' Sta. Ana, Tagoloan';
+        $residentialAddress = trim($zoneNumber).' Sta. Ana, Tagoloan';
 
         // --- 2. DUPLICATE CHECK ---
         // Prevents double-entry of the same person

@@ -89,7 +89,7 @@ class ConsultationController extends Controller
             }
         }
 
-        $consultations = $query->get();
+        $consultations = $query->paginate(15)->withQueryString();
 
         $consultationIds = $consultations->pluck('id')->toArray();
 
@@ -513,6 +513,14 @@ class ConsultationController extends Controller
                 ->withErrors(['diagnosis' => 'Add at least one diagnosis before finalizing consultation.']);
         }
 
+        $workerId = DB::table('health_workers')
+            ->where('user_id', Auth::id())
+            ->value('id');
+
+        if ($workerId === null) {
+            abort(403, 'No health worker profile is linked to this user.');
+        }
+
         $updates = [
             'status' => 'completed',
             'updated_at' => now(),
@@ -619,6 +627,81 @@ class ConsultationController extends Controller
             'diagnoses' => $diagnoses,
             'prescriptions' => $prescriptions,
         ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        if (! auth()->user()->hasPermission('consultations')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $consultation = DB::table('consultations')->find($id);
+        if (! $consultation) {
+            abort(404, 'Consultation not found');
+        }
+
+        // Update notes if provided
+        if ($request->has('notes')) {
+            DB::table('consultations')
+                ->where('id', $id)
+                ->update(['notes' => $request->input('notes'), 'updated_at' => now()]);
+        }
+
+        return redirect()->route('consultations.show', $id)->with('success', 'Consultation updated successfully.');
+    }
+
+    public function deleteDiagnosis(Request $request, $consultationId, $diagnosisId)
+    {
+        if (! auth()->user()->hasPermission('consultations')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $diagnosis = DB::table('diagnosis_records')
+            ->where('id', $diagnosisId)
+            ->where('consultation_id', $consultationId)
+            ->first();
+
+        if (! $diagnosis) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Diagnosis not found'], 404);
+            }
+            abort(404, 'Diagnosis not found');
+        }
+
+        DB::table('diagnosis_records')->where('id', $diagnosisId)->delete();
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Diagnosis deleted successfully']);
+        }
+
+        return redirect()->route('consultations.edit', $consultationId)->with('success', 'Diagnosis deleted successfully.');
+    }
+
+    public function deletePrescription(Request $request, $consultationId, $prescriptionId)
+    {
+        if (! auth()->user()->hasPermission('consultations')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $prescription = DB::table('prescriptions')
+            ->where('id', $prescriptionId)
+            ->where('consultation_id', $consultationId)
+            ->first();
+
+        if (! $prescription) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Prescription not found'], 404);
+            }
+            abort(404, 'Prescription not found');
+        }
+
+        DB::table('prescriptions')->where('id', $prescriptionId)->delete();
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Prescription deleted successfully']);
+        }
+
+        return redirect()->route('consultations.edit', $consultationId)->with('success', 'Prescription deleted successfully.');
     }
 
     private function vitalsSupportVersioning(): bool

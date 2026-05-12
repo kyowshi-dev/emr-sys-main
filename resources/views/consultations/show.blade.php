@@ -152,7 +152,6 @@
                             </div>
 
                             <button type="button" class="text-red-600 hover:text-red-800 transition" title="Delete diagnosis">
-                                <i class="fas fa-trash-can"></i>
                             </button>
                         </div>
                     @endforeach
