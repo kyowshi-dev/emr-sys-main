@@ -54,15 +54,60 @@ class AuthController extends Controller
         ])->onlyInput('username');
     }
 
+    /**
+     * Logout User
+     *
+     * Securely logs out the user and invalidates their session.
+     *
+     * Security Controls (OWASP A01 & A07):
+     * 1. Auth::logout() - Logs out the user from the guard
+     * 2. $request->session()->invalidate() - Destroys the session on the server
+     * 3. $request->session()->regenerateToken() - Generates a new CSRF token
+     * 4. Clears all session data to prevent data leakage
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function logout(Request $request)
     {
+        // Log the logout event for audit trail
+        $user = Auth::user();
+        if ($user) {
+            \Log::info("User logged out [User ID: {$user->id}, Username: {$user->username}]");
+            
+            // Optional: Record in audit log if using AuditLog model
+            // \App\Models\AuditLog::create([
+            //     'user_id' => $user->id,
+            //     'action' => 'logout',
+            //     'description' => 'User logged out',
+            //     'ip_address' => $request->ip(),
+            // ]);
+        }
+
+        // 1. Unauthenticate the user (Guard logout)
         Auth::logout();
 
-        // Invalidate the session (Security best practice)
+        // 2. Completely invalidate the session on the server
+        //    This ensures the session ID cannot be reused
         $request->session()->invalidate();
+
+        // 3. Regenerate CSRF token to prevent token replay attacks
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        // 4. Clear all session data (additional security)
+        $request->session()->flush();
+
+        // 5. Clear browser cookies to remove any session identifiers
+        // This is handled by invalidate(), but explicit is good for defense-in-depth
+        $response = redirect()->route('login')
+            ->with('success', 'You have been successfully logged out.');
+
+        // Ensure no caching of the response
+        $response->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0, private');
+        $response->header('Pragma', 'no-cache');
+        $response->header('Expires', 'Thu, 01 Jan 1970 00:00:00 GMT');
+
+        return $response;
     }
 
     public function showForgotPassword()

@@ -85,62 +85,65 @@
     <div class="absolute inset-0 z-0 opacity-50" style="background: linear-gradient(145deg, var(--teal-soft) 0%, transparent 40%, rgba(196,92,65,0.06) 100%);"></div>
 
     <div class="relative z-10 w-full max-w-md px-4">
-        <div class="rounded-2xl border card-compact animate-in opacity-0" style="background: var(--bg-card); border-color: var(--border); font-family: var(--font-display);">
+        <div class="rounded-2xl border-2 card-compact animate-in opacity-0" style="background: var(--bg-card); border-color: var(--border); font-family: var(--font-display);">
             <div class="text-center mb-6">
-                <div class="flex items-center justify-center gap-3">
-                    <div class="logo-mark">
-                        <img src="{{ asset('img/sta-ana-logo.png') }}" alt="Santa Ana logo">
-                    </div>
-                    <div class="text-left">
-                        <h1 class="font-semibold text-lg leading-snug mb-0" style="color: var(--ink);">BHCIS</h1>
-                        <p class="muted-xs leading-tight">Sta. Ana Health Center</p>
-                    </div>
+            <div class="flex items-center justify-center gap-3">
+                <div class="logo-mark">
+                <img src="{{ asset('img/sta-ana-logo.png') }}" alt="Santa Ana logo">
                 </div>
-                <p class="text-xs mt-4 muted-xs leading-relaxed">Sign in to access patient records and services</p>
+                <div class="text-left">
+                <h1 class="font-extrabold text-lg leading-snug mb-0" style="color: var(--primary);">BHCIS</h1>
+                <p class="muted-xs leading-tight">Sta. Ana Health Center</p>
+                </div>
+            </div>
+            <p class="text-xs mt-4 muted-xs leading-relaxed">Sign in to access patient records and services</p>
             </div>
 
             <form action="{{ route('login.process') }}" method="POST">
-                @csrf
+            @csrf
 
-                @if ($errors->any())
-                    <div class="mb-4 p-3 rounded-lg text-sm" style="background: rgba(196, 92, 65, 0.08); border-left:4px solid var(--accent); color: var(--accent-strong);">
-                        <p class="font-medium text-sm">Login failed — {{ $errors->first() }}</p>
-                    </div>
-                @endif
-
-                <div class="mb-4">
-                    <label for="username" class="block text-sm font-medium mb-2.5" style="color: var(--ink);">Username</label>
-                    <input type="text" name="username" id="username" value="{{ old('username') }}"
-                           class="w-full px-3 py-2 rounded-md border text-[var(--ink)] placeholder-[var(--ink-muted)] focus:outline-none focus:ring-2 transition text-sm"
-                           style="border-color: var(--border); --tw-ring-color: var(--primary);"
-                           placeholder="Your Username" required autofocus>
+            @if ($errors->any())
+                <div class="mb-4 p-3 rounded-lg text-sm" style="background: rgba(196, 92, 65, 0.08); border-left:4px solid var(--accent); color: var(--accent-strong);">
+                <p class="font-medium text-sm">Login failed — {{ $errors->first() }}</p>
                 </div>
+            @endif
 
-                <div class="mb-5">
-                    <label for="password" class="block text-sm font-medium mb-2.5" style="color: var(--ink);">Password</label>
-                    <input type="password" name="password" id="password"
-                           class="w-full px-3 py-2 rounded-md border text-[var(--ink)] placeholder-[var(--ink-muted)] focus:outline-none focus:ring-2 transition text-sm"
-                           style="border-color: var(--border); --tw-ring-color: var(--primary);"
-                           placeholder="Your password" required>
-                </div>
+            <div class="mb-4">
+                <label for="username" class="block text-sm font-medium mb-2.5" style="color: var(--ink);">Username</label>
+                <input type="text" name="username" id="username" value="{{ old('username') }}"
+                   class="w-full px-3 py-2 rounded-md border text-[var(--ink)] placeholder-[var(--ink-muted)] focus:outline-none focus:ring-2 transition text-sm"
+                   style="border-color: var(--border); --tw-ring-color: var(--primary);"
+                   placeholder="Your Username" required autofocus>
+            </div>
 
-                <div class="flex items-center justify-between mb-5 text-sm">
-                    <label class="flex items-center text-sm cursor-pointer" style="color: var(--ink-muted);">
-                        <input type="checkbox" name="remember" class="mr-2 h-4 w-4 rounded border-[var(--border)]" style="accent-color: var(--primary);">
-                        Remember me
-                    </label>
-                    <a href="{{ route('password.forgot') }}" class="text-sm font-medium" style="color: var(--primary); text-decoration: underline;">
-                        Forgot Password?
-                    </a>
-                </div>
+            <div class="mb-5">
+                <label for="password" class="block text-sm font-medium mb-2.5" style="color: var(--ink);">Password</label>
+                <input type="password" name="password" id="password"
+                   class="w-full px-3 py-2 rounded-md border text-[var(--ink)] placeholder-[var(--ink-muted)] focus:outline-none focus:ring-2 transition text-sm"
+                   style="border-color: var(--border); --tw-ring-color: var(--primary);"
+                   placeholder="Your password" required>
+            </div>
 
-                <button type="submit" class="w-full py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 active:scale-[0.99] accent-button">
-                    Sign in
-                </button>
+            <div class="flex items-center justify-between mb-5 text-sm">
+                <label class="flex items-center text-sm cursor-pointer" style="color: var(--ink-muted);">
+                <input type="checkbox" name="remember" class="mr-2 h-4 w-4 rounded border-[var(--border)]" style="accent-color: var(--primary);">
+                Remember me
+                </label>
+                <a href="{{ route('password.forgot') }}" class="text-sm font-medium" style="color: var(--primary); text-decoration: underline;">
+                Forgot Password?
+                </a>
+            </div>
+
+            <button type="submit" class="w-full py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 active:scale-[0.99]" style="background: var(--primary); color: #ffffff; box-shadow: 0 2px 8px rgba(13, 74, 60, 0.35);">
+                Sign in
+            </button>
             </form>
 
             <p class="text-center text-xs mt-6" style="color: var(--ink-muted);">
-                &copy; {{ date('Y') }} Barangay Sta. Ana Health Center
+            &copy; {{ date('Y') }} | Developed by
+            <a href="facebook.com/charlz.chavaria" class="font-medium" style="color: var(--primary);">
+                Charlz Chavaria
+            </a>
             </p>
         </div>
     </div>
