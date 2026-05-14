@@ -95,6 +95,40 @@ class BreadcrumbHelper
                 ];
                 break;
 
+            case 'lab_requests.index':
+                $breadcrumbs = [
+                    ['name' => 'Dashboard', 'url' => route('dashboard')],
+                    ['name' => 'Lab Requests', 'url' => null],
+                ];
+                break;
+
+            case 'lab_requests.create':
+                $breadcrumbs = [
+                    ['name' => 'Dashboard', 'url' => route('dashboard')],
+                    ['name' => 'Lab Requests', 'url' => route('lab_requests.index')],
+                    ['name' => 'New Lab Request', 'url' => null],
+                ];
+                break;
+
+            case 'lab_requests.show':
+                $labRequest = request()->route('labRequest');
+                $breadcrumbs = [
+                    ['name' => 'Dashboard', 'url' => route('dashboard')],
+                    ['name' => 'Lab Requests', 'url' => route('lab_requests.index')],
+                    ['name' => $labRequest ? 'Lab Request #' . str_pad($labRequest->id, 3, '0', STR_PAD_LEFT) : 'Lab Request Details', 'url' => null],
+                ];
+                break;
+
+            case 'lab_requests.edit':
+                $labRequest = request()->route('labRequest');
+                $breadcrumbs = [
+                    ['name' => 'Dashboard', 'url' => route('dashboard')],
+                    ['name' => 'Lab Requests', 'url' => route('lab_requests.index')],
+                    ['name' => $labRequest ? 'Lab Request #' . str_pad($labRequest->id, 3, '0', STR_PAD_LEFT) : 'Lab Request Details', 'url' => route('lab_requests.show', $labRequest)],
+                    ['name' => 'Edit Lab Request', 'url' => null],
+                ];
+                break;
+
             case 'medicines.index':
                 $breadcrumbs = [
                     ['name' => 'Dashboard', 'url' => route('dashboard')],
