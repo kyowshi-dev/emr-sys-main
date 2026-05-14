@@ -58,10 +58,13 @@
                                        class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-full border border-sky-300 text-xs font-semibold text-sky-600 hover:bg-sky-50 transition">
                                         Edit
                                     </a>
-                                    <a href="{{ route('users.permissions.edit', $user) }}"
-                                       class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-full border border-purple-300 text-xs font-semibold text-purple-600 hover:bg-purple-50 transition">
+                                    <button
+                                        type="button"
+                                        onclick="openPermissionsModal({{ $user->id }}, '{{ $user->username }}')"
+                                        class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 rounded-full border border-purple-300 text-xs font-semibold text-purple-600 hover:bg-purple-50 transition"
+                                    >
                                         Permissions
-                                    </a>
+                                    </button>
                                     @if ($user->is_active && ! $user->isAdmin())
                                         <button
                                             type="button"
@@ -111,6 +114,56 @@
 <form id="enableForm" method="POST" style="display: none;">
     @csrf
 </form>
+
+@push('modal-content')
+<div class="p-6">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-800">Edit Permissions</h2>
+        <button onclick="closePageModal()" class="text-gray-400 hover:text-gray-600">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+    <p class="text-sm text-gray-600 mb-4">Manage permissions for <span id="modalUsername" class="font-medium"></span>.</p>
+
+    <form id="permissionsForm" method="POST">
+        @csrf
+        @method('PUT')
+
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-base font-medium text-gray-800">Module Permissions</h3>
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="checkbox" id="selectAllPermissions" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded">
+                    <span class="text-sm text-gray-700">Select All</span>
+                </label>
+            </div>
+            <p class="text-sm text-gray-600">Select the modules this user can access.</p>
+
+            <div id="permissionsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @foreach($permissions as $permission)
+                    <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox"
+                               name="permissions[]"
+                               value="{{ $permission->name }}"
+                               class="permission-checkbox h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded">
+                        <div>
+                            <div class="font-medium text-gray-900">{{ ucfirst($permission->name) }}</div>
+                            <div class="text-sm text-gray-500">{{ $permission->description }}</div>
+                        </div>
+                    </label>
+                @endforeach
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4">
+                <button type="button" onclick="closePageModal()" class="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 font-medium text-sm hover:bg-gray-50">Cancel</button>
+                <button type="submit" class="px-6 py-2 rounded-xl bg-emerald-900 text-white font-semibold text-sm shadow-md hover:bg-emerald-800 hover:shadow-xl transition">
+                    Update Permissions
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+@endpush
 
 <script>
     function confirmDisableUser(userId) {
@@ -176,5 +229,72 @@
             }
         });
     }
+
+    function openPermissionsModal(userId, username) {
+        document.getElementById('modalUsername').textContent = username;
+        document.getElementById('permissionsForm').action = '/users/' + userId + '/permissions';
+        
+        // Fetch current user permissions via AJAX
+        fetch('/users/' + userId + '/permissions-data')
+            .then(response => response.json())
+            .then(data => {
+                // Reset all checkboxes
+                document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                
+                // Check the permissions the user currently has
+                data.permissions.forEach(permissionName => {
+                    const checkbox = document.querySelector(`input[name="permissions[]"][value="${permissionName}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+                
+                // Update select all checkbox
+                updateSelectAllCheckbox();
+                
+                // Show modal
+                openPageModal();
+            })
+            .catch(error => {
+                console.error('Error fetching permissions:', error);
+                Swal.fire('Error', 'Failed to load permissions data.', 'error');
+            });
+    }
+
+    function updateSelectAllCheckbox() {
+        const checkboxes = document.querySelectorAll('.permission-checkbox');
+        const checkedBoxes = document.querySelectorAll('.permission-checkbox:checked');
+        const selectAllCheckbox = document.getElementById('selectAllPermissions');
+        
+        selectAllCheckbox.checked = checkboxes.length === checkedBoxes.length && checkboxes.length > 0;
+        selectAllCheckbox.indeterminate = checkedBoxes.length > 0 && checkedBoxes.length < checkboxes.length;
+    }
+
+    // Initialize modal functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle select all functionality
+        document.getElementById('selectAllPermissions').addEventListener('change', function() {
+            const isChecked = this.checked;
+            document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+        });
+
+        // Update select all when individual checkboxes change
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('permission-checkbox')) {
+                updateSelectAllCheckbox();
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('pageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePageModal();
+            }
+        });
+    });
 </script>
 @endsection

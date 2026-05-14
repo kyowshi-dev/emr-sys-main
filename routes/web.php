@@ -154,6 +154,8 @@ Route::middleware('auth')->group(function () {
     // User Permissions
     Route::get('/users/{user}/permissions', [UserManagementController::class, 'editPermissions'])
         ->name('users.permissions.edit');
+    Route::get('/users/{user}/permissions-data', [UserManagementController::class, 'getPermissionsData'])
+        ->name('users.permissions.data');
     Route::put('/users/{user}/permissions', [UserManagementController::class, 'updatePermissions'])
         ->name('users.permissions.update');
 

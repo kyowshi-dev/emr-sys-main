@@ -140,7 +140,7 @@
             <a href="{{ route('users.index') }}" class="px-4 lg:px-5 py-2 lg:py-2.5 rounded-xl border border-gray-300 text-gray-700 font-medium text-xs lg:text-sm hover:bg-gray-50">Cancel</a>
             <button
                 type="submit"
-                class="px-5 lg:px-6 py-2 lg:py-2.5 rounded-xl text-xs lg:text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-emerald-500 shadow-md hover:shadow-xl transition"
+                class="px-5 lg:px-6 py-2 lg:py-2.5 rounded-xl text-xs lg:text-sm font-semibold text-white bg-emerald-900 hover:bg-emerald-800 transition shadow-md hover:shadow-xl"
             >
                 Update User
             </button>

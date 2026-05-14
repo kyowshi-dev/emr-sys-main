@@ -43,7 +43,7 @@
 
                 <div class="flex justify-end pt-4">
                     <button type="submit"
-                            class="inline-flex items-center px-6 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-sm font-semibold text-white shadow-md hover:shadow-xl transition">
+                            class="inline-flex items-center px-6 py-2.5 rounded-xl bg-emerald-900 text-sm font-semibold text-white shadow-md hover:bg-emerald-800 hover:shadow-xl transition">
                         Update Permissions
                     </button>
                 </div>

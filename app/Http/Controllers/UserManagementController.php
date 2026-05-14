@@ -21,9 +21,11 @@ class UserManagementController extends Controller
         $pageSize = auth()->check() && auth()->user()->isAdmin() ? 10 : 15;
 
         $users = User::with('permissions')->orderBy('username')->paginate($pageSize);
+        $permissions = Permission::all();
 
         return view('users.index', [
             'users' => $users,
+            'permissions' => $permissions,
         ]);
     }
 
@@ -223,6 +225,17 @@ class UserManagementController extends Controller
         return view('users.permissions', [
             'user' => $user,
             'permissions' => $permissions,
+        ]);
+    }
+
+    public function getPermissionsData(User $user)
+    {
+        if (! auth()->user()->hasPermission('users')) {
+            abort(403, 'Unauthorized');
+        }
+
+        return response()->json([
+            'permissions' => $user->permissions->pluck('name')->toArray(),
         ]);
     }
 
