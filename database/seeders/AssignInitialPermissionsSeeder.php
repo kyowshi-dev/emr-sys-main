@@ -29,7 +29,9 @@ class AssignInitialPermissionsSeeder extends Seeder
             $normalizedRole = strtolower($roleName);
 
             if (str_contains($normalizedRole, 'admin') || str_contains($normalizedRole, 'head nurse')) {
-                $permissions = ['household', 'patients', 'consultations', 'immunizations', 'lab_requests', 'medicines', 'reports', 'users', 'print_handouts', 'dashboard_handouts_admin', 'dashboard_handouts_clinical'];
+                $user->permissions()->sync(Permission::pluck('id'));
+
+                continue;
             } elseif (str_contains($normalizedRole, 'nurse')) {
                 $permissions = ['patients', 'consultations', 'lab_requests', 'medicines', 'print_handouts', 'dashboard_handouts_clinical'];
             } elseif (str_contains($normalizedRole, 'bhw')) {
