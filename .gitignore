@@ -17,6 +17,7 @@
 /public/build
 /public/hot
 /public/storage
+/storage/logs/*.log
 /storage/*.key
 /storage/pail
 /vendor
@@ -26,3 +27,6 @@ Thumbs.db
 storage/logs/laravel.log
 _ide_helper_models.php
 storage/logs/laravel.log
+/docs/*.md
+/docs/*.txt
+/docs

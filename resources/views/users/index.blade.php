@@ -2,6 +2,24 @@
 
 @section('content')
 <div class="space-y-4 lg:space-y-6">
+    @if (session('success'))
+        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800">
+            <div class="flex items-start gap-3">
+                <i class="fa-solid fa-check-circle mt-1"></i>
+                <span>{{ session('success') }}</span>
+            </div>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800">
+            <div class="flex items-start gap-3">
+                <i class="fa-solid fa-exclamation-circle mt-1"></i>
+                <span>{{ session('error') }}</span>
+            </div>
+        </div>
+    @endif
+
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
             <h1 class="text-2xl lg:text-3xl font-extrabold text-sky-700">User Management</h1>
@@ -241,6 +259,7 @@
                 // Reset all checkboxes
                 document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
                     checkbox.checked = false;
+                    checkbox.disabled = false;
                 });
                 
                 // Check the permissions the user currently has
@@ -250,6 +269,21 @@
                         checkbox.checked = true;
                     }
                 });
+                
+                // If admin is editing themselves, disable the 'users' permission checkbox
+                if (data.isAdminEditingSelf) {
+                    const usersCheckbox = document.querySelector(`input[name="permissions[]"][value="users"]`);
+                    if (usersCheckbox) {
+                        usersCheckbox.disabled = true;
+                        usersCheckbox.checked = true;
+                        // Add a visual indicator
+                        const label = usersCheckbox.closest('label');
+                        if (label) {
+                            label.classList.add('opacity-60', 'cursor-not-allowed');
+                            label.title = 'You cannot remove this permission from your own account';
+                        }
+                    }
+                }
                 
                 // Update select all checkbox
                 updateSelectAllCheckbox();
@@ -278,23 +312,35 @@
         document.getElementById('selectAllPermissions').addEventListener('change', function() {
             const isChecked = this.checked;
             document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
-                checkbox.checked = isChecked;
+                // Don't uncheck disabled checkboxes (like 'users' when admin edits self)
+                if (!checkbox.disabled) {
+                    checkbox.checked = isChecked;
+                }
             });
+            updateSelectAllCheckbox();
         });
 
         // Update select all when individual checkboxes change
         document.addEventListener('change', function(e) {
             if (e.target.classList.contains('permission-checkbox')) {
+                // Prevent unchecking disabled checkboxes
+                if (e.target.disabled && !e.target.checked) {
+                    e.target.checked = true;
+                    return;
+                }
                 updateSelectAllCheckbox();
             }
         });
 
         // Close modal when clicking outside
-        document.getElementById('pageModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closePageModal();
-            }
-        });
+        const pageModal = document.getElementById('pageModal');
+        if (pageModal) {
+            pageModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closePageModal();
+                }
+            });
+        }
     });
 </script>
 @endsection

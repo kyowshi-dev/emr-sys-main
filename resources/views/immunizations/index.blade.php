@@ -9,7 +9,7 @@
             <h1 class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">Immunization tracking</h1>
             <p class="text-sm mt-1" style="color: var(--ink-muted);">Manage today’s queue, record doses, and follow up defaulters.</p>
         </div>
-        <a href="{{ route('patients.create') }}" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-white text-sm font-semibold transition duration-200 hover:shadow-md" style="background: var(--accent);">
+        <a href="{{ route('patients.create') }}" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-white text-sm font-semibold transition duration-200 hover:shadow-md" style="background: #0d4a3c;">
             Add new patient
         </a>
     </div>
@@ -134,7 +134,7 @@
                                 <td class="px-3 lg:px-4 py-2 lg:py-3" style="color: var(--ink);">{{ $p->vaccine_name }}</td>
                                 <td class="px-3 lg:px-4 py-2 lg:py-3 text-right whitespace-nowrap">
                                     <button type="button" class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-white text-xs font-semibold transition hover:shadow-md" style="background: var(--primary);" @click="openPatient({{ (int) $p->patient_id }}, @js($p->last_name . ', ' . $p->first_name))">
-                                        Check-in / record
+                                        Check-in / Record
                                     </button>
                                 </td>
                             </tr>

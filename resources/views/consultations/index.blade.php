@@ -5,8 +5,16 @@
      x-data="{ blurSensitive: false, advancedOpen: @json(request()->filled('date_from') || request()->filled('date_to') || (request()->filled('sort') && request('sort') !== 'newest')) }">
     <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
-            <h1 class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">Consultation history</h1>
-            <p class="text-sm mt-1" style="color: var(--ink-muted);">Review timelines, diagnoses, and treatments with patient-safe visibility controls.</p>
+            <h1 class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">
+                {{ ($showQueue ?? false) ? 'Clinical queue' : 'Consultation history' }}
+            </h1>
+            <p class="text-sm mt-1" style="color: var(--ink-muted);">
+                @if ($showQueue ?? false)
+                    Patients awaiting validation or doctor review. Filter by urgency or zone.
+                @else
+                    Review timelines, diagnoses, and treatments with patient-safe visibility controls.
+                @endif
+            </p>
         </div>
     </div>
 
@@ -31,9 +39,18 @@
     <div class="sticky top-0 z-20 rounded-xl border p-4 lg:p-5 space-y-4 animate-in opacity-0 delay-4"
          style="background: var(--bg-surface-elevated); border-color: var(--border); box-shadow: var(--shadow-md);">
         <form method="GET" action="{{ route('consultations.index') }}" id="consultations-filter-form" class="space-y-4">
+            @if ($showQueue ?? false)
+                <input type="hidden" name="queue" value="1">
+            @endif
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <h2 class="font-display font-semibold text-lg" style="color: var(--ink);">Filter consultations</h2>
-                <a href="{{ route('consultations.index') }}" class="text-xs font-semibold transition hover:underline" style="color: var(--primary);">Reset filters</a>
+                <div class="flex flex-wrap items-center gap-3 text-xs font-semibold">
+                    @if ($isClinicalRole ?? false)
+                        <a href="{{ route('consultations.index', ['queue' => 1]) }}" class="transition hover:underline {{ ($showQueue ?? false) ? '' : 'opacity-70' }}" style="color: var(--primary);">Queue</a>
+                        <a href="{{ route('consultations.index') }}" class="transition hover:underline {{ ($showQueue ?? false) ? 'opacity-70' : '' }}" style="color: var(--primary);">Full history</a>
+                    @endif
+                    <a href="{{ ($showQueue ?? false) ? route('consultations.index', ['queue' => 1]) : route('consultations.index') }}" class="transition hover:underline" style="color: var(--primary);">Reset filters</a>
+                </div>
             </div>
 
             <div class="flex flex-col xl:flex-row xl:flex-wrap xl:items-end gap-4">
@@ -94,6 +111,34 @@
                         <input type="text" id="date_to" name="date_to" value="{{ request('date_to') }}" placeholder="dd/mm/yyyy"
                                class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 transition" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);">
                     </div>
+                    @if ($showQueue ?? false)
+                        <div>
+                            <label for="urgency" class="block text-xs font-medium mb-1" style="color: var(--ink-muted);">Urgency</label>
+                            <select id="urgency" name="urgency" class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 transition" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);">
+                                <option value="">All</option>
+                                <option value="critical" @selected(request('urgency') === 'critical')>Critical vitals only</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="zone_id" class="block text-xs font-medium mb-1" style="color: var(--ink-muted);">Zone</label>
+                            <select id="zone_id" name="zone_id" class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 transition" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);">
+                                <option value="">All zones</option>
+                                @foreach ($zones ?? [] as $zone)
+                                    <option value="{{ $zone->id }}" @selected((string) request('zone_id') === (string) $zone->id)>Zone {{ $zone->zone_number }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label for="status" class="block text-xs font-medium mb-1" style="color: var(--ink-muted);">Status</label>
+                            <select id="status" name="status" class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 transition" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);">
+                                <option value="">All in queue</option>
+                                <option value="pending_validation" @selected(request('status') === 'pending_validation')>Pending validation</option>
+                                <option value="pending_doctor" @selected(request('status') === 'pending_doctor')>Pending doctor</option>
+                                <option value="in_progress" @selected(request('status') === 'in_progress')>In progress</option>
+                                <option value="triage" @selected(request('status') === 'triage')>Triage</option>
+                            </select>
+                        </div>
+                    @endif
                     <div class="sm:col-span-2 lg:col-span-1">
                         <label for="sort" class="block text-xs font-medium mb-1" style="color: var(--ink-muted);">Sort by</label>
                         <select id="sort" name="sort" class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 transition" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);">
@@ -109,7 +154,7 @@
                 </div>
             </div>
 
-            @if (request()->filled('query') || request()->filled('date_from') || request()->filled('date_to') || (request()->filled('sort') && request('sort') !== 'newest'))
+            @if (request()->filled('query') || request()->filled('date_from') || request()->filled('date_to') || request()->filled('urgency') || request()->filled('zone_id') || request()->filled('status') || (request()->filled('sort') && request('sort') !== 'newest'))
                 <div class="pt-3 border-t flex flex-wrap items-center gap-2" style="border-color: var(--border);">
                     <span class="text-xs font-medium" style="color: var(--ink-muted);">Active filters:</span>
                     @if (request('query'))
@@ -120,6 +165,15 @@
                     @endif
                     @if (request('date_to'))
                         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium" style="background: var(--teal-soft); color: var(--primary);">To: {{ request('date_to') }}</span>
+                    @endif
+                    @if (request('urgency') === 'critical')
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Critical vitals</span>
+                    @endif
+                    @if (request('zone_id'))
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium" style="background: var(--teal-soft); color: var(--primary);">Zone filter active</span>
+                    @endif
+                    @if (request('status'))
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium" style="background: var(--teal-soft); color: var(--primary);">Status: {{ str_replace('_', ' ', request('status')) }}</span>
                     @endif
                     @if (request()->filled('sort') && request('sort') !== 'newest')
                         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium" style="background: var(--teal-soft); color: var(--primary);">Sort: {{ str_replace('_', ' ', request('sort')) }}</span>
@@ -138,6 +192,8 @@
             @php
                 $diagnoses = $diagnosisByConsultation[$consultation->id] ?? [];
                 $treatments = $treatmentByConsultation[$consultation->id] ?? [];
+                $latestVitals = $latestVitalsByConsultation[$consultation->id] ?? null;
+                $isCritical = \App\Support\VitalsThresholds::isCritical($latestVitals);
             @endphp
             <div class="rounded-xl border p-4 lg:p-5 transition-all duration-200 hover:shadow-md hover:scale-[1.005]" style="background: var(--bg-surface); border-color: var(--border);">
                 <div class="flex flex-col gap-3">
@@ -148,14 +204,26 @@
                                     {{ $consultation->patient_last_name }}, {{ $consultation->patient_first_name }}
                                     <span class="font-medium" style="color: var(--primary);">(PT{{ str_pad($consultation->patient_id, 3, '0', STR_PAD_LEFT) }})</span>
                                 </span>
+                                @if ($isCritical)
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wide bg-red-100 text-red-800">
+                                        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Critical
+                                    </span>
+                                @endif
                             </div>
-                            <p class="text-xs lg:text-sm mb-1" style="color: var(--ink-muted);">{{ \Carbon\Carbon::parse($consultation->created_at)->format('M d, Y \a\t h:i A') }}</p>
+                            <p class="text-xs lg:text-sm mb-1" style="color: var(--ink-muted);">{{ \Carbon\Carbon::parse($consultation->created_at)->format('M d, Y \a\t h:i A') }}@if ($consultation->zone_number ?? null) · Zone {{ $consultation->zone_number }}@endif</p>
+                            @if (($showQueue ?? false) && ($consultation->complaint_text ?? null))
+                                <p class="text-xs italic line-clamp-2" style="color: var(--ink-subtle);">{{ $consultation->complaint_text }}</p>
+                            @endif
                             <p class="text-xs lg:text-sm mb-1" style="color: var(--ink-muted);"><span class="font-medium" style="color: var(--ink);">Doctor:</span> {{ $consultation->worker_first_name }} {{ $consultation->worker_last_name }}</p>
                         </div>
                         <div class="flex flex-col items-end gap-2 shrink-0">
                             @if ($consultation->status === 'completed')
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" style="background: var(--teal-soft); color: var(--primary);">
                                     {{ ucfirst(str_replace('_', ' ', $consultation->status)) }}
+                                </span>
+                            @elseif ($consultation->status === 'pending_validation')
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold" style="background: var(--accent-soft); color: var(--accent);">
+                                    Pending validation
                                 </span>
                             @elseif ($consultation->status === 'referred')
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-950 ring-1 ring-amber-400">
@@ -168,7 +236,10 @@
                             @endif
                             <div class="flex items-center gap-2">
                                 <a href="{{ route('consultations.edit', $consultation->id) }}" class="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition hover:opacity-85" style="background: var(--accent-soft); color: var(--accent);">Edit</a>
-                                <a href="{{ route('consultations.show', $consultation->id) }}" class="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition hover:opacity-85" style="background: var(--teal-soft); color: var(--primary);">View details</a>
+                                <a href="{{ route('consultations.show', $consultation->id) }}" class="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition hover:opacity-85" style="background: var(--teal-soft); color: var(--primary);">{{ ($showQueue ?? false) ? 'Open case' : 'View details' }}</a>
+                                @if (in_array($consultation->status, ['completed', 'referred'], true))
+                                    <a href="{{ route('consultations.handout', $consultation->id) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition hover:opacity-85" style="background: rgba(0,0,0,0.06); color: var(--ink-muted);"><i class="fa-solid fa-print"></i> Handout</a>
+                                @endif
                             </div>
                         </div>
                     </div>

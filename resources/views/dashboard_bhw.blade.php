@@ -7,6 +7,10 @@
             <h1 class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">Dashboard</h1>
             <p class="text-sm mt-1">Search a patient to start a new consultation or register a new one.</p>
         </div>
+        <a href="{{ url('/patients/create') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold transition hover:bg-primary-hover">
+            <i class="fa-solid fa-user-plus"></i>
+            New Patient
+        </a>
     </div>
 
     <div class="rounded-xl" x-data="patientSearch()">
@@ -65,6 +69,54 @@
                 <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: var(--ink-muted);">Pending queue</p>
                 <p class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">{{ $pendingConsultations ?? 0 }}</p>
                 <p class="text-xs mt-2" style="color: var(--ink-muted);">Cases waiting for doctor review</p>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="flex items-center justify-between mb-3">
+            <div>
+                <h2 class="font-display font-semibold text-lg lg:text-xl" style="color: var(--ink);">Queue</h2>
+                <p class="text-sm" style="color: var(--ink-muted);">Patients currently waiting in line.</p>
+            </div>
+            <a href="{{ route('consultations.index') }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-primary border border-primary transition hover:bg-primary/5">
+                <i class="fa-solid fa-list"></i>
+                View all consultations
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="rounded-xl border bg-surface p-4" style="border-color: var(--border); box-shadow: var(--shadow-sm);">
+                <h3 class="text-sm font-semibold mb-3" style="color: var(--ink);">Next patients in queue</h3>
+                <ul class="space-y-2">
+                    @forelse($pendingQueue ?? [] as $queue)
+                        <li class="rounded-xl border px-4 py-3" style="border-color: var(--border); background: var(--bg-surface-elevated);">
+                            <div class="font-medium text-sm" style="color: var(--ink);">{{ $queue->name ?? $queue['name'] ?? 'Unknown patient' }}</div>
+                            <div class="text-xs mt-1" style="color: var(--ink-muted);">{{ $queue->identifier ?? $queue['identifier'] ?? 'No ID available' }}</div>
+                        </li>
+                    @empty
+                        <li class="rounded-xl border px-4 py-6 text-center" style="border-color: var(--border); background: var(--bg-surface-elevated); color: var(--ink-muted);">
+                            No queued patients at the moment.
+                        </li>
+                    @endforelse
+                </ul>
+            </div>
+
+            <div class="rounded-xl border bg-surface p-4" style="border-color: var(--border); box-shadow: var(--shadow-sm);">
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-sm font-semibold" style="color: var(--ink);">Queue summary</p>
+                    <span class="text-xs font-semibold uppercase tracking-wider" style="color: var(--ink-muted);">Updated</span>
+                </div>
+                <div class="space-y-3">
+                    <div class="rounded-xl bg-surface-elevated p-4" style="border: 1px solid var(--border);">
+                        <p class="text-xs uppercase tracking-wide" style="color: var(--ink-muted);">Total queued</p>
+                        <p class="mt-2 font-display font-semibold text-2xl" style="color: var(--ink);">{{ $pendingConsultations ?? 0 }}</p>
+                    </div>
+                    <div class="rounded-xl bg-surface-elevated p-4" style="border: 1px solid var(--border);">
+                        <p class="text-xs uppercase tracking-wide" style="color: var(--ink-muted);">Latest queue refresh</p>
+                        <p class="mt-2 text-sm" style="color: var(--ink);">{{ $queueUpdatedAt ?? 'Not available' }}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

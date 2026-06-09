@@ -28,7 +28,29 @@
         <div class="mt-2 flex flex-wrap items-center gap-3">
             <a href="{{ route('patients.show', $patient->id) }}" class="text-xs font-medium text-emerald-900 hover:underline lg:text-sm">Back to patient</a>
             <a href="{{ route('consultations.index') }}" class="text-xs font-medium text-emerald-900 hover:underline lg:text-sm">History</a>
+            @if (in_array($consultation->status, ['completed', 'referred'], true))
+                <a href="{{ route('consultations.handout', $consultation->id) }}" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90"
+                   style="background: var(--primary);">
+                    <i class="fa-solid fa-print" aria-hidden="true"></i> Print handout
+                </a>
+            @endif
         </div>
+        @if ($consultation->status === 'pending_validation' && ($canAcknowledgeIntake ?? false))
+            <div class="mt-3 rounded-xl border px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                 style="background: var(--accent-soft); border-color: var(--border);">
+                <div>
+                    <p class="text-sm font-semibold" style="color: var(--ink);">Awaiting nurse intake validation</p>
+                    <p class="text-xs mt-0.5" style="color: var(--ink-muted);">Confirm triage details before sending this case to the doctor queue.</p>
+                </div>
+                <form action="{{ route('consultations.acknowledge-intake', $consultation->id) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="rounded-xl px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90" style="background: var(--accent);">
+                        Acknowledge intake
+                    </button>
+                </form>
+            </div>
+        @endif
     </div>
 
     @include('consultations.partials.patient-ribbon', [

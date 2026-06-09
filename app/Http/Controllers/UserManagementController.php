@@ -234,8 +234,12 @@ class UserManagementController extends Controller
             abort(403, 'Unauthorized');
         }
 
+        $authUser = auth()->user();
+        $isAdminEditingSelf = $authUser->id === $user->id && $authUser->isAdmin();
+
         return response()->json([
             'permissions' => $user->permissions->pluck('name')->toArray(),
+            'isAdminEditingSelf' => $isAdminEditingSelf,
         ]);
     }
 
@@ -249,6 +253,18 @@ class UserManagementController extends Controller
             'permissions' => 'array',
             'permissions.*' => 'exists:permissions,name',
         ]);
+
+        // Prevent admin from removing the 'users' permission from themselves
+        $authUser = auth()->user();
+        if ($authUser->id === $user->id && $authUser->isAdmin()) {
+            $requestedPermissions = $request->permissions ?? [];
+            if (!in_array('users', $requestedPermissions)) {
+                return redirect()
+                    ->route('users.index')
+                    ->with('error', 'You cannot remove the "User Management" permission from your own account. This would lock you out of the system.')
+                    ->with('warning', true);
+            }
+        }
 
         $user->permissions()->sync(Permission::whereIn('name', $request->permissions ?? [])->pluck('id'));
 

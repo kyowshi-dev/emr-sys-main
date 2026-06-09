@@ -96,6 +96,10 @@ Route::middleware('auth')->group(function () {
         ->name('consultations.diagnosis');
     Route::post('/consultations/{id}/finalize', [ConsultationController::class, 'finalizeConsultation'])
         ->name('consultations.finalize');
+    Route::post('/consultations/{id}/acknowledge-intake', [ConsultationController::class, 'acknowledgeIntake'])
+        ->name('consultations.acknowledge-intake');
+    Route::get('/consultations/{id}/handout', [ConsultationController::class, 'printHandout'])
+        ->name('consultations.handout');
     Route::post('/consultations/{id}/vitals/retake', [ConsultationController::class, 'retakeVitals'])
         ->name('consultations.vitals.retake');
     Route::put('/consultations/{consultationId}/vitals/{vitalId}', [ConsultationController::class, 'updateVitalVersion'])
@@ -113,6 +117,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/immunizations', [ImmunizationController::class, 'index'])->name('immunizations.index');
     Route::get('/patients/{id}/immunizations', [ImmunizationController::class, 'forPatient'])->name('immunizations.patient');
     Route::post('/immunizations', [ImmunizationController::class, 'store'])->name('immunizations.store');
+    Route::post('/patients/{id}/immunizations/administer', [ImmunizationController::class, 'administer'])
+        ->name('immunizations.administer');
 
     // 6. LAB REQUESTS
     Route::get('/lab-requests', [LabRequestController::class, 'index'])->name('lab_requests.index');

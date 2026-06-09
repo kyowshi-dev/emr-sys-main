@@ -113,7 +113,7 @@
                 <input type="text" name="username" id="username" value="{{ old('username') }}"
                    class="w-full px-3 py-2 rounded-md border text-[var(--ink)] placeholder-[var(--ink-muted)] focus:outline-none focus:ring-2 transition text-sm"
                    style="border-color: var(--border); --tw-ring-color: var(--primary);"
-                   placeholder="Your Username" required autofocus>
+                   placeholder="Username" required autofocus>
             </div>
 
             <div class="mb-5">
@@ -121,7 +121,7 @@
                 <input type="password" name="password" id="password"
                    class="w-full px-3 py-2 rounded-md border text-[var(--ink)] placeholder-[var(--ink-muted)] focus:outline-none focus:ring-2 transition text-sm"
                    style="border-color: var(--border); --tw-ring-color: var(--primary);"
-                   placeholder="Your password" required>
+                   placeholder="Password" required>
             </div>
 
             <div class="flex items-center justify-between mb-5 text-sm">
@@ -142,7 +142,7 @@
             <p class="text-center text-xs mt-6" style="color: var(--ink-muted);">
             &copy; {{ date('Y') }} | Developed by
             <a href="facebook.com/charlz.chavaria" class="font-medium" style="color: var(--primary);">
-                Charlz Chavaria
+                PHINMA COC Students
             </a>
             </p>
         </div>

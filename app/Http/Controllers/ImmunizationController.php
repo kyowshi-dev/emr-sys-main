@@ -144,12 +144,83 @@ class ImmunizationController extends Controller
             ->orderBy('last_name')
             ->get();
 
+        $recordsByVaccine = $records->groupBy('vaccine_id');
+        $schedule = $vaccines->map(function ($vaccine) use ($recordsByVaccine) {
+            $doses = $recordsByVaccine->get($vaccine->id, collect());
+            $latestDose = $doses->sortByDesc('date_given')->first();
+
+            return (object) [
+                'vaccine' => $vaccine,
+                'doses_given' => $doses->count(),
+                'latest_date' => $latestDose?->date_given,
+                'latest_dose_number' => $latestDose?->dose_number,
+                'next_due_date' => $latestDose?->next_due_date,
+            ];
+        });
+
+        $currentWorkerId = DB::table('health_workers')->where('user_id', auth()->id())->value('id');
+
         return view('immunizations.patient', [
             'patient' => $patient,
             'records' => $records,
             'vaccines' => $vaccines,
+            'schedule' => $schedule,
             'healthWorkers' => $healthWorkers,
+            'currentWorkerId' => $currentWorkerId,
         ]);
+    }
+
+    public function administer(Request $request, $id)
+    {
+        if (! auth()->user()->hasPermission('immunizations')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'vaccine_id' => ['required', 'integer', 'exists:vaccines_lookup,id'],
+            'dose_number' => ['nullable', 'integer', 'min:1', 'max:99'],
+            'date_given' => ['nullable', 'date', 'before_or_equal:today'],
+            'notes' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $patient = DB::table('patients')->where('id', $id)->first();
+        if (! $patient) {
+            abort(404, 'Patient not found');
+        }
+
+        $age = Carbon::parse($patient->date_of_birth)->age;
+        $isChild = $age < 18;
+        $allowedCategories = $isChild ? ['Child', 'Both'] : ['Adult', 'Both'];
+
+        $vaccine = DB::table('vaccines_lookup')->where('id', $validated['vaccine_id'])->first();
+        if (! in_array($vaccine->category, $allowedCategories, true)) {
+            return back()->withErrors(['vaccine_id' => 'This vaccine is not appropriate for the patient\'s age group.']);
+        }
+
+        $lastDose = DB::table('immunization_records')
+            ->where('patient_id', $id)
+            ->where('vaccine_id', $validated['vaccine_id'])
+            ->orderByDesc('dose_number')
+            ->value('dose_number');
+
+        $doseNumber = $validated['dose_number'] ?? ((int) $lastDose + 1);
+        $workerId = DB::table('health_workers')->where('user_id', auth()->id())->value('id');
+
+        DB::table('immunization_records')->insert([
+            'patient_id' => $id,
+            'vaccine_id' => $validated['vaccine_id'],
+            'dose_number' => $doseNumber,
+            'date_given' => $validated['date_given'] ?? Carbon::today()->toDateString(),
+            'administered_by' => $workerId,
+            'next_due_date' => null,
+            'notes' => $validated['notes'] ?? null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return redirect()
+            ->route('immunizations.patient', $id)
+            ->with('success', $vaccine->vaccine_name.' marked as administered (dose '.$doseNumber.').');
     }
 
     public function store(Request $request)
