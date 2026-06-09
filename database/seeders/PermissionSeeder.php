@@ -21,6 +21,10 @@ class PermissionSeeder extends Seeder
             ['name' => 'medicines', 'description' => 'Access to Medicines module'],
             ['name' => 'reports', 'description' => 'Access to Reports module'],
             ['name' => 'users', 'description' => 'Access to User Management'],
+            ['name' => 'print_handouts', 'description' => 'Print consultation Rx and diagnosis handouts'],
+            ['name' => 'dashboard_handouts_bhw', 'description' => 'BHW dashboard — Results ready panel'],
+            ['name' => 'dashboard_handouts_clinical', 'description' => 'Clinical dashboard — Recent completed handouts panel'],
+            ['name' => 'dashboard_handouts_admin', 'description' => 'Admin dashboard — Completed consultations handouts panel'],
         ];
 
         foreach ($permissions as $permission) {

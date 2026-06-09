@@ -28,7 +28,7 @@
         <div class="mt-2 flex flex-wrap items-center gap-3">
             <a href="{{ route('patients.show', $patient->id) }}" class="text-xs font-medium text-emerald-900 hover:underline lg:text-sm">Back to patient</a>
             <a href="{{ route('consultations.index') }}" class="text-xs font-medium text-emerald-900 hover:underline lg:text-sm">History</a>
-            @if (in_array($consultation->status, ['completed', 'referred'], true))
+            @if (in_array($consultation->status, ['completed', 'referred'], true) && auth()->user()->canPrintHandout())
                 <a href="{{ route('consultations.handout', $consultation->id) }}" target="_blank" rel="noopener"
                    class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90"
                    style="background: var(--primary);">

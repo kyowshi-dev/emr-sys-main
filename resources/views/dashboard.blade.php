@@ -188,6 +188,15 @@
                 </div>
             </div>
 
+            @if ($showResultsReady ?? false)
+                @include('dashboard.partials.results-ready', [
+                    'panelTitle' => 'Completed consultations — handouts',
+                    'panelSubtitle' => 'Barangay-wide completed visits. Print patient handouts for pickup or records.',
+                    'showFilters' => true,
+                    'filterAction' => route('dashboard'),
+                ])
+            @endif
+
             <div class="animate-in opacity-0 delay-6 rounded-xl border p-4 lg:p-5"
                  style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm);">
                 <h2 class="font-display font-semibold text-lg lg:text-xl mb-4" style="color: var(--ink);">Recent activity</h2>

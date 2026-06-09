@@ -67,6 +67,21 @@ class User extends Authenticatable
         return $this->hasPermission('users');
     }
 
+    public function canPrintHandout(): bool
+    {
+        return $this->hasPermission('print_handouts');
+    }
+
+    public function canViewDashboardHandouts(string $context): bool
+    {
+        return match ($context) {
+            'bhw' => $this->hasPermission('dashboard_handouts_bhw'),
+            'clinical' => $this->hasPermission('dashboard_handouts_clinical'),
+            'admin' => $this->hasPermission('dashboard_handouts_admin'),
+            default => false,
+        };
+    }
+
     private function getPermissionNames(): array
     {
         return Cache::remember("user_permissions_{$this->id}", 3600, function () {

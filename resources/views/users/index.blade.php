@@ -137,7 +137,7 @@
 <div class="p-6">
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-gray-800">Edit Permissions</h2>
-        <button onclick="closePageModal()" class="text-gray-400 hover:text-gray-600">
+        <button onclick="closePageDrawer()" class="text-gray-400 hover:text-gray-600">
             <i class="fa-solid fa-times"></i>
         </button>
     </div>
@@ -173,7 +173,7 @@
             </div>
 
             <div class="flex justify-end gap-3 pt-4">
-                <button type="button" onclick="closePageModal()" class="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 font-medium text-sm hover:bg-gray-50">Cancel</button>
+                <button type="button" onclick="closePageDrawer()" class="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 font-medium text-sm hover:bg-gray-50">Cancel</button>
                 <button type="submit" class="px-6 py-2 rounded-xl bg-emerald-900 text-white font-semibold text-sm shadow-md hover:bg-emerald-800 hover:shadow-xl transition">
                     Update Permissions
                 </button>
@@ -289,7 +289,7 @@
                 updateSelectAllCheckbox();
                 
                 // Show modal
-                openPageModal();
+                openPageDrawer();
             })
             .catch(error => {
                 console.error('Error fetching permissions:', error);
@@ -337,7 +337,7 @@
         if (pageModal) {
             pageModal.addEventListener('click', function(e) {
                 if (e.target === this) {
-                    closePageModal();
+                    closePageDrawer();
                 }
             });
         }

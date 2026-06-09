@@ -258,7 +258,7 @@ class UserManagementController extends Controller
         $authUser = auth()->user();
         if ($authUser->id === $user->id && $authUser->isAdmin()) {
             $requestedPermissions = $request->permissions ?? [];
-            if (!in_array('users', $requestedPermissions)) {
+            if (! in_array('users', $requestedPermissions)) {
                 return redirect()
                     ->route('users.index')
                     ->with('error', 'You cannot remove the "User Management" permission from your own account. This would lock you out of the system.')

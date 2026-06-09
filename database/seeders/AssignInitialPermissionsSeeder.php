@@ -29,13 +29,15 @@ class AssignInitialPermissionsSeeder extends Seeder
             $normalizedRole = strtolower($roleName);
 
             if (str_contains($normalizedRole, 'admin') || str_contains($normalizedRole, 'head nurse')) {
-                $permissions = ['household', 'patients', 'consultations', 'immunizations', 'lab_requests', 'medicines', 'reports', 'users'];
+                $permissions = ['household', 'patients', 'consultations', 'immunizations', 'lab_requests', 'medicines', 'reports', 'users', 'print_handouts', 'dashboard_handouts_admin', 'dashboard_handouts_clinical'];
             } elseif (str_contains($normalizedRole, 'nurse')) {
-                $permissions = ['patients', 'consultations', 'lab_requests', 'medicines'];
+                $permissions = ['patients', 'consultations', 'lab_requests', 'medicines', 'print_handouts', 'dashboard_handouts_clinical'];
             } elseif (str_contains($normalizedRole, 'bhw')) {
-                $permissions = ['household', 'patients', 'consultations', 'lab_requests', 'reports'];
+                $permissions = ['household', 'patients', 'consultations', 'lab_requests', 'reports', 'print_handouts', 'dashboard_handouts_bhw'];
             } elseif (str_contains($normalizedRole, 'midwife')) {
-                $permissions = ['patients', 'consultations', 'immunizations', 'lab_requests', 'reports'];
+                $permissions = ['patients', 'consultations', 'immunizations', 'lab_requests', 'reports', 'print_handouts', 'dashboard_handouts_clinical'];
+            } elseif (str_contains($normalizedRole, 'doctor')) {
+                $permissions = ['patients', 'consultations', 'lab_requests', 'medicines', 'print_handouts', 'dashboard_handouts_clinical'];
             }
 
             if (! empty($permissions)) {

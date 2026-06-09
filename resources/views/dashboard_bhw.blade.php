@@ -120,6 +120,15 @@
             </div>
         </div>
     </div>
+
+    @if ($showResultsReady ?? false)
+        @include('dashboard.partials.results-ready', [
+            'panelTitle' => 'Results ready',
+            'panelSubtitle' => 'Completed consultations — print handouts for patients picking up Rx or diagnosis summaries.',
+            'showFilters' => true,
+            'filterAction' => route('dashboard'),
+        ])
+    @endif
 </div>
 
 <script>

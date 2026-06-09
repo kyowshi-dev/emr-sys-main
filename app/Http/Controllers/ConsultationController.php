@@ -280,6 +280,7 @@ class ConsultationController extends Controller
             ->value('role');
 
         $canReferExternally = in_array(strtolower((string) $currentUserRole), ['doctor', 'nurse'], true);
+        $canAcknowledgeIntake = strtolower((string) $currentUserRole) === 'nurse';
 
         // 2. Fetch Existing Records (History)
         $existingDiagnoses = DB::table('diagnosis_records')
@@ -310,6 +311,107 @@ class ConsultationController extends Controller
             'diagnosisOptions' => $diagnosisOptions,
             'medicineOptions' => $medicineOptions,
             'canReferExternally' => $canReferExternally,
+            'canAcknowledgeIntake' => $canAcknowledgeIntake,
+        ]);
+    }
+
+    public function acknowledgeIntake($id)
+    {
+        if (! auth()->user()->hasPermission('consultations')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $worker = DB::table('health_workers')->where('user_id', Auth::id())->first();
+        if ($worker === null || strtolower((string) $worker->role) !== 'nurse') {
+            abort(403, 'Only nurses can acknowledge intake.');
+        }
+
+        $consultation = DB::table('consultations')->where('id', $id)->first();
+        if (! $consultation) {
+            abort(404, 'Consultation not found');
+        }
+
+        if ($consultation->status !== 'pending_validation') {
+            return redirect()->back()->withErrors([
+                'intake' => 'This consultation is not awaiting nurse validation.',
+            ]);
+        }
+
+        $updates = [
+            'status' => 'pending_doctor',
+            'updated_at' => now(),
+        ];
+
+        if (Schema::hasColumn('consultations', 'nurse_validated_at')) {
+            $updates['nurse_validated_at'] = now();
+            $updates['nurse_validated_by'] = $worker->id;
+        }
+
+        DB::table('consultations')->where('id', $id)->update($updates);
+
+        return redirect()->route('consultations.show', $id)
+            ->with('success', 'Intake acknowledged. Patient is now in the doctor queue.');
+    }
+
+    public function printHandout($id)
+    {
+        if (! auth()->user()->hasPermission('consultations')) {
+            abort(403, 'Unauthorized');
+        }
+
+        if (! auth()->user()->canPrintHandout()) {
+            abort(403, 'You do not have permission to print consultation handouts.');
+        }
+
+        $consultation = DB::table('consultations')
+            ->leftJoin('health_workers', 'consultations.worker_id', '=', 'health_workers.id')
+            ->where('consultations.id', $id)
+            ->select(
+                'consultations.*',
+                'health_workers.first_name as worker_first_name',
+                'health_workers.last_name as worker_last_name'
+            )
+            ->first();
+
+        if (! $consultation) {
+            abort(404, 'Consultation not found');
+        }
+
+        if (! in_array($consultation->status, ['completed', 'referred'], true)) {
+            abort(403, 'Print handout is available only for completed consultations.');
+        }
+
+        $patient = DB::table('patients')
+            ->join('households', 'patients.household_id', '=', 'households.id')
+            ->leftJoin('zones', 'households.zone_id', '=', 'zones.id')
+            ->where('patients.id', $consultation->patient_id)
+            ->select('patients.*', 'zones.zone_number')
+            ->first();
+
+        $diagnoses = DB::table('diagnosis_records')
+            ->join('diagnosis_lookup', 'diagnosis_records.diagnosis_id', '=', 'diagnosis_lookup.id')
+            ->where('diagnosis_records.consultation_id', $id)
+            ->select('diagnosis_lookup.diagnosis_name', 'diagnosis_lookup.diagnosis_code', 'diagnosis_records.remarks')
+            ->orderBy('diagnosis_records.id')
+            ->get();
+
+        $prescriptions = DB::table('prescriptions')
+            ->join('medicines_lookup', 'prescriptions.medicine_id', '=', 'medicines_lookup.id')
+            ->where('prescriptions.consultation_id', $id)
+            ->select('medicines_lookup.medicine_name', 'prescriptions.dosage', 'prescriptions.frequency', 'prescriptions.duration', 'prescriptions.quantity')
+            ->orderBy('prescriptions.id')
+            ->get();
+
+        $age = $patient ? Carbon::parse($patient->date_of_birth)->age : null;
+        $zoneLabel = $patient?->zone_number ? 'Zone '.$patient->zone_number : null;
+
+        return view('consultations.handout', [
+            'consultation' => $consultation,
+            'patient' => $patient,
+            'diagnoses' => $diagnoses,
+            'prescriptions' => $prescriptions,
+            'age' => $age,
+            'zoneLabel' => $zoneLabel,
         ]);
     }
 

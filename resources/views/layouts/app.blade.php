@@ -433,7 +433,7 @@
     </div>
 
     <div id="pageModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closePageModal()"></div>
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closePageDrawer()"></div>
         <div id="pageModalPanel" class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl transform scale-95 opacity-0 transition-all duration-300 ease-out">
             @stack('modal-content')
         </div>
@@ -491,14 +491,6 @@
                 modal.classList.add('hidden');
                 panel.removeEventListener('transitionend', handleTransitionEnd);
             }, { once: true });
-        }
-
-        function openPageModal() {
-            openPageDrawer();
-        }
-
-        function closePageModal() {
-            closePageDrawer();
         }
 
         // Session timeout check

@@ -210,23 +210,30 @@
         </div>
     </div>
 
-    <div x-show="drawerOpen" x-cloak class="fixed inset-0 z-50" aria-modal="true" role="dialog">
-        <div class="absolute inset-0" style="background: rgba(17, 24, 39, 0.55);" @click="closeDrawer()"></div>
-        <div class="absolute inset-y-0 right-0 w-full sm:w-[520px] lg:w-[640px] border-l shadow-xl flex flex-col" style="background: var(--bg-surface-elevated); border-color: var(--border);">
-            <div class="p-4 border-b flex items-start justify-between gap-3" style="border-color: var(--border); background: var(--bg-surface);">
-                <div>
-                    <p class="text-xs font-medium" style="color: var(--ink-muted);">Patient</p>
-                    <p class="font-display font-semibold text-lg leading-tight" style="color: var(--ink);" x-text="drawerTitle || 'Immunizations'"></p>
+    <template x-teleport="body">
+        <div x-show="drawerOpen"
+             x-cloak
+             class="fixed inset-0 z-[100]"
+             aria-modal="true"
+             role="dialog"
+             @keydown.escape.window="closeDrawer()">
+            <div class="absolute inset-0" style="background: rgba(17, 24, 39, 0.55);" @click="closeDrawer()"></div>
+            <div class="absolute inset-y-0 right-0 w-full sm:w-[520px] lg:w-[640px] border-l shadow-xl flex flex-col" style="background: var(--bg-surface-elevated); border-color: var(--border);">
+                <div class="p-4 border-b flex items-start justify-between gap-3" style="border-color: var(--border); background: var(--bg-surface);">
+                    <div>
+                        <p class="text-xs font-medium" style="color: var(--ink-muted);">Patient</p>
+                        <p class="font-display font-semibold text-lg leading-tight" style="color: var(--ink);" x-text="drawerTitle || 'Immunizations'"></p>
+                    </div>
+                    <button type="button" class="inline-flex items-center justify-center px-3 py-2 rounded-xl text-sm font-semibold transition" style="background: rgba(0,0,0,0.06); color: var(--ink);" @click="closeDrawer()">
+                        Close
+                    </button>
                 </div>
-                <button type="button" class="inline-flex items-center justify-center px-3 py-2 rounded-xl text-sm font-semibold transition" style="background: rgba(0,0,0,0.06); color: var(--ink);" @click="closeDrawer()">
-                    Close
-                </button>
-            </div>
-            <div class="flex-1 overflow-hidden">
-                <iframe :src="drawerUrl" class="w-full h-full" style="background: var(--bg-page);" title="Patient immunizations"></iframe>
+                <div class="flex-1 overflow-hidden">
+                    <iframe :src="drawerUrl" class="w-full h-full" style="background: var(--bg-page);" title="Patient immunizations"></iframe>
+                </div>
             </div>
         </div>
-    </div>
+    </template>
 </div>
 
 <script>
@@ -238,6 +245,11 @@
             drawerOpen: false,
             drawerUrl: '',
             drawerTitle: '',
+            init() {
+                this.$watch('drawerOpen', (open) => {
+                    document.body.classList.toggle('overflow-hidden', open);
+                });
+            },
             patientUrl(patientId) {
                 return this.patientRouteTemplate.replace('__PATIENT_ID__', patientId);
             },
