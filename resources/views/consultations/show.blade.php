@@ -26,6 +26,15 @@
             </div>
         </div>
         <div class="mt-2 flex flex-wrap items-center gap-3">
+            @php
+                $statusLabel = ucfirst(str_replace('_', ' ', $consultation->status));
+                $statusStyle = match ($consultation->status) {
+                    'completed' => 'background: var(--teal-soft); color: var(--primary);',
+                    'referred' => 'background: var(--accent-soft); color: var(--accent);',
+                    default => 'background: rgba(0,0,0,0.06); color: var(--ink-muted);',
+                };
+            @endphp
+            <span class="rounded-full px-2.5 py-1 text-xs font-semibold" style="{{ $statusStyle }}">{{ $statusLabel }}</span>
             <a href="{{ route('patients.show', $patient->id) }}" class="text-xs font-medium text-emerald-900 hover:underline lg:text-sm">Back to patient</a>
             <a href="{{ route('consultations.index') }}" class="text-xs font-medium text-emerald-900 hover:underline lg:text-sm">History</a>
             @if (in_array($consultation->status, ['completed', 'referred'], true) && auth()->user()->canPrintHandout())
@@ -167,14 +176,18 @@
             @if(isset($diagnoses) && $diagnoses->count() > 0)
                 <div class="mt-3 space-y-2">
                     @foreach($diagnoses as $d)
-                        <div class="rounded-lg border p-2 text-sm flex items-center justify-between" style="border-color: var(--border);">
+                        <div class="rounded-lg border p-2 text-sm flex items-center justify-between gap-2" style="border-color: var(--border);">
                             <div>
-                                <span class="font-semibold" style="color: var(--ink);">{{ $d->diagnosis_code }}</span>
-                                <span style="color: var(--ink-muted);">- {{ $d->diagnosis_name }}</span>
+                                @if ($d->diagnosis_code)
+                                    <span class="font-semibold" style="color: var(--ink);">{{ $d->diagnosis_code }}</span>
+                                    <span style="color: var(--ink-muted);">- {{ $d->diagnosis_name }}</span>
+                                @else
+                                    <span class="font-semibold" style="color: var(--ink);">{{ $d->diagnosis_name }}</span>
+                                @endif
+                                @if ($d->is_custom)
+                                    <span class="ml-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide" style="background: var(--accent-soft); color: var(--accent);">Custom</span>
+                                @endif
                             </div>
-
-                            <button type="button" class="text-red-600 hover:text-red-800 transition" title="Delete diagnosis">
-                            </button>
                         </div>
                     @endforeach
                 </div>
@@ -193,23 +206,46 @@
                     </div>
                 </div>
                 <div class="relative">
-                    <label class="block text-xs font-medium mb-1" style="color: var(--ink-muted);">Search ICD-10 / Disease name</label>
-                    <input type="text" x-model="query" @input.debounce.300ms="search()" placeholder="e.g. Dengue, Hypertension..." class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-900/30 transition" style="border-color: var(--border); color: var(--ink);" autocomplete="off">
-                    <input type="hidden" name="diagnosis_id" x-model="selectedId">
-                    <div x-show="results.length > 0" class="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border bg-white" style="display:none; border-color: var(--border);">
-                        <ul>
-                            <template x-for="item in results" :key="item.id">
-                                <li @click="select(item)" class="px-3 py-2 cursor-pointer text-sm border-b" style="border-color: var(--border); color: var(--ink);" x-text="item.text"></li>
-                            </template>
-                        </ul>
+                    <div class="flex items-center justify-between gap-2 mb-1">
+                        <label class="block text-xs font-medium" style="color: var(--ink-muted);">Search ICD-10 / Disease name</label>
+                        <button type="button" @click="toggleCustom()" class="text-xs font-medium hover:underline" style="color: var(--primary);" x-text="useCustom ? 'Search master list' : 'Enter custom diagnosis'"></button>
                     </div>
+                    <template x-if="!useCustom">
+                        <div>
+                            <input type="text" x-model="query" @input.debounce.300ms="search()" placeholder="e.g. Dengue, Hypertension..." class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-900/30 transition" style="border-color: var(--border); color: var(--ink);" autocomplete="off">
+                            <input type="hidden" name="diagnosis_id" :value="selectedId">
+                            <div x-show="results.length > 0" class="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border bg-white" style="display:none; border-color: var(--border);">
+                                <ul>
+                                    <template x-for="item in results" :key="item.id">
+                                        <li @click="select(item)" class="px-3 py-2 cursor-pointer text-sm border-b hover:bg-gray-50" style="border-color: var(--border); color: var(--ink);" x-text="item.text"></li>
+                                    </template>
+                                </ul>
+                            </div>
+                            <div x-show="query.length >= 2 && results.length === 0 && !searching" class="mt-2 rounded-lg border px-3 py-2 text-xs" style="display:none; border-color: var(--border); background: var(--accent-soft); color: var(--ink);">
+                                <span>Not in the master list?</span>
+                                <button type="button" @click="enableCustomFromQuery()" class="ml-1 font-semibold hover:underline" style="color: var(--accent);">Use "<span x-text="query"></span>" as custom diagnosis</button>
+                            </div>
+                        </div>
+                    </template>
+                    <template x-if="useCustom">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div class="md:col-span-1">
+                                <label class="block text-xs font-medium mb-1" style="color: var(--ink-muted);">ICD code (optional)</label>
+                                <input type="text" name="custom_diagnosis_code" x-model="customCode" placeholder="e.g. J06.9" class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-900/30 transition" style="border-color: var(--border); color: var(--ink);">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-medium mb-1" style="color: var(--ink-muted);">Diagnosis name</label>
+                                <input type="text" name="custom_diagnosis_name" x-model="customName" placeholder="Enter diagnosis name" class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-900/30 transition" style="border-color: var(--border); color: var(--ink);" required>
+                            </div>
+                        </div>
+                    </template>
                 </div>
                 <div>
                     <label class="block text-xs font-medium mb-1" style="color: var(--ink-muted);">Remarks</label>
                     <textarea name="remarks" rows="2" class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-900/30 transition" style="border-color: var(--border); color: var(--ink);"></textarea>
                 </div>
                 <div class="flex justify-end">
-                    <button type="submit" :disabled="!selectedId" class="rounded-xl bg-emerald-900 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50">Add diagnosis</button>
+                    <button type="submit" :disabled="!canSubmitDiagnosis" class="rounded-xl bg-emerald-900 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50">Add diagnosis</button>
                 </div>
             </form>
         </section>
@@ -236,7 +272,12 @@
                         <tbody>
                             @foreach($prescriptions as $rx)
                                 <tr class="border-b" style="border-color: var(--border); color: var(--ink);">
-                                    <td class="px-3 py-2">{{ $rx->medicine_name }}</td>
+                                    <td class="px-3 py-2">
+                                        {{ $rx->medicine_name }}
+                                        @if ($rx->is_custom)
+                                            <span class="ml-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide" style="background: var(--accent-soft); color: var(--accent);">Custom</span>
+                                        @endif
+                                    </td>
                                     <td class="px-3 py-2">{{ $rx->dosage }}{{ $rx->frequency ? ' · '.$rx->frequency : '' }}</td>
                                     <td class="px-3 py-2">{{ $rx->duration ?? '—' }}</td>
                                     <td class="px-3 py-2">{{ $rx->quantity ?? '—' }}</td>
@@ -252,16 +293,33 @@
             <form action="{{ route('consultations.prescription', $consultation->id) }}" method="POST" x-data="medicineSearch()" class="space-y-4 mt-4 pt-4 border-t" style="border-color: var(--border);">
                 @csrf
                 <div class="relative">
-                    <label class="block text-xs font-medium mb-1" style="color: var(--ink-muted);">Medicine search</label>
-                    <input type="text" x-model="query" @input.debounce.300ms="search()" placeholder="e.g. Paracetamol, Amoxicillin..." class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-900/30 transition" style="border-color: var(--border); color: var(--ink);" autocomplete="off">
-                    <input type="hidden" name="medicine_id" x-model="selectedId">
-                    <div x-show="results.length > 0" class="absolute z-10 w-full mt-1 rounded-lg border max-h-48 overflow-y-auto bg-white" style="display:none; border-color: var(--border);">
-                        <ul>
-                            <template x-for="item in results" :key="item.id">
-                                <li @click="select(item)" class="px-3 py-2 cursor-pointer text-sm border-b" style="border-color: var(--border); color: var(--ink);" x-text="item.text"></li>
-                            </template>
-                        </ul>
+                    <div class="flex items-center justify-between gap-2 mb-1">
+                        <label class="block text-xs font-medium" style="color: var(--ink-muted);">Medicine search</label>
+                        <button type="button" @click="toggleCustom()" class="text-xs font-medium hover:underline" style="color: var(--primary);" x-text="useCustom ? 'Search master list' : 'Enter custom medicine'"></button>
                     </div>
+                    <template x-if="!useCustom">
+                        <div>
+                            <input type="text" x-model="query" @input.debounce.300ms="search()" placeholder="e.g. Paracetamol, Amoxicillin..." class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-900/30 transition" style="border-color: var(--border); color: var(--ink);" autocomplete="off">
+                            <input type="hidden" name="medicine_id" :value="selectedId">
+                            <div x-show="results.length > 0" class="absolute z-10 w-full mt-1 rounded-lg border max-h-48 overflow-y-auto bg-white" style="display:none; border-color: var(--border);">
+                                <ul>
+                                    <template x-for="item in results" :key="item.id">
+                                        <li @click="select(item)" class="px-3 py-2 cursor-pointer text-sm border-b hover:bg-gray-50" style="border-color: var(--border); color: var(--ink);" x-text="item.text"></li>
+                                    </template>
+                                </ul>
+                            </div>
+                            <div x-show="query.length >= 2 && results.length === 0 && !searching" class="mt-2 rounded-lg border px-3 py-2 text-xs" style="display:none; border-color: var(--border); background: var(--accent-soft); color: var(--ink);">
+                                <span>Not in the master list?</span>
+                                <button type="button" @click="enableCustomFromQuery()" class="ml-1 font-semibold hover:underline" style="color: var(--accent);">Use "<span x-text="query"></span>" as custom medicine</button>
+                            </div>
+                        </div>
+                    </template>
+                    <template x-if="useCustom">
+                        <div>
+                            <label class="block text-xs font-medium mb-1" style="color: var(--ink-muted);">Medicine name</label>
+                            <input type="text" name="custom_medicine_name" x-model="customName" placeholder="Enter medicine name and strength" class="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-900/30 transition" style="border-color: var(--border); color: var(--ink);" required>
+                        </div>
+                    </template>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
@@ -292,7 +350,7 @@
                     </div>
                 </div>
                 <div class="flex justify-end">
-                    <button type="submit" :disabled="!selectedId" class="rounded-xl bg-emerald-900 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50">Add prescription</button>
+                    <button type="submit" :disabled="!canSubmitPrescription" class="rounded-xl bg-emerald-900 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50">Add prescription</button>
                 </div>
             </form>
         </section>
@@ -319,14 +377,22 @@
         </section>
     </main>
 
-    <div class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white/95 px-4 py-3 backdrop-blur" style="border-color: var(--border);">
-        <div class="mx-auto flex max-w-5xl items-center justify-between gap-3">
-            <p class="text-xs" style="color: var(--ink-muted);">Final action for this consultation session.</p>
-            <button type="submit" form="finalizeForm" class="rounded-xl bg-emerald-900 px-5 py-2 text-sm font-semibold text-white">
-                Finalize &amp; Save Consultation
-            </button>
+    @if (! in_array($consultation->status, ['completed', 'referred'], true))
+        <div class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white/95 px-4 py-3 backdrop-blur" style="border-color: var(--border);">
+            <div class="mx-auto flex max-w-5xl items-center justify-between gap-3">
+                <p class="text-xs" style="color: var(--ink-muted);">
+                    @if (($diagnoses->count() ?? 0) > 0 && ($prescriptions->count() ?? 0) > 0)
+                        Diagnosis and prescription recorded. Finalize to close this visit, or add more entries above.
+                    @else
+                        Add at least one diagnosis before finalizing. Prescription is optional but recommended when medicines are given.
+                    @endif
+                </p>
+                <button type="submit" form="finalizeForm" class="rounded-xl bg-emerald-900 px-5 py-2 text-sm font-semibold text-white">
+                    Finalize &amp; Save Consultation
+                </button>
+            </div>
         </div>
-    </div>
+    @endif
 </div>
 
 <script>
@@ -335,20 +401,58 @@
             query: '',
             results: [],
             selectedId: null,
+            useCustom: false,
+            customName: '',
+            customCode: '',
+            searching: false,
+            get canSubmitDiagnosis() {
+                if (this.useCustom) {
+                    return this.customName.trim().length >= 2;
+                }
+                return Boolean(this.selectedId);
+            },
             async search() {
-                if (this.query.length < 2) { this.results = []; return; }
+                if (this.useCustom) {
+                    return;
+                }
+                if (this.query.length < 2) {
+                    this.results = [];
+                    return;
+                }
+                this.searching = true;
                 const response = await fetch('/search/diagnoses?query=' + encodeURIComponent(this.query));
                 this.results = await response.json();
+                this.searching = false;
             },
             select(item) {
+                this.useCustom = false;
                 this.query = item.text;
                 this.selectedId = item.id;
+                this.customName = '';
+                this.customCode = '';
                 this.results = [];
             },
             setQuery(term) {
+                this.useCustom = false;
                 this.query = term;
+                this.selectedId = null;
                 this.search();
-            }
+            },
+            toggleCustom() {
+                this.useCustom = ! this.useCustom;
+                this.results = [];
+                this.selectedId = null;
+                if (! this.useCustom) {
+                    this.customName = '';
+                    this.customCode = '';
+                }
+            },
+            enableCustomFromQuery() {
+                this.useCustom = true;
+                this.customName = this.query.trim();
+                this.selectedId = null;
+                this.results = [];
+            },
         };
     }
     function medicineSearch() {
@@ -356,16 +460,49 @@
             query: '',
             results: [],
             selectedId: null,
+            useCustom: false,
+            customName: '',
+            searching: false,
+            get canSubmitPrescription() {
+                if (this.useCustom) {
+                    return this.customName.trim().length >= 2;
+                }
+                return Boolean(this.selectedId);
+            },
             async search() {
-                if (this.query.length < 2) { this.results = []; return; }
+                if (this.useCustom) {
+                    return;
+                }
+                if (this.query.length < 2) {
+                    this.results = [];
+                    return;
+                }
+                this.searching = true;
                 const response = await fetch('/search/medicines?query=' + encodeURIComponent(this.query));
                 this.results = await response.json();
+                this.searching = false;
             },
             select(item) {
+                this.useCustom = false;
                 this.query = item.text;
                 this.selectedId = item.id;
+                this.customName = '';
                 this.results = [];
-            }
+            },
+            toggleCustom() {
+                this.useCustom = ! this.useCustom;
+                this.results = [];
+                this.selectedId = null;
+                if (! this.useCustom) {
+                    this.customName = '';
+                }
+            },
+            enableCustomFromQuery() {
+                this.useCustom = true;
+                this.customName = this.query.trim();
+                this.selectedId = null;
+                this.results = [];
+            },
         };
     }
     function appendSig(targetId, value) {
