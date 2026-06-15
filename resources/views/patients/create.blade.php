@@ -312,12 +312,11 @@
                     @error('is_philhealth_member') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-xs uppercase -500 font-bold mb-1">PhilHealth Number</label>
+                    <label class="block text-xs uppercase -500 font-bold mb-1">PhilHealth Number <span class="text-gray-400 font-normal normal-case">(optional)</span></label>
                     <input type="text" name="philhealth_no" value="{{ old('philhealth_no') }}"
                            placeholder="12-123456789-0"
                            :disabled="isPhilhealthMember !== 'y'"
                            x-bind:class="isPhilhealthMember !== 'y' ? 'opacity-50 bg-gray-50 cursor-not-allowed' : ''"
-                           x-bind:required="isPhilhealthMember === 'y'"
                            class="w-full px-3 lg:px-4 py-2 rounded-xl border @error('philhealth_no') border-red-500 bg-red-50 @else border-gray-300 @enderror focus:ring-sky-500 focus:border-sky-500 text-sm">
                     @error('philhealth_no') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -325,11 +324,10 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4 mb-3">
                 <div>
-                    <label class="block text-xs uppercase -500 font-bold mb-1">Membership Category</label>
+                    <label class="block text-xs uppercase -500 font-bold mb-1">Membership Category <span class="text-gray-400 font-normal normal-case">(optional)</span></label>
                     <select name="membership_category"
                             :disabled="isPhilhealthMember !== 'y'"
                             x-bind:class="isPhilhealthMember !== 'y' ? 'opacity-50 cursor-not-allowed' : ''"
-                            x-bind:required="isPhilhealthMember === 'y'"
                             class="w-full px-3 lg:px-4 py-2 rounded-xl border @error('membership_category') border-red-500 @else border-gray-300 @enderror focus:ring-sky-500 focus:border-sky-500 text-sm">
                         <option value="">Select category</option>
                         @foreach(\App\Models\Patient::PHILHEALTH_MEMBERSHIP_CATEGORIES as $category)
@@ -339,11 +337,10 @@
                     @error('membership_category') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-xs uppercase -500 font-bold mb-1">PhilHealth Status</label>
+                    <label class="block text-xs uppercase -500 font-bold mb-1">PhilHealth Status <span class="text-gray-400 font-normal normal-case">(optional)</span></label>
                     <select name="status_type"
                             :disabled="isPhilhealthMember !== 'y'"
                             x-bind:class="isPhilhealthMember !== 'y' ? 'opacity-50 cursor-not-allowed' : ''"
-                            x-bind:required="isPhilhealthMember === 'y'"
                             class="w-full px-3 lg:px-4 py-2 rounded-xl border @error('status_type') border-red-500 @else border-gray-300 @enderror focus:ring-sky-500 focus:border-sky-500 text-sm">
                         <option value="">Select status</option>
                         @foreach(\App\Models\Patient::PHILHEALTH_STATUS_TYPES as $status)

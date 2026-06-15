@@ -58,7 +58,7 @@
             </div>
 
             <div class="p-4 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
-                 style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--accent);">
+                 style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);">
                 <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: var(--ink-muted);">Consultations today</p>
                 <p class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">{{ $consultationsToday ?? 0 }}</p>
                 <p class="text-xs mt-2" style="color: var(--ink-muted);">Newly logged patient visits</p>
@@ -66,9 +66,9 @@
 
             <div class="p-4 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
                  style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);">
-                <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: var(--ink-muted);">Pending queue</p>
+                <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: var(--ink-muted);">Pending Queue</p>
                 <p class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">{{ $pendingConsultations ?? 0 }}</p>
-                <p class="text-xs mt-2" style="color: var(--ink-muted);">Cases waiting for doctor review</p>
+                <p class="text-xs mt-2" style="color: var(--ink-muted);">Cases Waiting for Doctor Review</p>
             </div>
         </div>
     </div>
@@ -123,8 +123,8 @@
 
     @if ($showResultsReady ?? false)
         @include('dashboard.partials.results-ready', [
-            'panelTitle' => 'Results ready',
-            'panelSubtitle' => 'Completed consultations — print handouts for patients picking up Rx or diagnosis summaries.',
+            'panelTitle' => 'Results Ready',
+            'panelSubtitle' => 'Completed & Finalized Consultations Ready for Print',
             'showFilters' => true,
             'filterAction' => route('dashboard'),
         ])

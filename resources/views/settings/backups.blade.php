@@ -26,7 +26,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="rounded-xl border p-5 lg:p-6" style="background: var(--bg-surface); border-color: var(--border);">
             <h2 class="font-display font-semibold text-lg mb-4" style="color: var(--ink);">Export Database</h2>
-            <p class="text-sm mb-4" style="color: var(--ink-muted);">Current database: <strong style="color: var(--ink);">{{ $driver }}</strong>. Download a full copy now and store it in a safe place for disaster recovery.</p>
+            <p class="text-sm mb-4" style="color: var(--ink-muted);">Current database: <strong style="color: var(--ink);">{{ $databaseName }}</strong> ({{ $driver }}). Download a full copy now and store it in a safe place for disaster recovery.</p>
             <form action="{{ route('settings.backups.export') }}" method="POST" class="inline">
                 @csrf
                 <button type="submit" class="px-4 py-2.5 rounded-xl text-white text-sm font-semibold transition duration-200 hover:shadow-md" style="background: var(--accent);">

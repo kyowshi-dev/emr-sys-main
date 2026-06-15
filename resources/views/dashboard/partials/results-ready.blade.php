@@ -64,8 +64,8 @@
                     @if (auth()->user()->canPrintHandout())
                         <a href="{{ route('consultations.handout', $result->id) }}" target="_blank" rel="noopener"
                            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-white transition hover:opacity-90"
-                           style="background: var(--accent);">
-                            <i class="fa-solid fa-print" aria-hidden="true"></i> Print handout
+                           style="background: var(--primary);">
+                            <i class="fa-solid fa-print" aria-hidden="true"></i> Print Handout
                         </a>
                     @endif
                     @if (auth()->user()->hasPermission('consultations'))

@@ -86,7 +86,7 @@ class ZoneController extends Controller
                 'zones.created_at',
                 'zones.updated_at',
                 DB::raw("CONCAT(health_workers.first_name, ' ', health_workers.last_name) as worker_name"),
-                'health_workers.position as worker_position'
+                'health_workers.role as worker_role'
             )
             ->where('zones.id', $id)
             ->first();

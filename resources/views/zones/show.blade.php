@@ -37,7 +37,7 @@
                     <dd style="color: var(--ink);">
                         @if ($zone->worker_name)
                             <span>{{ $zone->worker_name }}</span><br>
-                            <span class="text-xs" style="color: var(--ink-muted);">{{ $zone->worker_position }}</span>
+                            <span class="text-xs" style="color: var(--ink-muted);">{{ ucfirst($zone->worker_role ?? '') }}</span>
                         @else
                             <span style="color: var(--ink-muted);">Not assigned</span>
                         @endif

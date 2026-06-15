@@ -402,8 +402,23 @@ class ConsultationController extends Controller
             ->join('households', 'patients.household_id', '=', 'households.id')
             ->leftJoin('zones', 'households.zone_id', '=', 'zones.id')
             ->where('patients.id', $consultation->patient_id)
-            ->select('patients.*', 'zones.zone_number')
+            ->select(
+                'patients.*',
+                'households.contact_number as household_contact_number',
+                'households.id as household_record_id',
+                'zones.zone_number'
+            )
             ->first();
+
+        $vitals = DB::table('vitals')
+            ->where('consultation_id', $id)
+            ->orderByDesc('id')
+            ->first();
+
+        $labRequests = DB::table('lab_requests')
+            ->where('consultation_id', $id)
+            ->orderBy('id')
+            ->get();
 
         $diagnoses = $this->diagnosisRecordsQuery()
             ->where('diagnosis_records.consultation_id', $id)
@@ -430,13 +445,20 @@ class ConsultationController extends Controller
         $age = $patient ? Carbon::parse($patient->date_of_birth)->age : null;
         $zoneLabel = $patient?->zone_number ? 'Zone '.$patient->zone_number : null;
 
+        $consultationAt = Carbon::parse($consultation->updated_at ?? $consultation->created_at);
+        $attendingProvider = trim(($consultation->worker_first_name ?? '').' '.($consultation->worker_last_name ?? '')) ?: null;
+
         return view('consultations.handout', [
             'consultation' => $consultation,
             'patient' => $patient,
             'diagnoses' => $diagnoses,
             'prescriptions' => $prescriptions,
+            'vitals' => $vitals,
+            'labRequests' => $labRequests,
             'age' => $age,
             'zoneLabel' => $zoneLabel,
+            'consultationAt' => $consultationAt,
+            'attendingProvider' => $attendingProvider,
         ]);
     }
 

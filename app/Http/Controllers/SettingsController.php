@@ -50,8 +50,12 @@ class SettingsController extends Controller
 
     public function backups()
     {
+        $driver = config('database.default');
+        $connection = config('database.connections.'.$driver);
+
         return view('settings.backups', [
-            'driver' => config('database.default'),
+            'driver' => $driver,
+            'databaseName' => $connection['database'] ?? $driver,
         ]);
     }
 
@@ -113,42 +117,15 @@ class SettingsController extends Controller
                     ->with('error', 'Backup completed but no data was exported. Check database connection.');
             }
 
-            $disk = Storage::disk(config('filesystems.default'));
-
-            if (! $disk->put($filename, $sqlContent)) {
-                return redirect()
-                    ->route('settings.backups')
-                    ->with('error', 'Backup exported but failed to write export file. Check storage permissions.');
-            }
-
-            // Use the disk's actual path; hardcoding `storage_path('app/...')` breaks when the default disk is not `local`.
-            try {
-                $path = $disk->path($filename);
-            } catch (\Throwable) {
-                // Fallback for disks that don't support local paths (e.g. remote disks).
-                return response()->streamDownload(
-                    static function () use ($sqlContent): void {
-                        echo $sqlContent;
-                    },
-                    $filename,
-                    [
-                        'Content-Type' => 'application/sql',
-                    ],
-                );
-            }
-
-            if (! is_file($path)) {
-                return redirect()
-                    ->route('settings.backups')
-                    ->with('error', 'Backup exported but export file not found for download.');
-            }
-
-            $response = response()->download($path, $filename, [
-                'Content-Type' => 'application/sql',
-            ]);
-            $response->deleteFileAfterSend(true);
-
-            return $response;
+            return response()->streamDownload(
+                static function () use ($sqlContent): void {
+                    echo $sqlContent;
+                },
+                $filename,
+                [
+                    'Content-Type' => 'application/sql',
+                ],
+            );
         }
 
         return redirect()

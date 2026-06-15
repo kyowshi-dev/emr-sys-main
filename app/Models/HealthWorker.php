@@ -12,7 +12,7 @@ class HealthWorker extends Model
         'user_id',
         'first_name',
         'last_name',
-        'position',
+        'role',
         'contact_number',
     ];
 

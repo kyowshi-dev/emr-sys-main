@@ -57,10 +57,10 @@ class StorePatientWithHouseholdRequest extends FormRequest
             'mother_name' => ['required', 'string', 'max:255'],
             'spouse_name' => ['required', 'string', 'max:255'],
             'family_relationship' => ['required', 'in:'.implode(',', Patient::FAMILY_RELATIONSHIP_OPTIONS)],
-            'status_type' => ['nullable', 'in:'.implode(',', Patient::PHILHEALTH_STATUS_TYPES), 'required_if:is_philhealth_member,y'],
             'is_philhealth_member' => ['required', 'in:y,n'],
-            'philhealth_no' => ['nullable', 'required_if:is_philhealth_member,y', 'regex:/^[0-9]{2}-[0-9]{9}-[0-9]{1}$/'],
-            'membership_category' => ['nullable', 'in:'.implode(',', Patient::PHILHEALTH_MEMBERSHIP_CATEGORIES), 'required_if:is_philhealth_member,y'],
+            'philhealth_no' => ['nullable', 'string', 'max:20'],
+            'membership_category' => ['nullable', 'in:'.implode(',', Patient::PHILHEALTH_MEMBERSHIP_CATEGORIES)],
+            'status_type' => ['nullable', 'in:'.implode(',', Patient::PHILHEALTH_STATUS_TYPES)],
             'is_pcb_member' => ['required', 'in:y,n'],
 
             'suffix' => 'nullable|string|max:50',
@@ -82,8 +82,6 @@ class StorePatientWithHouseholdRequest extends FormRequest
             'household_id.required' => 'You must select an existing household or create a new one.',
             'new_household_zone_id.required_if' => 'Zone is required when creating a new household.',
             'new_household_family_name_head.required_if' => 'Family name (head) is required when creating a new household.',
-            'membership_category.required_if' => 'Membership category is required when the patient is a PhilHealth member.',
-            'status_type.required_if' => 'PhilHealth status is required when the patient is a PhilHealth member.',
         ];
     }
 
@@ -101,6 +99,14 @@ class StorePatientWithHouseholdRequest extends FormRequest
             'is_philhealth_member' => in_array($this->input('is_philhealth_member'), ['y', 'yes', '1'], true) ? 'y' : 'n',
             'is_pcb_member' => in_array($this->input('is_pcb_member'), ['y', 'yes', '1'], true) ? 'y' : 'n',
         ]);
+
+        if ($this->input('is_philhealth_member') !== 'y') {
+            $this->merge([
+                'philhealth_no' => null,
+                'membership_category' => null,
+                'status_type' => null,
+            ]);
+        }
 
         // Only set new household fields if creating new household
         if ($createNew === 1) {
