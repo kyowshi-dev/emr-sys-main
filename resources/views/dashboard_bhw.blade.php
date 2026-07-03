@@ -15,8 +15,8 @@
 
     <div class="rounded-xl" x-data="patientSearch()">
         <div class="relative">
-            <span class="absolute inset-y-0 flex items-center pointer-events-none" style="color: var(--ink-subtle); left: calc(0.75rem);">
-                <i class="fa fa-search" aria-hidden="true"></i>
+            <span class="absolute inset-y-0 flex items-center pointer-events-none" style="color: var(--ink-subtle); left: calc(0.75rem);" :style="loading && 'color: var(--primary)'">
+                <i class="fa-solid fa-magnifying-glass"></i>
             </span>
             <input type="text" x-model="query" @input.debounce.300ms="search()"
                    placeholder="Search patient"
@@ -24,12 +24,12 @@
                    style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);"
                    autocomplete="off">
         </div>
-        <div x-show="results.length > 0" class="mt-3 rounded-lg border overflow-hidden" style="display: none; border-color: var(--border); background: var(--bg-surface-elevated); box-shadow: var(--shadow-md);">
+        <div x-show="results.length > 0" x-transition class="mt-3 rounded-lg border overflow-hidden" style="display: none; border-color: var(--border); background: var(--bg-surface-elevated); box-shadow: var(--shadow-md);">
             <ul>
                 <template x-for="patient in results" :key="patient.id">
                     <li class="border-b last:border-0 transition-colors hover:bg-black/[0.03]">
                         <a :href="'/patients/' + patient.id + '/consultations/create'" class="block px-4 py-2.5">
-                            <div class="font-medium text-sm" style="color: var(--ink);" x-text="patient.text"></div>
+                            <div class="font-medium text-sm" style="color: var(--ink);" x-text="patient.text.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')"></div>
                             <div class="text-xs mt-0.5" style="color: var(--ink-muted);">
                                 <span x-text="patient.subtext"></span>
                                 <span class="font-semibold" style="color: var(--primary);"> - Create consultation</span>
@@ -39,7 +39,7 @@
                 </template>
             </ul>
         </div>
-        <div x-show="query.length > 1 && results.length === 0 && !loading" class="mt-3 rounded-lg border p-6 text-center" style="display: none; border-color: var(--border); background: var(--bg-surface);">
+        <div x-show="query.length > 1 && results.length === 0 && !loading" x-transition class="mt-3 rounded-lg border p-6 text-center" style="display: none; border-color: var(--border); background: var(--bg-surface);">
             <div class="flex justify-center mb-2"><i class="fa-solid fa-user-plus text-3xl" style="color: var(--ink-subtle);"></i></div>
             <p class="text-sm font-medium" style="color: var(--ink);">No patient found</p>
             <p class="text-xs mt-1 mb-3" style="color: var(--ink-muted);">Try searching with a different name or ID</p>

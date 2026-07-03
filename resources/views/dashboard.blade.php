@@ -190,8 +190,8 @@
 
             @if ($showResultsReady ?? false)
                 @include('dashboard.partials.results-ready', [
-                    'panelTitle' => 'Completed consultations — handouts',
-                    'panelSubtitle' => 'Barangay-wide completed visits. Print patient handouts for pickup or records.',
+                    'panelTitle' => 'Ready-to-Print Results',
+                    'panelSubtitle' => 'Finalized consultations by RHU doctors that are ready for printing and distribution to patients',
                     'showFilters' => true,
                     'filterAction' => route('dashboard'),
                 ])

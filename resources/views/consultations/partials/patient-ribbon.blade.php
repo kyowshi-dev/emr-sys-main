@@ -8,7 +8,7 @@
         <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
             <p class="text-xs font-semibold uppercase tracking-wide text-slate-900">Patient Context</p>
             <p class="font-display text-lg font-semibold text-slate-900 mt-2">
-                {{ $patient->last_name }}, {{ $patient->first_name }}
+                {{ $patient->last_name }}, {{ ucwords($patient->first_name) }}
             </p>
             <p class="text-xs text-slate-600 mt-1">
                 {{ \Carbon\Carbon::parse($patient->date_of_birth)->age }} · {{ $patient->sex }} ·
@@ -19,7 +19,7 @@
         <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
             <p class="text-xs font-semibold uppercase tracking-wide text-slate-900">Chief Complaint</p>
             <p class="text-sm italic text-slate-600 mt-2 leading-6">
-                {{ $consultation->complaint_text ?? 'No complaint recorded' }}
+                {{ ucwords($consultation->complaint_text ?? 'No complaint recorded') }}
             </p>
         </div>
 

@@ -8,7 +8,7 @@
                 <div class="w-16 h-16 lg:w-20 lg:h-20 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center text-2xl lg:text-3xl font-bold mx-auto">
                     {{ substr($patient->first_name, 0, 1) }}{{ substr($patient->last_name, 0, 1) }}
                 </div>
-                <h2 class="text-lg lg:text-xl font-bold mt-2">{{ $patient->last_name }}, {{ $patient->first_name }}</h2>
+                <h2 class="text-lg lg:text-xl font-bold mt-2">{{ ucwords($patient->last_name) }}, {{ ucwords($patient->first_name) }}</h2>
                 <p class="text-gray-500 text-xs lg:text-sm">ID: PT{{ str_pad($patient->id, 3, '0', STR_PAD_LEFT) }}</p>
             </div>
 
@@ -27,21 +27,21 @@
                     <span class="text-gray-500">Blood Type:</span>
                     <span class="font-medium">{{ $patient->blood_type ?? 'N/A' }}</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between items-start">
                     <span class="text-gray-500">Mother's Name:</span>
-                    <span class="font-medium">{{ $patient->mother_name }}</span>
+                    <span class="font-medium text-right">{{ ucwords($patient->mother_name) }}</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between items-start">
                     <span class="text-gray-500">Spouse's Name:</span>
-                    <span class="font-medium">{{ $patient->spouse_name }}</span>
+                    <span class="font-medium text-right">{{ ucwords ($patient->spouse_name) }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-500">Relationship:</span>
                     <span class="font-medium">{{ $patient->family_relationship }}</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between items-start">
                     <span class="text-gray-500">Residential Address:</span>
-                    <span class="font-medium">{{ $patient->residential_address }}</span>
+                    <span class="font-medium text-right">{{ $patient->residential_address }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-500">Zone:</span>
@@ -98,7 +98,7 @@
                 <h4 class="text-xs font-bold text-gray-400 uppercase mb-2">Immunization</h4>
                 <p class="text-xs lg:text-sm text-gray-600 mb-2">{{ $immunizationCount }} dose(s) recorded.</p>
                 <a href="{{ route('immunizations.patient', $patient->id) }}" class="inline-flex items-center justify-center w-full px-3 py-2 rounded-lg text-xs lg:text-sm font-medium bg-teal-50 text-teal-700 hover:bg-teal-100 transition">
-                    View / add immunization
+                    View / Add Immunization
                 </a>
             </div>
         </div>

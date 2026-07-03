@@ -345,7 +345,7 @@
                                 </span>
                                 <span class="hidden sm:block text-left leading-tight">
                                     <span class="block text-sm font-semibold text-white">
-                                        {{ $username }}
+                                    {{ ucwords($username) }}
                                     </span>
                                     <span class="inline-flex mt-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-white/20 text-white">
                                         {{ $roleName }}

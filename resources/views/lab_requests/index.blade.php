@@ -33,7 +33,7 @@
                         <tr class="transition-colors hover:bg-black/[0.02]">
                             <td class="px-4 py-2.5 font-medium whitespace-nowrap" style="color: var(--ink);">LR{{ str_pad($labRequest->id, 3, '0', STR_PAD_LEFT) }}</td>
                             <td class="px-4 py-2.5" style="color: var(--ink);">
-                                <div class="font-medium">{{ $labRequest->last_name }}, {{ $labRequest->first_name }}</div>
+                                <div class="font-medium">{{ $labRequest->last_name }}, {{ ucwords($labRequest->first_name) }}</div>
                                 <div class="text-xs" style="color: var(--ink-muted);">PT{{ str_pad($labRequest->patient_id, 3, '0', STR_PAD_LEFT) }}</div>
                             </td>
                             <td class="px-4 py-2.5" style="color: var(--ink);">

@@ -201,7 +201,7 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex flex-wrap items-center gap-2 mb-1 lg:mb-2">
                                 <span class="font-semibold text-sm lg:text-base" :class="{ 'blur-sensitive': blurSensitive }" style="color: var(--ink);">
-                                    {{ $consultation->patient_last_name }}, {{ $consultation->patient_first_name }}
+                                    {{ $consultation->patient_last_name }}, {{ ucwords($consultation->patient_first_name) }}
                                     <span class="font-medium" style="color: var(--primary);">(PT{{ str_pad($consultation->patient_id, 3, '0', STR_PAD_LEFT) }})</span>
                                 </span>
                                 @if ($isCritical)

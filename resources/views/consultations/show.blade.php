@@ -208,7 +208,7 @@
                 <div class="relative">
                     <div class="flex items-center justify-between gap-2 mb-1">
                         <label class="block text-xs font-medium" style="color: var(--ink-muted);">Search ICD-10 / Disease name</label>
-                        <button type="button" @click="toggleCustom()" class="text-xs font-medium hover:underline" style="color: var(--primary);" x-text="useCustom ? 'Search master list' : 'Enter custom diagnosis'"></button>
+                        <button type="button" @click="toggleCustom()" class="text-xs font-medium hover:underline" style="color: var(--primary);" x-text="useCustom ? 'Search master list' : 'Diagnosis Not Found?'"></button>
                     </div>
                     <template x-if="!useCustom">
                         <div>
