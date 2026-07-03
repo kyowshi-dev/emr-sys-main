@@ -16,11 +16,8 @@
     {{-- DOH branding --}}
     <div class="col-span-7 flex gap-1.5 p-1 border-r border-black">
         <div class="w-10 h-10 shrink-0 border border-black rounded-full flex items-center justify-center overflow-hidden bg-white">
-            <svg viewBox="0 0 40 40" class="w-9 h-9" aria-hidden="true">
-                <circle cx="20" cy="20" r="18" fill="none" stroke="#1a5c2e" stroke-width="2"/>
-                <text x="20" y="17" text-anchor="middle" font-size="5" font-weight="bold" fill="#1a5c2e">DOH</text>
-                <text x="20" y="24" text-anchor="middle" font-size="3.5" fill="#333">PH</text>
-            </svg>
+            {{-- Place the webp file in: /public/img --}}
+            <img src="{{ asset('img/Department_of_Health_(DOH)_PHL.svg.webp') }}" alt="Department of Health Logo" class="w-9 h-9">
         </div>
         <div class="leading-tight">
             <p class="text-[8px]">Republic of the Philippines</p>
