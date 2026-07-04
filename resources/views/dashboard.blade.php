@@ -17,7 +17,7 @@
     <div class="animate-in opacity-0 delay-1 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
             <h1 class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">Dashboard</h1>
-            <p class="text-sm mt-1" style="color: var(--ink-muted);">Overview of health center activity</p>
+            <p class="text-sm mt-1" style="color: var(--ink-muted);">Welcome, Admin!</p>
         </div>
 
         <div class="inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs sm:text-sm"

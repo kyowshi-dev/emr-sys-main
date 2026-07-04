@@ -7,60 +7,60 @@
     $formTitle = $formTitle ?? 'FORM';
     $serialDigits = $serialDigits ?? 4;
     $householdId = $patient->household_record_id ?? $patient->household_id ?? '';
-    $serial = str_pad((string) $householdId, $serialDigits, '0', STR_PAD_LEFT);
+    $serial = str_pad('0', $serialDigits, '0', STR_PAD_LEFT);
     $serialChars = str_split(substr($serial, -$serialDigits));
-    $facilityCode = config('app.facility_code', 'BHCIS001');
+    $facilityCode = config('app.facility_code', 'DOH000000000038890');
 @endphp
 
-<div class="grid grid-cols-12 border border-black border-b-0">
+<div class="grid grid-cols-12 border border-black border-b-0 iclinic-form-header">
     {{-- DOH branding --}}
-    <div class="col-span-7 flex gap-1.5 p-1 border-r border-black">
-        <div class="w-10 h-10 shrink-0 border border-black rounded-full flex items-center justify-center overflow-hidden bg-white">
-            {{-- Place the webp file in: /public/img --}}
+    <div class="col-span-7 flex gap-2 p-2 border-r border-black min-h-[64px]">
+        <div class="w-11 h-11 shrink-0 border border-black rounded-full flex items-center justify-center overflow-hidden bg-white iclinic-logo">
             <img src="{{ asset('img/Department_of_Health_(DOH)_PHL.svg.webp') }}" alt="Department of Health Logo" class="w-9 h-9">
         </div>
         <div class="leading-tight">
-            <p class="text-[8px]">Republic of the Philippines</p>
-            <p class="text-[11px] font-bold text-[#1a5c2e] leading-none">Department of Health</p>
-            <p class="text-[9px] italic">Kagawaran ng Kalusugan</p>
+            <p class="text-[8px] m-0">Republic of the Philippines</p>
+            <p class="text-[11px] font-bold text-[#1a5c2e] leading-none m-0">Department of Health</p>
+            <p class="text-[9px] italic leading-none m-0">Kagawaran ng Kalusugan</p>
         </div>
     </div>
 
     {{-- Family Serial Number + Facility Code --}}
-    <div class="col-span-5 grid grid-rows-2">
+    <div class="col-span-5 grid grid-rows-[auto_auto]">
         <div class="grid grid-cols-12 border-b border-black">
-            <div class="col-span-5 bg-gray-300 border-r border-black p-0.5 text-[8px] font-bold leading-tight flex items-center">
+            <div class="col-span-5 bg-gray-300 border-r border-black p-1 text-[8px] font-bold leading-tight flex items-center">
                 Family Serial Number
             </div>
-            <div class="col-span-7 flex">
+            <div class="col-span-7 grid grid-cols-4">
                 @foreach ($serialChars as $digit)
-                    <span class="flex-1 border-r border-black last:border-r-0 text-center text-[10px] font-semibold py-0.5">{{ $digit }}</span>
+                    <div class="border-r border-black last:border-r-0 text-center text-[10px] font-semibold serial-box">{{ $digit }}</div>
                 @endforeach
             </div>
         </div>
+
         <div class="grid grid-cols-12">
-            <div class="col-span-5 bg-gray-300 border-r border-black p-0.5 text-[8px] font-bold leading-tight flex items-center">
+            <div class="col-span-5 bg-gray-300 border-r border-black p-1 text-[8px] font-bold leading-tight flex items-center">
                 Facility Code
             </div>
-            <div class="col-span-7 p-0.5 text-[10px] font-semibold tracking-wider">
+            <div class="col-span-7 grid grid-cols-12">
                 @if ($serialDigits > 4)
                     @foreach (str_split(str_pad($facilityCode, 10, ' ', STR_PAD_RIGHT)) as $char)
-                        <span class="inline-block w-[9%] text-center border-r border-black last:border-r-0">{{ trim($char) }}</span>
+                        <div class="border-r border-black last:border-r-0 text-center text-[10px] font-semibold facility-box">{{ trim($char) }}</div>
                     @endforeach
                 @else
-                    {{ $facilityCode }}
+                    <div class="col-span-12 text-[10px] font-semibold facility-box">{{ $facilityCode }}</div>
                 @endif
             </div>
         </div>
     </div>
 </div>
 
-<div class="border border-black border-b-0 text-center py-1">
-    <p class="text-[10px] tracking-wide">Integrated Clinic Information System (iCLINICSYS)</p>
-    <h1 class="text-sm font-bold tracking-wide uppercase">{{ $formTitle }}</h1>
+<div class="border border-black border-b-0 text-center py-1 form-header">
+    <p class="text-[10px] tracking-wide title-caption">Integrated Clinic Information System (iCLINICSYS)</p>
+    <h1 class="text-[12px] font-bold tracking-wide uppercase m-0">{{ $formTitle }}</h1>
 </div>
 
-<div class="border border-black border-b-0 px-1 py-0.5 text-[8px] italic leading-tight">
+<div class="border border-black border-b-0 px-1 py-1 text-[8px] italic leading-tight instructions">
     @if (($formTitle ?? '') === 'PATIENT ENROLMENT RECORD')
         <strong>Instructions:</strong> For new patient only. Please print legibly and mark appropriate boxes with "X".
         <span class="not-italic">/</span>

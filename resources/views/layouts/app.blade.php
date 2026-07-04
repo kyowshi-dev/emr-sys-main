@@ -166,7 +166,7 @@
             <div class="flex items-center justify-between p-4 lg:p-5 border-b border-border">
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
                     <div class="logo-mark">
-                        <img src="{{ asset('img/sta-ana-logo.png') }}" alt="Santa Ana logo">
+                        <img src="{{ asset('img/logo.svg') }}" alt="Santa Ana logo">
                     </div>
                     <span class="font-display font-semibold text-lg text-ink">BHCIS</span>
                     <span class="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded bg-teal-soft text-primary">Sta. Ana</span>

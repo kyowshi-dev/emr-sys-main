@@ -31,6 +31,90 @@
 
         .iclinic-form {
             font-family: Arial, 'Source Sans 3', sans-serif;
+            font-size: 9px;
+            line-height: 1.1;
+            width: 100%;
+            max-width: 6.5in;
+        }
+
+        .iclinic-form p {
+            margin: 0;
+        }
+
+        .iclinic-form .field-label {
+            font-size: 9px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 0.12rem;
+        }
+
+        .iclinic-form .field-help {
+            font-size: 8px;
+            font-weight: 400;
+            line-height: 1.1;
+        }
+
+        .iclinic-form .field-value {
+            min-height: 14px;
+            font-size: 10px;
+            line-height: 1.15;
+        }
+
+        .iclinic-form .box-cell {
+            padding: 0.35rem;
+        }
+
+        .iclinic-form .box-cell-compact {
+            padding: 0.25rem 0.35rem;
+        }
+
+        .iclinic-form .checkbox-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 0.2rem;
+        }
+
+        .iclinic-form .checkbox-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 0.2rem;
+        }
+
+        .iclinic-form .form-header .title-caption {
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.15rem;
+        }
+
+        .iclinic-form .form-header h1 {
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            margin: 0;
+        }
+
+        .iclinic-form .instructions {
+            font-size: 8px;
+            letter-spacing: 0.02em;
+            padding: 0.15rem 0.35rem;
+        }
+
+        .iclinic-form .iclinic-logo {
+            width: 42px;
+            height: 42px;
+        }
+
+        .iclinic-form .serial-box {
+            min-height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .iclinic-form .facility-box {
+            min-height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         [x-cloak] {
@@ -38,16 +122,17 @@
         }
 
         .iclinic-sheet {
-            width: 8.5in;
-            max-width: 100%;
+            width: 6.5in;
+            min-height: 11in;
+            max-width: 6.5in;
             margin-left: auto;
             margin-right: auto;
         }
 
         @media print {
             @page {
-                size: letter portrait;
-                margin: 0.35in;
+                size: 8.5in 13in;
+                margin: 1in;
             }
 
             body {
@@ -60,8 +145,8 @@
             }
 
             .iclinic-sheet {
-                width: 100%;
-                max-width: none;
+                width: 6.5in;
+                max-width: 6.5in;
                 box-shadow: none !important;
                 page-break-after: always;
             }

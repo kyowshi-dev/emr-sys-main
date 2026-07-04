@@ -36,71 +36,68 @@
     </div>
 
     <div class="border border-black text-[9px] leading-tight">
-        {{-- Name block --}}
         <div class="grid grid-cols-12 border-b border-black">
-            <div class="col-span-8 border-r border-black p-0.5">
-                <p class="font-bold">Last Name <span class="font-normal">(Apelyido)</span></p>
-                <p class="min-h-[14px] text-[10px] font-semibold">{{ $patient->last_name ?? '' }}</p>
+            <div class="col-span-8 border-r border-black box-cell">
+                <p class="field-label">Last Name <span class="field-help">(Apelyido)</span></p>
+                <p class="field-value font-semibold">{{ ucfirst($patient->last_name ?? '') }}</p>
             </div>
-            <div class="col-span-4 p-0.5">
-                <p class="font-bold">Suffix <span class="font-normal">(e.g. Jr., Sr., II, III)</span></p>
-                <p class="min-h-[14px] text-[10px]">{{ $patient->suffix ?? '' }}</p>
+            <div class="col-span-4 box-cell">
+                <p class="field-label">Suffix <span class="field-help">(e.g. Jr., Sr., II, III)</span></p>
+                <p class="field-value">{{ ucfirst($patient->suffix ?? '') }}</p>
             </div>
         </div>
 
         <div class="grid grid-cols-12 border-b border-black">
-            <div class="col-span-6 border-r border-black p-0.5">
-                <p class="font-bold">First Name <span class="font-normal">(Pangalan)</span></p>
-                <p class="min-h-[14px] text-[10px] font-semibold">{{ $patient->first_name ?? '' }}</p>
+            <div class="col-span-6 border-r border-black box-cell">
+                <p class="field-label">First Name <span class="field-help">(Pangalan)</span></p>
+                <p class="field-value font-semibold">{{ ucwords($patient->first_name ?? '') }}</p>
             </div>
-            <div class="col-span-6 p-0.5">
-                <p class="font-bold">Maiden Name <span class="font-normal">(for married women)</span></p>
-                <p class="min-h-[14px] text-[10px]">&nbsp;</p>
+            <div class="col-span-6 box-cell">
+                <p class="field-label">Maiden Name <span class="field-help">(for married women)</span></p>
+                <p class="field-value">&nbsp;</p>
             </div>
         </div>
 
         <div class="grid grid-cols-12 border-b border-black">
-            <div class="col-span-6 border-r border-black p-0.5">
-                <p class="font-bold">Middle Name <span class="font-normal">(Gitnang Pangalan)</span></p>
-                <p class="min-h-[14px] text-[10px]">{{ $patient->middle_name ?? '' }}</p>
+            <div class="col-span-6 border-r border-black box-cell">
+                <p class="field-label">Middle Name <span class="field-help">(Gitnang Pangalan)</span></p>
+                <p class="field-value">{{ $patient->middle_name ?? '' }}</p>
             </div>
-            <div class="col-span-6 p-0.5">
-                <p class="font-bold">Mother's Name <span class="font-normal">(Pangalan ng Ina)</span></p>
-                <p class="min-h-[14px] text-[10px]">{{ $patient->mother_name ?? '' }}</p>
+            <div class="col-span-6 box-cell">
+                <p class="field-label">Mother's Name <span class="field-help">(Pangalan ng Ina)</span></p>
+                <p class="field-value">{{ ucwords($patient->mother_name ?? '') }}</p>
             </div>
         </div>
 
-        {{-- Demographics + right column --}}
         <div class="grid grid-cols-12">
-            {{-- Left column --}}
             <div class="col-span-8 border-r border-black">
                 <div class="grid grid-cols-12 border-b border-black">
-                    <div class="col-span-5 border-r border-black p-0.5">
-                        <p class="font-bold mb-0.5">Sex <span class="font-normal">(Kasarian)</span></p>
-                        <div class="flex flex-wrap gap-x-2">
+                    <div class="col-span-5 border-r border-black box-cell">
+                        <p class="field-label mb-0.5">Sex <span class="field-help">(Kasarian)</span></p>
+                        <div class="flex flex-wrap gap-x-1">
                             @include('consultations.handout.partials._mark', ['checked' => $isFemale, 'label' => 'Female (Babae)'])
                             @include('consultations.handout.partials._mark', ['checked' => $isMale, 'label' => 'Male (Lalaki)'])
                         </div>
                     </div>
-                    <div class="col-span-7 p-0.5">
-                        <p class="font-bold">Birth Date <span class="font-normal">(mm/dd/yyyy)</span></p>
-                        <p class="min-h-[14px] text-[10px]">{{ $dobFormatted }}</p>
+                    <div class="col-span-7 box-cell">
+                        <p class="field-label">Birth Date <span class="field-help">(mm/dd/yyyy)</span></p>
+                        <p class="field-value">{{ $dobFormatted }}</p>
                     </div>
                 </div>
 
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold">Birthplace <span class="font-normal">(Lugar ng Kapanganakan)</span></p>
-                    <p class="min-h-[14px] text-[10px]">{{ $patient->birth_place ?? '' }}</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label">Birthplace <span class="field-help">(Lugar ng Kapanganakan)</span></p>
+                    <p class="field-value">{{ ucwords($patient->birth_place ?? '') }}</p>
                 </div>
 
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold">Blood Type</p>
-                    <p class="min-h-[14px] text-[10px]">{{ $patient->blood_type ?? '' }}</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label">Blood Type</p>
+                    <p class="field-value">{{ $patient->blood_type ?? '' }}</p>
                 </div>
 
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold mb-0.5">Civil Status</p>
-                    <div class="grid grid-cols-2 gap-x-1">
+                <div class="border-b border-black box-cell">
+                    <p class="field-label mb-0.5">Civil Status</p>
+                    <div class="checkbox-row">
                         @include('consultations.handout.partials._mark', ['checked' => $civilStatus === 'Single', 'label' => 'Single'])
                         @include('consultations.handout.partials._mark', ['checked' => $civilStatus === 'Married', 'label' => 'Married'])
                         @include('consultations.handout.partials._mark', ['checked' => false, 'label' => 'Annulled'])
@@ -110,13 +107,13 @@
                     </div>
                 </div>
 
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold">Spouse's Name <span class="font-normal">(Asawa)</span></p>
-                    <p class="min-h-[14px] text-[10px]">{{ $patient->spouse_name ?? '' }}</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label">Spouse's Name <span class="field-help">(Asawa)</span></p>
+                    <p class="field-value">{{ $patient->spouse_name ?? '' }}</p>
                 </div>
 
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold mb-0.5">Educational Attainment</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label mb-0.5">Educational Attainment</p>
                     <div class="grid grid-cols-2 gap-x-1">
                         @include('consultations.handout.partials._mark', ['checked' => in_array($education, ['None', 'No Formal Education'], true), 'label' => 'No Formal Education'])
                         @include('consultations.handout.partials._mark', ['checked' => $education === 'High School', 'label' => 'High School'])
@@ -127,22 +124,22 @@
                     </div>
                 </div>
 
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold mb-0.5">Employment Status</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label mb-0.5">Employment Status</p>
                     <div class="grid grid-cols-2 gap-x-1">
                         @include('consultations.handout.partials._mark', ['checked' => str_contains($employment, 'student'), 'label' => 'Student'])
                         @include('consultations.handout.partials._mark', ['checked' => str_contains($employment, 'employ'), 'label' => 'Employed'])
                         @include('consultations.handout.partials._mark', [
-                        'checked' => in_array($employment, ['none', 'unemployed', 'none/unemployed', '']) || str_contains($employment, 'unemploy'), 
-                        'label' => 'None/Unemployed'
+                            'checked' => in_array($employment, ['none', 'unemployed', 'none/unemployed', '']) || str_contains($employment, 'unemploy'),
+                            'label' => 'None/Unemployed'
                         ])
                         @include('consultations.handout.partials._mark', ['checked' => str_contains($employment, 'unknown'), 'label' => 'Unknown'])
                         @include('consultations.handout.partials._mark', ['checked' => str_contains($employment, 'retir'), 'label' => 'Retired'])
                     </div>
                 </div>
 
-                <div class="p-0.5">
-                    <p class="font-bold mb-0.5">Family Member <span class="font-normal">(Kasapi ng Pamilya)</span></p>
+                <div class="box-cell">
+                    <p class="field-label mb-0.5">Family Member <span class="field-help">(Kasapi ng Pamilya)</span></p>
                     <div class="grid grid-cols-2 gap-x-1">
                         @include('consultations.handout.partials._mark', ['checked' => $relationship === 'Father', 'label' => 'Father'])
                         @include('consultations.handout.partials._mark', ['checked' => $relationship === 'Son', 'label' => 'Son'])
@@ -153,66 +150,65 @@
                 </div>
             </div>
 
-            {{-- Right column --}}
             <div class="col-span-4">
-                <div class="border-b border-black p-0.5 min-h-[72px]">
-                    <p class="font-bold">Residential Address <span class="font-normal">(Tirahan)</span></p>
-                    <p class="text-[10px] whitespace-pre-wrap">{{ $patient->residential_address ?? '' }}</p>
+                <div class="border-b border-black box-cell min-h-[72px]">
+                    <p class="field-label">Residential Address <span class="field-help">(Tirahan)</span></p>
+                    <p class="field-value text-[10px] whitespace-pre-wrap">{{ $patient->residential_address ?? '' }}</p>
                 </div>
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold">Contact Number</p>
-                    <p class="min-h-[14px] text-[10px]">{{ $contactNumber }}</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label">Contact Number</p>
+                    <p class="field-value">{{ $contactNumber }}</p>
                 </div>
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold mb-0.5">DSWD NHTS?</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label mb-0.5">DSWD NHTS?</p>
                     <div class="flex gap-2">
                         @include('consultations.handout.partials._mark', ['checked' => $hasNhts, 'label' => 'Yes'])
                         @include('consultations.handout.partials._mark', ['checked' => ! $hasNhts, 'label' => 'No'])
                     </div>
                 </div>
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold">Facility Household No.</p>
-                    <p class="min-h-[14px] text-[10px]">{{ $householdNo ? 'HH'.str_pad($householdNo, 4, '0', STR_PAD_LEFT) : '' }}</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label">Facility Household No.</p>
+                    <p class="field-value">{{ $householdNo ? 'HH'.str_pad($householdNo, 4, '0', STR_PAD_LEFT) : '' }}</p>
                 </div>
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold mb-0.5">4Ps Member?</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label mb-0.5">4Ps Member?</p>
                     <div class="flex gap-2">
                         @include('consultations.handout.partials._mark', ['checked' => $has4ps, 'label' => 'Yes'])
                         @include('consultations.handout.partials._mark', ['checked' => ! $has4ps, 'label' => 'No'])
                     </div>
                 </div>
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold">Household No.</p>
-                    <p class="min-h-[14px] text-[10px]">{{ $householdNo }}</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label">Household No.</p>
+                    <p class="field-value">{{ $householdNo }}</p>
                 </div>
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold mb-0.5">PhilHealth Member?</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label mb-0.5">PhilHealth Member?</p>
                     <div class="flex gap-2">
                         @include('consultations.handout.partials._mark', ['checked' => $isPhilhealth, 'label' => 'Yes'])
                         @include('consultations.handout.partials._mark', ['checked' => ! $isPhilhealth, 'label' => 'No'])
                     </div>
                 </div>
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold mb-0.5">Status Type</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label mb-0.5">Status Type</p>
                     <div class="flex flex-col gap-0.5">
                         @include('consultations.handout.partials._mark', ['checked' => $statusType === 'Member', 'label' => 'Member'])
                         @include('consultations.handout.partials._mark', ['checked' => $statusType === 'Dependent', 'label' => 'Dependent'])
                     </div>
                 </div>
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold">PhilHealth No.</p>
-                    <p class="min-h-[14px] text-[10px]">{{ $patient->philhealth_no ?? '' }}</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label">PhilHealth No.</p>
+                    <p class="field-value">{{ $patient->philhealth_no ?? '' }}</p>
                 </div>
-                <div class="border-b border-black p-0.5">
-                    <p class="font-bold mb-0.5">PhilHealth Category</p>
+                <div class="border-b border-black box-cell">
+                    <p class="field-label mb-0.5">PhilHealth Category</p>
                     <div class="flex flex-col gap-0.5">
                         @foreach (['FE - Private', 'FE - Government', 'IE', 'Others'] as $category)
                             @include('consultations.handout.partials._mark', ['checked' => $philhealthCategory === $category, 'label' => $category])
                         @endforeach
                     </div>
                 </div>
-                <div class="p-0.5">
-                    <p class="font-bold mb-0.5">Primary Care Benefit (PCB) Member?</p>
+                <div class="box-cell">
+                    <p class="field-label mb-0.5">Primary Care Benefit (PCB) Member?</p>
                     <div class="flex gap-2">
                         @include('consultations.handout.partials._mark', ['checked' => $isPcb, 'label' => 'Yes'])
                         @include('consultations.handout.partials._mark', ['checked' => ! $isPcb, 'label' => 'No'])

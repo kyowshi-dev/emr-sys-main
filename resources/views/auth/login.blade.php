@@ -89,10 +89,10 @@
             <div class="text-center mb-6">
             <div class="flex items-center justify-center gap-3">
                 <div class="logo-mark">
-                <img src="{{ asset('img/sta-ana-logo.png') }}" alt="Santa Ana logo">
+                <img src="{{ asset('img/logo.svg') }}" alt="Santa Ana logo">
                 </div>
                 <div class="text-left">
-                <h1 class="font-extrabold text-lg leading-snug mb-0" style="color: var(--primary);">BHCIS</h1>
+                <h1 class="font-extrabold text-lg leading-snug mb-0" style="color: var(--primary);">Integrated Health Information System</h1>
                 <p class="muted-xs leading-tight">Sta. Ana Health Center</p>
                 </div>
             </div>

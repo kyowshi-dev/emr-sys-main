@@ -5,7 +5,6 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
             <h1 class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">Dashboard</h1>
-            <p class="text-sm mt-1">Search a patient to start a new consultation or register a new one.</p>
         </div>
         <a href="{{ url('/patients/create') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold transition hover:bg-primary-hover">
             <i class="fa-solid fa-user-plus"></i>
@@ -15,11 +14,11 @@
 
     <div class="rounded-xl" x-data="patientSearch()">
         <div class="relative">
-            <span class="absolute inset-y-0 flex items-center pointer-events-none" style="color: var(--ink-subtle); left: calc(0.75rem);" :style="loading && 'color: var(--primary)'">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none" style="color: var(--ink-subtle);" :style="loading && 'color: var(--primary)'">
                 <i class="fa-solid fa-magnifying-glass"></i>
             </span>
             <input type="text" x-model="query" @input.debounce.300ms="search()"
-                   placeholder="Search patient"
+                   placeholder="Search patients by name..."
                    class="w-full pl-10 pr-4 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2 transition"
                    style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);"
                    autocomplete="off">
@@ -48,7 +47,6 @@
     </div>
 
     <div>
-        <h2 class="font-display font-semibold text-lg lg:text-xl mb-3" style="color: var(--ink);">Overview</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="p-4 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
                  style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);">
