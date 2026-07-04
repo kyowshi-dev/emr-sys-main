@@ -358,7 +358,82 @@
                             $roleName = 'User';
                             $username = (string) $authUser->username;
                             $initials = mb_strtoupper(mb_substr($username, 0, 1));
+                            $notifications = auth()->user()->notifications()->latest()->take(5)->get();
+                            $unreadCount = auth()->user()->unreadNotifications->count();
                         @endphp
+                        
+                        <!-- Notifications Dropdown -->
+                        <div x-data="{ notificationsOpen: false }" class="relative">
+                            <button type="button"
+                                    @click="notificationsOpen = !notificationsOpen"
+                                    @click.away="notificationsOpen = false"
+                                    class="relative p-2 rounded-lg hover:bg-white/10 transition-colors text-white/90 hover:text-white">
+                                <i class="fa-solid fa-bell text-lg" aria-hidden="true"></i>
+                                @if ($unreadCount > 0)
+                                    <span class="absolute top-1 right-1 inline-flex items-center justify-center h-5 w-5 text-xs font-bold rounded-full bg-red-500 text-white">
+                                        {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                                    </span>
+                                @endif
+                            </button>
+
+                            <div x-show="notificationsOpen"
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 transform translate-y-1"
+                                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                                 x-transition:leave="transition ease-in duration-150"
+                                 x-transition:leave-start="opacity-100 transform translate-y-0"
+                                 x-transition:leave-end="opacity-0 transform translate-y-1"
+                                 class="absolute right-0 mt-3 w-80 rounded-xl border border-border shadow-md bg-surface-elevated z-50"
+                                 style="display: none;">
+                                
+                                <div class="px-4 py-3 border-b border-border">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="font-semibold text-ink">Notifications</h3>
+                                        @if ($unreadCount > 0)
+                                            <form action="{{ route('notifications.mark-all-read') }}" method="POST" class="inline">
+                                                @csrf
+                                                <button type="submit" class="text-xs font-medium text-primary hover:opacity-70 transition-opacity">
+                                                    Mark all as read
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="max-h-96 overflow-y-auto">
+                                    @forelse ($notifications as $notification)
+                                        <div class="px-4 py-3 border-b border-border hover:bg-black/3 transition-colors {{ is_null($notification->read_at) ? 'bg-teal-soft' : '' }}">
+                                            <div class="flex gap-3">
+                                                <div class="flex-1">
+                                                    <p class="text-sm font-medium text-ink">{{ $notification->data['title'] ?? 'Notification' }}</p>
+                                                    <p class="text-xs text-ink-muted mt-1">{{ $notification->data['message'] ?? '' }}</p>
+                                                    <p class="text-xs text-ink-subtle mt-2">{{ $notification->created_at->diffForHumans() }}</p>
+                                                </div>
+                                                @if (is_null($notification->read_at))
+                                                    <form action="{{ route('notifications.mark-read', $notification->id) }}" method="POST" class="inline">
+                                                        @csrf
+                                                        <button type="submit" class="p-1 rounded hover:bg-black/10 transition-colors" title="Mark as read">
+                                                            <i class="fa-solid fa-check text-xs text-primary" aria-hidden="true"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="px-4 py-8 text-center">
+                                            <i class="fa-solid fa-bell-slash text-2xl text-ink-subtle opacity-50 mb-2" aria-hidden="true"></i>
+                                            <p class="text-sm text-ink-muted">No notifications yet</p>
+                                        </div>
+                                    @endforelse
+                                </div>
+
+                                <div class="px-4 py-3 border-t border-border">
+                                    <a href="{{ route('notifications.index') }}" class="block text-center text-sm font-medium text-primary hover:opacity-75 transition-opacity">
+                                        View all notifications
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                         
                         <div x-data="{ profileOpen: false }" class="relative">
                             <button type="button"
