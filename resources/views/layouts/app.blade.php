@@ -83,6 +83,31 @@
         }
         .logo-mark img { width: 100%; height: 100%; object-fit: cover; }
 
+        /* Normalize checkbox appearance & size across the app */
+        input[type="checkbox"],
+        input[type="checkbox"].checkbox,
+        input[type="checkbox"].household-checkbox,
+        input[type="checkbox"]#selectAllCheckbox,
+        input[type="checkbox"].rounded {
+            width: 1rem !important; /* 16px */
+            height: 1rem !important; /* 16px */
+            min-width: 1rem !important;
+            min-height: 1rem !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
+            vertical-align: middle !important;
+            -webkit-appearance: checkbox !important;
+            appearance: checkbox !important;
+            transform: scale(1) !important;
+        }
+
+        /* Reduce visual differences from border-radius utilities */
+        input[type="checkbox"].rounded { border-radius: 4px !important; }
+
+        /* Ensure accent color consistent */
+        input[type="checkbox"] { accent-color: var(--primary); }
+
         .app-sidebar,
         .app-header {
             color: #ffffff;
@@ -165,10 +190,10 @@
             
             <div class="flex items-center justify-between p-4 lg:p-5 border-b border-border">
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
-                    <div class="logo-mark">
+                    <div class="logo-mark" style="background: transparent;">
                         <img src="{{ asset('img/logo.svg') }}" alt="Santa Ana logo">
                     </div>
-                    <span class="font-display font-semibold text-lg text-ink">BHCIS</span>
+                    <span class="font-display font-semibold text-lg text-ink">iHEALTHSYS</span>
                     <span class="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded bg-teal-soft text-primary">Sta. Ana</span>
                 </a>
                 <button @click="sidebarOpen = false" class="lg:hidden p-2 rounded-lg hover:bg-black/5 transition-colors text-ink-muted">

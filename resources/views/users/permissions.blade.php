@@ -12,7 +12,7 @@
 
         <a href="{{ route('users.index') }}"
            class="inline-flex items-center justify-center px-4 lg:px-5 py-2 lg:py-2.5 rounded-xl lg:rounded-2xl bg-gray-500 text-xs lg:text-sm font-semibold text-white shadow-md hover:shadow-xl transition">
-            ← Back to Users
+            Back to Users
         </a>
     </div>
 
@@ -29,10 +29,10 @@
                     @foreach($permissions as $permission)
                         <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
                             <input type="checkbox"
-                                   name="permissions[]"
-                                   value="{{ $permission->name }}"
-                                   {{ $user->permissions->contains('name', $permission->name) ? 'checked' : '' }}
-                                   class="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded">
+                                name="permissions[]"
+                                value="{{ $permission->name }}"
+                                {{ $user->permissions->contains('name', $permission->name) ? 'checked' : '' }}
+                                class="checkbox h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded">
                             <div>
                                 <div class="font-medium text-gray-900">{{ ucfirst($permission->name) }}</div>
                                 <div class="text-sm text-gray-500">{{ $permission->description }}</div>
