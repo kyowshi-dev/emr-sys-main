@@ -28,3 +28,4 @@ _ide_helper_models.php
 /docs/*.txt
 /storage/logs/laravel.log
 /docs
+NOTIFICATIONS_QUICKSTART.md

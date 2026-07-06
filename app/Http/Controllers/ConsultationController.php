@@ -141,6 +141,43 @@ class ConsultationController extends Controller
         ]);
     }
 
+    public function liveRequests(Request $request)
+    {
+        if (! auth()->user()->hasPermission('consultations')) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $consultation = DB::table('consultations')
+            ->where('status', 'pending_doctor')
+            ->orderByDesc('created_at')
+            ->first();
+
+        if (! $consultation) {
+            return response()->json(['hasRequest' => false]);
+        }
+
+        $patient = DB::table('patients')->where('id', $consultation->patient_id)->first();
+        $worker = DB::table('health_workers')->where('id', $consultation->worker_id)->first();
+
+        if (! $patient || ! $worker) {
+            return response()->json(['hasRequest' => false]);
+        }
+
+        return response()->json([
+            'hasRequest' => true,
+            'request' => [
+                'id' => $consultation->id,
+                'open_url' => route('consultations.show', ['id' => $consultation->id]),
+                'clinic_name' => 'Santa Ana Health Center',
+                'worker_name' => trim(($worker->first_name ?? '') . ' ' . ($worker->last_name ?? '')),
+                'patient_name' => trim(($patient->first_name ?? '') . ' ' . ($patient->last_name ?? '')),
+                'patient_age' => $patient->date_of_birth ? Carbon::parse($patient->date_of_birth)->age : null,
+                'patient_gender' => $patient->gender ?? '',
+                'chief_complaint' => $consultation->complaint_text ?? $consultation->chief_complaint ?? 'No reason provided',
+            ],
+        ]);
+    }
+
     // 1. Show the Admission Form (Triage)
     public function create($patientId)
     {

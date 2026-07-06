@@ -532,6 +532,29 @@
         </div>
     </div>
 
+    <div id="liveConsultationToast" class="fixed bottom-5 right-5 z-[60] hidden max-w-[380px] rounded-3xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(14,30,37,0.15)] ring-1 ring-slate-900/5 overflow-hidden" aria-live="assertive" aria-atomic="true">
+        <div class="p-5">
+            <div class="flex items-start gap-3">
+                <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 text-lg">!</span>
+                <div class="min-w-0">
+                    <p id="liveToastTitle" class="text-sm font-semibold text-slate-900">New Consultation Request</p>
+                    <p id="liveToastSubtitle" class="text-xs text-slate-500 mt-1">Santa Ana Health Center • BHW</p>
+                </div>
+            </div>
+
+            <div class="mt-4 rounded-3xl bg-slate-50 p-4 text-slate-700">
+                <p id="liveToastPatient" class="text-sm font-semibold"></p>
+                <p id="liveToastDetails" class="text-xs text-slate-500 mt-1"></p>
+                <p id="liveToastReason" class="mt-3 text-sm text-slate-700"></p>
+            </div>
+
+            <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <button id="liveToastDecline" type="button" class="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 sm:w-auto">Cancel</button>
+                <button id="liveToastAccept" type="button" class="w-full rounded-2xl bg-emerald-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800 sm:w-auto">Accept & Open Case</button>
+            </div>
+        </div>
+    </div>
+
     <div id="pageModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closePageDrawer()"></div>
         <div id="pageModalPanel" class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl transform scale-95 opacity-0 transition-all duration-300 ease-out">
@@ -560,6 +583,17 @@
             background: rgba(255, 255, 255, 0.24) !important;
             color: #ffffff !important;
             font-weight: 600;
+        }
+
+        #liveConsultationToast {
+            transform: translateX(16px);
+            opacity: 0;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        #liveConsultationToast.active {
+            display: block;
+            transform: translateX(0);
+            opacity: 1;
         }
     </style>
     <script>
@@ -622,6 +656,138 @@
                 console.error('Session check failed:', error);
             });
         }, 30000); // Check every 30 seconds
+
+        @if(auth()->check() && auth()->user()->hasPermission('consultations'))
+        (function() {
+            var liveToast = document.getElementById('liveConsultationToast');
+            var liveToastAccept = document.getElementById('liveToastAccept');
+            var liveToastDecline = document.getElementById('liveToastDecline');
+            var liveToastLastId = localStorage.getItem('lastLiveConsultationId');
+            var liveToastCloseTimer = null;
+
+            function playLiveToastChime() {
+                if (!window.AudioContext && !window.webkitAudioContext) {
+                    return;
+                }
+                var AudioContext = window.AudioContext || window.webkitAudioContext;
+                var ctx = new AudioContext();
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                gain.gain.setValueAtTime(0, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.7);
+            }
+
+            function notifyBrowser(payload) {
+                if (!('Notification' in window)) {
+                    return;
+                }
+
+                if (Notification.permission === 'default') {
+                    Notification.requestPermission();
+                }
+
+                if (Notification.permission === 'granted') {
+                    var notification = new Notification(payload.title, {
+                        body: payload.message,
+                        tag: 'live-consultation-alert',
+                    });
+                    notification.onclick = function() {
+                        window.focus();
+                        if (payload.openUrl) {
+                            window.location.href = payload.openUrl;
+                        }
+                    };
+                }
+            }
+
+            function dismissConsultationToast() {
+                if (!liveToast) {
+                    return;
+                }
+                liveToast.classList.remove('active');
+                if (liveToastCloseTimer) {
+                    clearTimeout(liveToastCloseTimer);
+                    liveToastCloseTimer = null;
+                }
+            }
+
+            function showConsultationToast(request) {
+                if (!liveToast || !request || !request.id) {
+                    return;
+                }
+
+                if (liveToastLastId === String(request.id)) {
+                    return;
+                }
+
+                document.getElementById('liveToastTitle').textContent = 'New Consultation Request';
+                document.getElementById('liveToastSubtitle').textContent = request.clinic_name + ' · BHW: ' + request.worker_name;
+                document.getElementById('liveToastPatient').textContent = request.patient_name + ' • ' + (request.patient_age ? request.patient_age + ' y/o' : 'Age unknown') + (request.patient_gender ? ' / ' + request.patient_gender : '');
+                document.getElementById('liveToastDetails').textContent = 'Reason: ' + (request.chief_complaint || 'No complaint provided');
+                document.getElementById('liveToastReason').textContent = request.chief_complaint || 'No complaint provided';
+
+                liveToastAccept.onclick = function() {
+                    localStorage.setItem('lastLiveConsultationId', request.id);
+                    window.location.href = request.open_url;
+                };
+                liveToastDecline.onclick = function() {
+                    localStorage.setItem('lastLiveConsultationId', request.id);
+                    dismissConsultationToast();
+                };
+
+                liveToast.classList.add('active');
+                liveToast.classList.remove('hidden');
+                if (liveToastCloseTimer) {
+                    clearTimeout(liveToastCloseTimer);
+                }
+                liveToastCloseTimer = setTimeout(dismissConsultationToast, 18000);
+                liveToastLastId = request.id;
+
+                playLiveToastChime();
+                notifyBrowser({
+                    title: 'New Consultation Request',
+                    message: request.patient_name + ' • ' + (request.patient_age ? request.patient_age + ' y/o' : 'Age unknown') + '\n' + request.chief_complaint,
+                    openUrl: request.open_url,
+                });
+            }
+
+            function pollLiveConsultationRequests() {
+                fetch('/consultations/live-requests', {
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Live request fetch failed');
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data.hasRequest && data.request) {
+                        showConsultationToast(data.request);
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Live consultation poll failed:', error);
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                pollLiveConsultationRequests();
+                setInterval(pollLiveConsultationRequests, 12000);
+            });
+        })();
+        @endif
         @endauth
     </script>
 
