@@ -75,7 +75,7 @@
         <div class="flex items-center justify-between mb-3">
             <div>
                 <h2 class="font-display font-semibold text-lg lg:text-xl" style="color: var(--ink);">Queue</h2>
-                <p class="text-sm" style="color: var(--ink-muted);">Patients currently waiting in line.</p>
+                <p class="text-sm" style="color: var(--ink-muted);">Patients awaiting for doctor's review</p>
             </div>
             <a href="{{ route('consultations.index') }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-primary border border-primary transition hover:bg-primary/5">
                 <i class="fa-solid fa-list"></i>
@@ -89,7 +89,7 @@
                 <ul class="space-y-2">
                     @forelse($pendingQueue ?? [] as $queue)
                         <li class="rounded-xl border px-4 py-3" style="border-color: var(--border); background: var(--bg-surface-elevated);">
-                            <div class="font-medium text-sm" style="color: var(--ink);">{{ $queue->name ?? $queue['name'] ?? 'Unknown patient' }}</div>
+                            <div class="font-medium text-sm" style="color: var(--ink);">{{ ucwords($queue->name ?? $queue['name'] ?? 'Unknown patient') }}</div>
                             <div class="text-xs mt-1" style="color: var(--ink-muted);">{{ $queue->identifier ?? $queue['identifier'] ?? 'No ID available' }}</div>
                         </li>
                     @empty

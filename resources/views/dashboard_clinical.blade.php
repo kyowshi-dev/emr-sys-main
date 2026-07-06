@@ -93,7 +93,7 @@
                        class="block py-3 transition-colors hover:bg-black/[0.02] rounded-lg px-2 -mx-2">
                         <div class="flex items-center justify-between gap-3">
                             <div>
-                                <p class="text-sm font-semibold" style="color: var(--ink);">{{ $item['patient_name'] }}</p>
+                                <p class="text-sm font-semibold" style="color: var(--ink);">{{ucwords ($item['patient_name']) }}</p>
                                 <p class="text-xs mt-1 capitalize" style="color: var(--ink-muted);">{{ $item['status'] }}</p>
                             </div>
                             <span class="text-xs" style="color: var(--ink-subtle);">{{ $item['time'] }}</span>

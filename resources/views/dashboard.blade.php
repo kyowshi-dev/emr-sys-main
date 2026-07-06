@@ -41,7 +41,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
         <div class="animate-in opacity-0 delay-2 p-4 lg:p-5 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
              style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);">
-            <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: var(--ink-muted);">Individual Records</p>
+            <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: var(--ink-muted);">Total Patients On Record</p>
             @if ($totalPatients === 0)
                 <div class="space-y-3">
                     <div class="py-6 text-center">
@@ -73,7 +73,7 @@
                         <p class="font-semibold text-sm" style="color: var(--ink);">All caught up</p>
                         <p class="text-xs mt-1" style="color: var(--ink-muted);">No pending appointments</p>
                     </div>
-                    <a href="{{ route('consultations.index') }}" class="w-full inline-flex items-center justify-center text-xs font-bold px-3 py-2 rounded-lg transition-[transform,box-shadow] duration-200 hover:shadow-sm hover:scale-[1.01]" style="background: var(--accent); color: #fff; box-shadow: var(--shadow-sm);">View appointments</a>
+                    
                 </div>
             @else
                 <p class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">{{ $pendingAppointments }}</p>
@@ -120,9 +120,7 @@
             @else
                 <p class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">{{ $followUpConsultationsToday }}</p>
                 <p class="text-xs mt-2" style="color: var(--ink-muted);">Follow-up visits scheduled</p>
-                <div class="mt-3 flex gap-2 flex-wrap">
-                    <a href="{{ route('consultations.index') }}" class="text-xs font-bold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: #f59e0b;">Review follow-up</a>
-                </div>
+                
             @endif
         </div>
         <div class="animate-in opacity-0 delay-4 p-4 lg:p-5 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
