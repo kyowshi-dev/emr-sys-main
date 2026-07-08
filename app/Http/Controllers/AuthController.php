@@ -4,17 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\PasswordResetRequest;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
     // Show the Login Form
-    public function showLogin()
+    public function showLogin(Request $request)
     {
         // If user is already logged in, send them to the dashboard (or patients list)
         if (Auth::check()) {
             return redirect()->route('dashboard');
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['token' => csrf_token()]);
         }
 
         return view('auth.login');
@@ -65,8 +70,7 @@ class AuthController extends Controller
      * 3. $request->session()->regenerateToken() - Generates a new CSRF token
      * 4. Clears all session data to prevent data leakage
      *
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function logout(Request $request)
     {
@@ -74,7 +78,7 @@ class AuthController extends Controller
         $user = Auth::user();
         if ($user) {
             \Log::info("User logged out [User ID: {$user->id}, Username: {$user->username}]");
-            
+
             // Optional: Record in audit log if using AuditLog model
             // \App\Models\AuditLog::create([
             //     'user_id' => $user->id,

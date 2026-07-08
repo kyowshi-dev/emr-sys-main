@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Login</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -99,8 +100,20 @@
             <p class="text-xs mt-4 muted-xs leading-relaxed">Sign in to access patient records and services</p>
             </div>
 
-            <form action="{{ route('login.process') }}" method="POST">
-            @csrf
+            <form action="{{ route('login.process') }}" method="POST" id="login-form">
+            <input type="hidden" name="_token" id="csrf-token-input" value="{{ csrf_token() }}" autocomplete="off">
+
+            @if (session('error') || session('session_expired'))
+                <div class="mb-4 p-3 text-sm" style="background: rgba(196, 92, 65, 0.08); border-left:4px solid var(--accent); color: var(--accent-strong);">
+                <p class="font-medium text-sm">{{ session('error', 'Your session has expired. Please sign in again.') }}</p>
+                </div>
+            @endif
+
+            @if (session('success'))
+                <div class="mb-4 p-3 text-sm" style="background: rgba(13, 74, 60, 0.08); border-left:4px solid var(--primary); color: var(--primary);">
+                <p class="font-medium text-sm">{{ session('success') }}</p>
+                </div>
+            @endif
 
             @if ($errors->any())
                 <div class="mb-4 p-3 text-sm" style="background: rgba(196, 92, 65, 0.08); border-left:4px solid var(--accent); color: var(--accent-strong);">
@@ -147,5 +160,61 @@
             </p>
         </div>
     </div>
+
+    <script>
+        (function () {
+            var tokenMeta = document.querySelector('meta[name="csrf-token"]');
+            var tokenInput = document.getElementById('csrf-token-input');
+            var refreshIntervalMs = Math.max(60000, {{ (int) config('session.lifetime') * 60 * 1000 }} / 2);
+
+            function updateCsrfToken(token) {
+                if (tokenInput) {
+                    tokenInput.value = token;
+                }
+                if (tokenMeta) {
+                    tokenMeta.setAttribute('content', token);
+                }
+            }
+
+            function refreshCsrfToken() {
+                fetch('{{ route('login') }}', {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Failed to refresh CSRF token');
+                    }
+
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (data.token) {
+                        updateCsrfToken(data.token);
+                    }
+                })
+                .catch(function () {
+                    // Keep the last known token; server-side handler redirects on mismatch.
+                });
+            }
+
+            window.addEventListener('pageshow', function (event) {
+                if (event.persisted) {
+                    window.location.reload();
+                }
+            });
+
+            document.addEventListener('visibilitychange', function () {
+                if (document.visibilityState === 'visible') {
+                    refreshCsrfToken();
+                }
+            });
+
+            setInterval(refreshCsrfToken, refreshIntervalMs);
+        })();
+    </script>
 </body>
 </html>
