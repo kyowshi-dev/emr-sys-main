@@ -9,7 +9,7 @@
             <h1 class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">Medicines</h1>
             <p class="text-sm mt-1" style="color: var(--ink-muted);">Manage the list of available medicines for prescriptions.</p>
         </div>
-        <a href="{{ route('medicines.create') }}" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-white text-sm font-semibold transition duration-200 hover:shadow-md" style="background: var(--accent);">
+        <a href="{{ route('medicines.create') }}" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-white text-sm font-semibold transition duration-200 hover:shadow-md" style="background: var(--primary);">
             Add medicine
         </a>
     </div>

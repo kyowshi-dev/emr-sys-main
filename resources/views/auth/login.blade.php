@@ -103,8 +103,8 @@
             @csrf
 
             @if ($errors->any())
-                <div class="mb-4 p-3 rounded-lg text-sm" style="background: rgba(196, 92, 65, 0.08); border-left:4px solid var(--accent); color: var(--accent-strong);">
-                <p class="font-medium text-sm">Login failed — {{ $errors->first() }}</p>
+                <div class="mb-4 p-3 text-sm" style="background: rgba(196, 92, 65, 0.08); border-left:4px solid var(--accent); color: var(--accent-strong);">
+                <p class="font-medium text-sm">Login failed. {{ $errors->first() }}</p>
                 </div>
             @endif
 

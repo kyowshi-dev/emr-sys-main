@@ -758,6 +758,21 @@
                 });
             }
 
+            /**
+             * Polls the server for live consultation requests
+             * 
+             * Sends a GET request to the '/consultations/live-requests' endpoint
+             * to fetch active consultation requests in real-time.
+             * 
+             * Uses the Fetch API with credentials set to 'same-origin' to ensure
+             * cookies and authentication tokens are included in the request.
+             * 
+             * Sets appropriate headers:
+             * - 'X-Requested-With': Identifies the request as XMLHttpRequest (AJAX)
+             * - 'Accept': Specifies the response format as JSON
+             * 
+             * @returns {Promise} A promise that resolves with the server response
+             */
             function pollLiveConsultationRequests() {
                 fetch('/consultations/live-requests', {
                     credentials: 'same-origin',
