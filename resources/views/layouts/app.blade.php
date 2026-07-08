@@ -11,9 +11,8 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    @livewireStyles
     
     <style>
         :root {
@@ -36,10 +35,10 @@
             --teal-soft: rgba(13, 74, 60, 0.08);
 
             /* Accent Colors */
-            --accent: #1fb592; 
-            --accent-hover: #189a7a;
-            --accent-soft: rgba(31, 181, 146, 0.12);
-            
+            --accent: #0d4a3c;
+            --accent-hover: #0a3d32;
+            --accent-soft: rgba(196, 92, 65, 0.12);
+
             /* Shadows */
             --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
             --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
@@ -130,6 +129,56 @@
             background: rgba(255, 255, 255, 0.14) !important;
             color: #ffffff !important;
         }
+
+        /* Dashboard — horizontal KPI cards & compact charts */
+        .kpi-card {
+            min-height: 4.25rem;
+        }
+
+        .kpi-card__icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.625rem;
+        }
+
+        .kpi-card__icon svg {
+            width: 1.125rem;
+            height: 1.125rem;
+        }
+
+        .kpi-card__value {
+            font-family: 'Poppins', system-ui, sans-serif;
+            font-weight: 600;
+            font-size: 1.25rem;
+            line-height: 1.2;
+            color: var(--ink);
+        }
+
+        @media (min-width: 1024px) {
+            .kpi-card__value {
+                font-size: 1.375rem;
+            }
+        }
+
+        .dashboard-chart__plot {
+            height: 11rem;
+        }
+
+        @media (min-width: 640px) {
+            .dashboard-chart__plot {
+                height: 13rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .dashboard-chart__plot {
+                height: 15rem;
+            }
+        }
     </style>
 
     <script>
@@ -193,7 +242,7 @@
                     <div class="logo-mark" style="background: transparent;">
                         <img src="{{ asset('img/logo.svg') }}" alt="Santa Ana logo">
                     </div>
-                    <span class="font-display font-semibold text-lg text-ink">iHEALTHSYS</span>
+                    <span class="font-display font-semibold text-lg text-ink">EMR System</span>
                     <span class="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded bg-teal-soft text-primary">Sta. Ana</span>
                 </a>
                 <button @click="sidebarOpen = false" class="lg:hidden p-2 rounded-lg hover:bg-black/5 transition-colors text-ink-muted">
@@ -497,7 +546,7 @@
             </header>
 
             <main class="flex-1 px-2 lg:px-2 pt-3 pb-2 lg:pt-3 lg:pb-2 overflow-auto">
-                <div class="max-w-5xl mx-auto">
+                <div class="{{ request()->routeIs('dashboard') ? 'max-w-7xl' : 'max-w-5xl' }} mx-auto">
                     
                     @php
                         $breadcrumbs = \App\Helpers\BreadcrumbHelper::getBreadcrumbs();
@@ -806,6 +855,8 @@
         @endauth
     </script>
 
+    @livewireScripts
+    @livewireChartsScripts
     @stack('scripts')
 </body>
 </html>

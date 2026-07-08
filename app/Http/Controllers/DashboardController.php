@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Asantibanez\LivewireCharts\Models\LineChartModel;
+use Asantibanez\LivewireCharts\Models\PieChartModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -156,6 +158,67 @@ class DashboardController extends Controller
             ->where('nature_of_visit', 'Follow-up')
             ->count();
 
+        $volumeStart = $today->copy()->subDays(6)->startOfDay();
+        $volumeEnd = $today->copy()->endOfDay();
+
+        $patientVolumeRows = DB::table('consultations')
+            ->selectRaw('DATE(created_at) as day, COUNT(*) as total')
+            ->whereBetween('created_at', [$volumeStart, $volumeEnd])
+            ->groupByRaw('DATE(created_at)')
+            ->orderBy('day')
+            ->get();
+
+        $volumeByDay = [];
+        foreach ($patientVolumeRows as $row) {
+            $volumeByDay[Carbon::parse($row->day)->toDateString()] = (int) $row->total;
+        }
+
+        $patientVolumeChartModel = (new LineChartModel)
+            ->setTitle('Patient volume')
+            ->singleLine()
+            ->withLegend()
+            ->setDataLabelsEnabled(true)
+            ->setAnimated(false)
+            ->setColors(['#0d4a3c']);
+
+        for ($daysAgo = 6; $daysAgo >= 0; $daysAgo--) {
+            $date = $today->copy()->subDays($daysAgo);
+            $dateKey = $date->toDateString();
+            $label = $date->format('D');
+            $count = $volumeByDay[$dateKey] ?? 0;
+            $patientVolumeChartModel->addPoint($label, $count);
+        }
+
+        $illnessStart = $today->copy()->subDays(29)->startOfDay();
+        $illnessEnd = $today->copy()->endOfDay();
+
+        $topPresentingIllnesses = DB::table('diagnosis_records')
+            ->leftJoin('diagnosis_lookup', 'diagnosis_records.diagnosis_id', '=', 'diagnosis_lookup.id')
+            ->leftJoin('consultations', 'diagnosis_records.consultation_id', '=', 'consultations.id')
+            ->whereBetween('consultations.created_at', [$illnessStart, $illnessEnd])
+            ->selectRaw("COALESCE(diagnosis_lookup.diagnosis_name, diagnosis_records.custom_diagnosis_name, 'Unspecified') as name, COUNT(*) as total")
+            ->groupBy('name')
+            ->orderByDesc('total')
+            ->limit(6)
+            ->get();
+
+        $presentingIllnessesColors = ['#0d4a3c', '#f97316', '#ec4899', '#22c55e', '#3b82f6', '#f59e0b'];
+        $presentingIllnessesChartModel = (new PieChartModel)
+            ->setTitle('Top presenting illnesses')
+            ->asDonut()
+            ->withoutLegend()
+            ->setDataLabelsEnabled(false)
+            ->setColors($presentingIllnessesColors);
+
+        if ($topPresentingIllnesses->isEmpty()) {
+            $presentingIllnessesChartModel->addSlice('No diagnoses', 1, '#cbd5e1');
+        } else {
+            foreach ($topPresentingIllnesses->values() as $index => $illness) {
+                $color = $presentingIllnessesColors[$index % count($presentingIllnessesColors)];
+                $presentingIllnessesChartModel->addSlice($illness->name, (int) $illness->total, $color);
+            }
+        }
+
         $doctorsOnDuty = DB::table('health_workers')->count();
 
         $pendingPasswordResets = DB::table('password_reset_requests')->where('status', 'pending')->count();
@@ -205,6 +268,9 @@ class DashboardController extends Controller
             'pendingPasswordResets' => $pendingPasswordResets,
             'onDutyStaff' => $onDutyStaff,
             'recentActivity' => $recentActivity,
+            'patientVolumeChartModel' => $patientVolumeChartModel,
+            'presentingIllnessesChartModel' => $presentingIllnessesChartModel,
+            'topPresentingIllnesses' => $topPresentingIllnesses,
             'showResultsReady' => $user->canViewDashboardHandouts('admin'),
             ...$handoutData,
         ]);
