@@ -72,7 +72,7 @@
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </span>
             <div class="min-w-0 flex-1">
-                <p class="text-[10px] font-semibold uppercase tracking-wider truncate" style="color: {{ $overdueImmunizations > 0 ? '#991b1b' : 'var(--ink-muted)' }};">Overdue immunizations</p>
+                <p class="text-[10px] font-semibold uppercase tracking-wider truncate" style="color: {{ $overdueImmunizations > 0 ? '#991b1b' : 'var(--ink-muted)' }};">Immunization Alerts</p>
                 @if ($overdueImmunizations === 0)
                     <p class="kpi-card__value">0</p>
                     <p class="text-[10px] truncate mt-0.5" style="color: var(--ink-muted);">On track</p>

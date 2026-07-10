@@ -178,8 +178,8 @@ class ConsultationController extends Controller
         ]);
     }
 
-    // 1. Show the Admission Form (Triage)
-    public function create($patientId)
+    // 1. Show the Admission Form (Triage) — modal partial via AJAX; redirect for direct navigation
+    public function create(Request $request, $patientId)
     {
         $patient = Patient::find($patientId);
 
@@ -187,10 +187,15 @@ class ConsultationController extends Controller
             abort(404, 'Patient not found');
         }
 
-        // Calculate age for display
         $patient->age = Carbon::parse($patient->date_of_birth)->age;
 
-        return view('consultations.create', compact('patient'));
+        if ($request->ajax() || $request->wantsJson()) {
+            return view('consultations.partials.create-modal', compact('patient'));
+        }
+
+        return redirect()
+            ->back(fallback: route('patients.show', $patientId))
+            ->with('open_consultation_for', $patientId);
     }
 
     // 2. Save the Data (Triage Save)

@@ -27,13 +27,13 @@
             <ul>
                 <template x-for="patient in results" :key="patient.id">
                     <li class="border-b last:border-0 transition-colors hover:bg-black/[0.03]">
-                        <a :href="'/patients/' + patient.id + '/consultations/create'" class="block px-4 py-2.5">
+                        <button type="button" @click="window.openConsultationCreateModal(patient.id)" class="block w-full text-left px-4 py-2.5">
                             <div class="font-medium text-sm" style="color: var(--ink);" x-text="patient.text.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')"></div>
                             <div class="text-xs mt-0.5" style="color: var(--ink-muted);">
                                 <span x-text="patient.subtext"></span>
                                 <span class="font-semibold" style="color: var(--primary);"> - Create consultation</span>
                             </div>
-                        </a>
+                        </button>
                     </li>
                 </template>
             </ul>

@@ -195,7 +195,7 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = `/patients/${patientId}/consultations/create`;
+                openConsultationCreateModal(patientId);
             } else {
                 // Stay on the current page (patients index)
             }

@@ -611,6 +611,13 @@
         </div>
     </div>
 
+    <div id="consultationCreateModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4" aria-modal="true" role="dialog" aria-labelledby="consultationCreateModalTitle">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeConsultationCreateModal()"></div>
+        <div id="consultationCreateModalPanel" class="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl transform scale-95 opacity-0 transition-all duration-300 ease-out" style="background: var(--bg-surface-elevated);">
+            <div id="consultationCreateModalContent"></div>
+        </div>
+    </div>
+
     <style>
         .nav-link:hover { background: var(--teal-soft); color: var(--primary) !important; }
         .nav-submenu:hover { background: var(--teal-soft); color: var(--primary) !important; }
@@ -675,6 +682,85 @@
                 panel.removeEventListener('transitionend', handleTransitionEnd);
             }, { once: true });
         }
+
+        function initConsultationCreateModalForm() {
+            var modeSelect = document.getElementById('mode_of_transaction');
+            var referredContainer = document.getElementById('referred_from_container');
+            if (!modeSelect || !referredContainer) return;
+
+            function toggleReferredFrom() {
+                referredContainer.style.display = modeSelect.value === 'Referral' ? 'block' : 'none';
+            }
+
+            toggleReferredFrom();
+            modeSelect.removeEventListener('change', modeSelect._consultationToggleHandler);
+            modeSelect._consultationToggleHandler = toggleReferredFrom;
+            modeSelect.addEventListener('change', toggleReferredFrom);
+        }
+
+        function openConsultationCreateModal(patientId) {
+            var modal = document.getElementById('consultationCreateModal');
+            var panel = document.getElementById('consultationCreateModalPanel');
+            var content = document.getElementById('consultationCreateModalContent');
+            if (!modal || !panel || !content || !patientId) return;
+
+            content.innerHTML = '<div class="p-8 text-center text-sm" style="color: var(--ink-muted);"><i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i>Loading consultation form…</div>';
+            modal.classList.remove('hidden');
+            requestAnimationFrame(function() {
+                panel.classList.remove('scale-95', 'opacity-0');
+                panel.classList.add('scale-100', 'opacity-100');
+            });
+
+            fetch('/patients/' + patientId + '/consultations/create', {
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'text/html',
+                },
+            })
+            .then(function(response) {
+                if (!response.ok) throw new Error('Failed to load consultation form');
+                return response.text();
+            })
+            .then(function(html) {
+                content.innerHTML = html;
+                initConsultationCreateModalForm();
+            })
+            .catch(function() {
+                content.innerHTML = '<div class="p-6 text-center text-sm" style="color: #b91c1c;">Unable to load the consultation form. Please try again.</div>';
+            });
+        }
+
+        function closeConsultationCreateModal() {
+            var modal = document.getElementById('consultationCreateModal');
+            var panel = document.getElementById('consultationCreateModalPanel');
+            var content = document.getElementById('consultationCreateModalContent');
+            if (!modal || !panel) return;
+            panel.classList.remove('scale-100', 'opacity-100');
+            panel.classList.add('scale-95', 'opacity-0');
+            panel.addEventListener('transitionend', function handleTransitionEnd() {
+                modal.classList.add('hidden');
+                if (content) content.innerHTML = '';
+                panel.removeEventListener('transitionend', handleTransitionEnd);
+            }, { once: true });
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                var consultationModal = document.getElementById('consultationCreateModal');
+                if (consultationModal && !consultationModal.classList.contains('hidden')) {
+                    closeConsultationCreateModal();
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('open_consultation_for'))
+                openConsultationCreateModal({{ (int) session('open_consultation_for') }});
+            @elseif ($errors->any() && old('modal_patient_id'))
+                openConsultationCreateModal({{ (int) old('modal_patient_id') }});
+            @endif
+        });
 
         // Session timeout check
         @auth

@@ -63,14 +63,6 @@ class BreadcrumbHelper
                 ];
                 break;
 
-            case 'consultations.create':
-                $breadcrumbs = [
-                    ['name' => 'Dashboard', 'url' => route('dashboard')],
-                    ['name' => 'Consultations', 'url' => route('consultations.index')],
-                    ['name' => 'New Consultation', 'url' => null],
-                ];
-                break;
-
             case 'consultations.show':
                 $breadcrumbs = [
                     ['name' => 'Dashboard', 'url' => route('dashboard')],
