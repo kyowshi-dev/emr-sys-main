@@ -185,51 +185,56 @@
                     <p class="text-[9px]">{{ $isReferral ? $provider : '' }}</p>
                 </div>
             </div>
-
-            {{-- Chief complaints --}}
-            <div class="col-span-4 flex flex-col min-h-[168px]">
-                <div class="bg-gray-300 border-b border-black p-0.5 font-bold text-[8px] text-center uppercase tracking-wide">
-                    Chief Complaints
-                </div>
-                <div class="flex-1 p-1 text-[9px] whitespace-pre-wrap">{{ $consultation->complaint_text ?? '' }}</div>
-            </div>
         </div>
 
         {{-- Nature of visit + consultation type --}}
         <div class="grid grid-cols-12 border-t border-black">
-            <div class="col-span-4 border-r border-black">
-                <div class="grid grid-cols-12 border-b border-black">
-                    <div class="col-span-5 bg-gray-300 border-r border-black p-0.5 font-bold leading-tight">Nature of Visit</div>
-                    <div class="col-span-7 p-0.5 space-y-0.5">
-                        @include('consultations.handout.partials._mark', ['checked' => in_array($natureOfVisit, ['Checkup', 'New Consultation/Case'], true), 'label' => 'New Consultation/Case', 'inline' => false])
-                        @include('consultations.handout.partials._mark', ['checked' => $natureOfVisit === 'New Admission', 'label' => 'New Admission', 'inline' => false])
-                        @include('consultations.handout.partials._mark', ['checked' => in_array($natureOfVisit, ['Follow-up', 'Follow-up Visit', 'Follow-up visit'], true), 'label' => 'Follow-up visit', 'inline' => false])
-                    </div>
-                </div>
-                <div class="grid grid-cols-12">
-                    <div class="col-span-5 bg-gray-300 border-r border-black p-0.5 font-bold leading-tight text-[8px]">
-                        Type of Consultation /<br>Purpose of visit
-                    </div>
-                    <div class="col-span-7 p-0.5">
-                        <div class="grid grid-cols-2 gap-x-0.5">
-                            @foreach ($consultationTypes as $type)
-                                @include('consultations.handout.partials._mark', [
-                                    'checked' => false,
-                                    'label' => $type,
-                                    'inline' => false,
-                                ])
-                            @endforeach
-                        </div>
-                    </div>
+            <div class="col-span-6 border-r border-black">
+            <div class="grid grid-cols-12 border-b border-black">
+                <div class="col-span-5 bg-gray-300 border-r border-black p-0.5 font-bold leading-tight">Nature of Visit</div>
+                <div class="col-span-7 p-0.5 space-y-0.5">
+                @include('consultations.handout.partials._mark', ['checked' => in_array($natureOfVisit, ['Checkup', 'New Consultation/Case'], true), 'label' => 'New Consultation/Case', 'inline' => false])
+                @include('consultations.handout.partials._mark', ['checked' => $natureOfVisit === 'New Admission', 'label' => 'New Admission', 'inline' => false])
+                @include('consultations.handout.partials._mark', ['checked' => in_array($natureOfVisit, ['Follow-up', 'Follow-up Visit', 'Follow-up visit'], true), 'label' => 'Follow-up visit', 'inline' => false])
                 </div>
             </div>
+            <div class="grid grid-cols-12">
+                <div class="col-span-5 bg-gray-300 border-r border-black p-0.5 font-bold leading-tight text-[8px]">
+                Type of Consultation /<br>Purpose of visit
+                </div>
+                <div class="col-span-7 p-0.5">
+                <div class="grid grid-cols-2 gap-x-0.5">
+                    @foreach ($consultationTypes as $type)
+                    @include('consultations.handout.partials._mark', [
+                        'checked' => false,
+                        'label' => $type,
+                        'inline' => false,
+                    ])
+                    @endforeach
+                </div>
+                </div>
+            </div>
+            </div>
 
-            {{-- Diagnosis --}}
-            <div class="col-span-8 flex min-h-[72px]">
+            {{-- Chief Complaints (moved into diagnosis column spot) --}}
+            <div class="col-span-6 flex min-h-[72px]">
+            <div class="bg-gray-300 border-r border-black p-0.5 font-bold text-[8px] w-16 shrink-0 flex items-start pt-1">
+                Chief Complaints
+            </div>
+            <div class="flex-1 p-1 text-[9px] whitespace-pre-wrap">{{ $consultation->complaint_text ?? '' }}</div>
+            </div>
+        </div>
+
+        {{-- Diagnosis (moved below Nature of Visit and above Medication/Treatment) --}}
+        <div class="grid grid-cols-12 border-t border-black min-h-[72px]">
+            <div class="col-span-8 border-r border-black flex">
                 <div class="bg-gray-300 border-r border-black p-0.5 font-bold text-[8px] w-16 shrink-0 flex items-start pt-1">
                     Diagnosis:
                 </div>
                 <div class="flex-1 p-1 text-[9px] whitespace-pre-wrap">{{ $diagnosisText ?: '—' }}</div>
+            </div>
+            <div class="col-span-4 p-1">
+                &nbsp;
             </div>
         </div>
 

@@ -32,9 +32,7 @@
                 Family Serial Number
             </div>
             <div class="col-span-7 grid grid-cols-4">
-                @foreach ($serialChars as $digit)
-                    <div class="border-r border-black last:border-r-0 text-center text-[10px] font-semibold serial-box">{{ $digit }}</div>
-                @endforeach
+                
             </div>
         </div>
 
@@ -43,13 +41,7 @@
                 Facility Code
             </div>
             <div class="col-span-7 grid grid-cols-12">
-                @if ($serialDigits > 4)
-                    @foreach (str_split(str_pad($facilityCode, 10, ' ', STR_PAD_RIGHT)) as $char)
-                        <div class="border-r border-black last:border-r-0 text-center text-[10px] font-semibold facility-box">{{ trim($char) }}</div>
-                    @endforeach
-                @else
-                    <div class="col-span-12 text-[10px] font-semibold facility-box">{{ $facilityCode }}</div>
-                @endif
+                
             </div>
         </div>
     </div>

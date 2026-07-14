@@ -138,7 +138,7 @@
 
     <div class="rounded-2xl border overflow-hidden"
          style="background: var(--bg-surface-elevated); border-color: var(--border); box-shadow: var(--shadow-sm);">
-        <div class="p-4 lg:p-5 border-b" style="border-color: var(--border); background: var(--bg-surface);">
+        <div class="p-4 lg:p-5 border-b" style="border-color: var(--border); background: var(--bgw-surface);">
             <p class="font-display font-semibold text-sm lg:text-base" style="color: var(--ink);">
                 Barangay Health Center Information System — Sta. Ana
             </p>

@@ -3,7 +3,7 @@
         <div>
             <h2 class="font-display font-semibold text-lg lg:text-xl" style="color: var(--ink);">New Consultation</h2>
             <p class="text-xs lg:text-sm mt-1" style="color: var(--ink-muted);">
-                Attending to <span class="font-semibold" style="color: var(--ink);">{{ $patient->last_name }}, {{ $patient->first_name }}@if($patient->suffix) {{ $patient->suffix }}@endif</span>
+                Attending to <span class="font-semibold" style="color: var(--ink);">{{ $patient->last_name }}, {{ucwords ($patient->first_name) }}@if($patient->suffix) {{ $patient->suffix }}@endif</span>
                 (PT{{ str_pad($patient->id, 3, '0', STR_PAD_LEFT) }})
             </p>
             <p class="text-xs lg:text-sm mt-0.5" style="color: var(--ink-muted);">{{ $patient->age }} y/o · {{ $patient->residential_address }}</p>
@@ -61,7 +61,7 @@
             </div>
 
             <div class="rounded-xl border p-4 lg:p-5" style="background: var(--bg-surface); border-color: var(--border);">
-                <h3 class="font-semibold mb-3 lg:mb-4 pb-2 border-b text-sm lg:text-base" style="color: var(--ink); border-color: var(--border);">2. Triage Baseline Vitals</h3>
+                <h3 class="font-semibold mb-3 lg:mb-4 pb-2 border-b text-sm lg:text-base" style="color: var(--ink); border-color: var(--border);">2. Vitals</h3>
 
                 <div class="grid grid-cols-2 gap-3 lg:gap-4">
                     <div class="col-span-2">
