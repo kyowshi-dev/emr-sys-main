@@ -86,7 +86,7 @@
     <div class="absolute inset-0 z-0 opacity-50" style="background: linear-gradient(145deg, var(--teal-soft) 0%, transparent 40%, rgba(196,92,65,0.06) 100%);"></div>
 
     <div class="relative z-10 w-full max-w-md px-4">
-        <div class="rounded-2xl border-2 card-compact animate-in opacity-0" style="background: var(--bg-card); border-color: var(--border); font-family: var(--font-display);">
+        <div class="border-2 card-compact animate-in opacity-0" style="background: var(--bg-card); font-family: var(--font-display);">
             <div class="text-center mb-6">
             <div class="flex items-center justify-center gap-3">
                 <div class="logo-mark">
