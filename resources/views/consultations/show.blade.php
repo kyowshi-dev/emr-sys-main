@@ -59,6 +59,17 @@
                     </button>
                 </form>
             </div>
+        @elseif (in_array($consultation->status, ['triage', 'pending_validation'], true))
+            <div class="mt-3 rounded-xl border px-4 py-3" style="background: rgba(0,0,0,0.03); border-color: var(--border);">
+                <p class="text-sm font-semibold" style="color: var(--ink);">
+                    @if ($consultation->status === 'triage')
+                        Triage intake in progress
+                    @else
+                        Awaiting nurse intake validation
+                    @endif
+                </p>
+                <p class="text-xs mt-0.5" style="color: var(--ink-muted);">Clinical review opens after nurse acknowledgment and doctor queue routing.</p>
+            </div>
         @endif
     </div>
 
@@ -67,6 +78,10 @@
         'consultation' => $consultation,
         'latestVitals' => $latestVitals,
     ])
+
+    @php
+        $clinicalReviewOpen = in_array($consultation->status, ['pending_doctor', 'in_progress'], true);
+    @endphp
 
     <main class="space-y-4">
         <section class="rounded-xl border bg-gray-100 p-4 lg:p-5" style="border-color: var(--border);">
@@ -142,6 +157,7 @@
                 </div>
 
                 <div class="mt-4 border-t pt-4" style="border-color: var(--border);">
+                    @if ($clinicalReviewOpen)
                     <button type="button" @click="showRetakeVitals = !showRetakeVitals" class="rounded-lg bg-emerald-900 px-3 py-2 text-xs font-semibold text-white">
                         <span x-show="!showRetakeVitals">Re-take vitals</span>
                         <span x-show="showRetakeVitals" style="display: none;">Hide re-take form</span>
@@ -161,6 +177,9 @@
                             <button type="submit" class="rounded-xl bg-emerald-900 px-4 py-2 text-sm font-semibold text-white">Save new vitals version</button>
                         </div>
                     </form>
+                    @else
+                    <p class="text-xs" style="color: var(--ink-muted);">Clinical vitals retake is available once the case is in the doctor queue.</p>
+                    @endif
                 </div>
             </details>
         </section>
@@ -195,6 +214,7 @@
                 <p class="mt-3 text-sm" style="color: var(--ink-muted);">No diagnosis entries yet for this consultation.</p>
             @endif
 
+            @if ($clinicalReviewOpen)
             <form action="{{ route('consultations.diagnosis', $consultation->id) }}" method="POST" x-data="diagnosisSearch()" @set-diagnosis-query.window="setQuery($event.detail.query)" class="space-y-4 mt-4 pt-4 border-t" style="border-color: var(--border);">
                 @csrf
                 <div>
@@ -248,6 +268,9 @@
                     <button type="submit" :disabled="!canSubmitDiagnosis" class="rounded-xl bg-emerald-900 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50">Add diagnosis</button>
                 </div>
             </form>
+            @else
+            <p class="mt-4 pt-4 border-t text-sm" style="border-color: var(--border); color: var(--ink-muted);">Diagnosis entry opens after nurse validation routes this case to the doctor queue.</p>
+            @endif
         </section>
 
         <section class="rounded-xl border bg-gray-100 p-4 lg:p-5" style="border-color: var(--border);">
@@ -290,6 +313,7 @@
                 <p class="mt-3 text-sm" style="color: var(--ink-muted);">No prescription entries yet for this consultation.</p>
             @endif
 
+            @if ($clinicalReviewOpen)
             <form action="{{ route('consultations.prescription', $consultation->id) }}" method="POST" x-data="medicineSearch()" class="space-y-4 mt-4 pt-4 border-t" style="border-color: var(--border);">
                 @csrf
                 <div class="relative">
@@ -353,8 +377,12 @@
                     <button type="submit" :disabled="!canSubmitPrescription" class="rounded-xl bg-emerald-900 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50">Add prescription</button>
                 </div>
             </form>
+            @else
+            <p class="mt-4 pt-4 border-t text-sm" style="border-color: var(--border); color: var(--ink-muted);">Prescription entry opens after nurse validation routes this case to the doctor queue.</p>
+            @endif
         </section>
 
+        @if ($clinicalReviewOpen)
         <section class="rounded-xl border bg-gray-100 p-4 lg:p-5" style="border-color: var(--border);">
             <h3 class="font-display text-lg font-semibold" style="color: var(--ink);">Final Disposition</h3>
             <p class="mt-1 text-xs" style="color: var(--ink-muted);">Use this section to decide referral before ending the consultation session.</p>
@@ -375,9 +403,10 @@
                 @endif
             </form>
         </section>
+        @endif
     </main>
 
-    @if (! in_array($consultation->status, ['completed', 'referred'], true))
+    @if ($clinicalReviewOpen && ! in_array($consultation->status, ['completed', 'referred'], true))
         <div class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white/95 px-4 py-3 backdrop-blur" style="border-color: var(--border);">
             <div class="mx-auto flex max-w-5xl items-center justify-between gap-3">
                 <p class="text-xs" style="color: var(--ink-muted);">

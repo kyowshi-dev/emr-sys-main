@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Consultation;
 use App\Models\Patient;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -169,8 +170,8 @@ class ConsultationController extends Controller
                 'id' => $consultation->id,
                 'open_url' => route('consultations.show', ['id' => $consultation->id]),
                 'clinic_name' => 'Santa Ana Health Center',
-                'worker_name' => trim(($worker->first_name ?? '') . ' ' . ($worker->last_name ?? '')),
-                'patient_name' => trim(($patient->first_name ?? '') . ' ' . ($patient->last_name ?? '')),
+                'worker_name' => trim(($worker->first_name ?? '').' '.($worker->last_name ?? '')),
+                'patient_name' => trim(($patient->first_name ?? '').' '.($patient->last_name ?? '')),
                 'patient_age' => $patient->date_of_birth ? Carbon::parse($patient->date_of_birth)->age : null,
                 'patient_gender' => $patient->gender ?? '',
                 'chief_complaint' => $consultation->complaint_text ?? $consultation->chief_complaint ?? 'No reason provided',
@@ -232,7 +233,7 @@ class ConsultationController extends Controller
             $consultationId = DB::table('consultations')->insertGetId([
                 'patient_id' => $patientId,
                 'worker_id' => $workerId,
-                'status' => 'pending_doctor',
+                'status' => 'pending_validation',
                 'nature_of_visit' => $validated['nature_of_visit'],
                 'mode_of_transaction' => $validated['mode_of_transaction'],
                 'referred_from' => $validated['referred_from'] ?? null,
@@ -265,7 +266,7 @@ class ConsultationController extends Controller
         });
 
         return redirect()->route('patients.show', $patientId)
-            ->with('success', 'Consultation started. Patient is in the doctor queue.');
+            ->with('success', 'Consultation started. Patient is awaiting nurse intake validation.');
     }
 
     // 3. Show the Doctor's Workspace (View Consultation)
@@ -524,6 +525,10 @@ class ConsultationController extends Controller
             abort(404, 'Consultation not found');
         }
 
+        if ($redirect = $this->guardClinicalReviewStage($consultation)) {
+            return $redirect;
+        }
+
         $workerId = DB::table('health_workers')
             ->where('user_id', Auth::id())
             ->value('id');
@@ -681,6 +686,15 @@ class ConsultationController extends Controller
             abort(403, 'No health worker profile is linked to this user.');
         }
 
+        $consultation = DB::table('consultations')->where('id', $id)->first();
+        if (! $consultation) {
+            abort(404, 'Consultation not found');
+        }
+
+        if ($redirect = $this->guardClinicalReviewStage($consultation)) {
+            return $redirect;
+        }
+
         DB::table('diagnosis_records')->insert([
             'consultation_id' => $id,
             'diagnosis_id' => $hasLookup ? $validated['diagnosis_id'] : null,
@@ -719,6 +733,10 @@ class ConsultationController extends Controller
         $consultation = DB::table('consultations')->where('id', $id)->first();
         if (! $consultation) {
             abort(404, 'Consultation not found');
+        }
+
+        if ($redirect = $this->guardClinicalReviewStage($consultation)) {
+            return $redirect;
         }
 
         $diagnosisCount = DB::table('diagnosis_records')
@@ -803,6 +821,15 @@ class ConsultationController extends Controller
             return redirect()->back()
                 ->withErrors(['custom_medicine_name' => 'Custom medicine name must be at least 2 characters.'])
                 ->withInput();
+        }
+
+        $consultation = DB::table('consultations')->where('id', $id)->first();
+        if (! $consultation) {
+            abort(404, 'Consultation not found');
+        }
+
+        if ($redirect = $this->guardClinicalReviewStage($consultation)) {
+            return $redirect;
         }
 
         DB::table('prescriptions')->insert([
@@ -957,6 +984,21 @@ class ConsultationController extends Controller
         }
 
         return redirect()->route('consultations.edit', $consultationId)->with('success', 'Prescription deleted successfully.');
+    }
+
+    private function guardClinicalReviewStage(object $consultation): ?RedirectResponse
+    {
+        if (in_array($consultation->status, ['pending_doctor', 'in_progress'], true)) {
+            return null;
+        }
+
+        $message = match ($consultation->status) {
+            'pending_validation' => 'Nurse intake validation must be completed before clinical review.',
+            'triage' => 'Triage intake must be completed before clinical review.',
+            default => 'This consultation is not open for clinical review.',
+        };
+
+        return redirect()->back()->withErrors(['consultation' => $message]);
     }
 
     private function maybeAutoCompleteConsultation(int $consultationId): bool
