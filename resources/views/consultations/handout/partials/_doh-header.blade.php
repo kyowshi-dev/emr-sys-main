@@ -11,7 +11,7 @@
         ? str_pad((string) $householdId, $serialDigits, '0', STR_PAD_LEFT)
         : str_repeat('0', $serialDigits);
     $serialChars = str_split(substr($serialSource, -$serialDigits));
-    $facilityCode = config('app.facility_code', 'DOH000000000038890');
+    $facilityCode = config('app.facility_code', '    ');
     $facilityChars = str_split($facilityCode);
 
     $logoPath = public_path('img/Department_of_Health_(DOH)_PHL.svg.webp');

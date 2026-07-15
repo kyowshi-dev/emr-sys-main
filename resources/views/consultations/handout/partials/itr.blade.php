@@ -52,8 +52,10 @@
 
     $labTests = $labRequests->pluck('lab_test_name')->implode("\n");
 
-    $consultationTypes = [
+    $consultationTypesLeft = [
         'General', 'Prenatal', 'Dental Care', 'Child Care', 'Child Nutrition', 'Injury', 'Adult Immunization',
+    ];
+    $consultationTypesRight = [
         'Family Planning', 'Postpartum', 'Tuberculosis', 'Child Immunization', 'Sick Children', 'Firecracker Injury',
     ];
 @endphp
@@ -103,30 +105,49 @@
         <tr>
             <td colspan="12" class="section-header" style="border-top:0;">II. For CHU / RHU Personnel Only (Para sa Kinatawan ng CHU / RHU Lamang)</td>
         </tr>
+
+        {{-- Block 1: Mode / Vitals (left) + Referral (right) --}}
         <tr>
-            {{-- Left: transaction + vitals (5/12) --}}
-            <td colspan="5" style="padding:0; vertical-align:top;">
-                <table class="form-table nested-table" style="border:0;">
+            <td colspan="12" style="padding:0; border-bottom:3px solid #000;">
+                <table class="form-table" style="border:0;">
+                    {{-- Row: Mode of Transaction | Referral header + FROM/TO --}}
                     <tr>
-                        <td class="label-cell" style="width:42%; border-top:0; border-left:0;">Mode of<br>Transaction</td>
-                        <td style="border-top:0; border-right:0;">
-                            <div class="marks-stack">
-                                @include('consultations.handout.partials._mark', ['checked' => $mode === 'Walk-in', 'label' => 'Walk-in', 'inline' => false])
-                                @include('consultations.handout.partials._mark', ['checked' => $mode === 'Visited', 'label' => 'Visited', 'inline' => false])
-                                @include('consultations.handout.partials._mark', ['checked' => $mode === 'Referral', 'label' => 'Referral', 'inline' => false])
-                            </div>
+                        <td class="label-cell text-center" rowspan="3" style="width:14%; border-top:0; border-left:0; vertical-align:middle !important;">Mode of<br>Transaction</td>
+                        <td style="width:36%; border-top:0; padding:1px 3px;">
+                            @include('consultations.handout.partials._mark', ['checked' => $mode === 'Walk-in', 'label' => 'Walk-in', 'inline' => false])
                         </td>
+                        <td colspan="2" class="label-cell-sm text-center" style="width:50%; border-top:0; border-right:0;">For REFERRAL Transaction only.</td>
                     </tr>
                     <tr>
+                        <td style="padding:1px 3px;">
+                            @include('consultations.handout.partials._mark', ['checked' => $mode === 'Visited', 'label' => 'Visited', 'inline' => false])
+                        </td>
+                        <td class="label-cell text-center" style="width:16%; vertical-align:middle !important; font-size:7pt;">REFERRED FROM</td>
+                        <td style="border-right:0;">{{ $isReferral ? ($consultation->referred_from ?? '') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:1px 3px;">
+                            @include('consultations.handout.partials._mark', ['checked' => $mode === 'Referral', 'label' => 'Referral', 'inline' => false])
+                        </td>
+                        <td class="label-cell text-center" style="vertical-align:middle !important; font-size:7pt;">REFERRED TO</td>
+                        <td style="border-right:0;">{{ $isReferral ? ($consultation->referred_to ?? 'Higher facility') : '' }}</td>
+                    </tr>
+
+                    {{-- Vitals + Reason(s) for Referral --}}
+                    <tr>
                         <td class="label-cell" style="border-left:0;">Date of Consultation</td>
-                        <td style="border-right:0;">
+                        <td>
                             <span class="field-value">{{ $consultDate->format('m/d/Y') }}</span>
                             <span class="field-help">(mm/dd/yyyy)</span>
+                        </td>
+                        <td class="label-cell text-center" rowspan="4" style="vertical-align:middle !important; font-size:7pt;">Reason(s) for<br>Referral</td>
+                        <td rowspan="4" style="border-right:0; vertical-align:top; min-height:72px;">
+                            <p class="field-value-sm whitespace-pre">{{ $isReferral ? ($consultation->referral_reason ?? '') : '' }}</p>
                         </td>
                     </tr>
                     <tr>
                         <td class="label-cell" style="border-left:0;">Consultation Time</td>
-                        <td style="border-right:0;">
+                        <td>
                             <span class="field-value">{{ $consultDate->format('g:i') }}</span>
                             <span class="am-pm-box">
                                 <span @class(['active' => $isAm])>AM</span>
@@ -136,116 +157,104 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="label-cell" style="border-left:0;">Blood Pressure</td>
-                        <td style="border-right:0; padding:0;">
-                            <table class="form-table nested-table" style="border:0;">
+                        <td style="border-left:0; padding:0;">
+                            <table class="form-table" style="border:0; width:100%;">
                                 <tr>
-                                    <td style="width:50%; border-top:0; border-left:0; border-bottom:0;">{{ $bp }}</td>
-                                    <td class="label-cell" style="width:28%;">Temperature</td>
-                                    <td style="border-top:0; border-right:0; border-bottom:0;">{{ $temperature !== null ? $temperature.'°C' : '' }}</td>
+                                    <td style="width:55%; border:0; border-right:1px solid #000; padding:1px 3px;">Blood Pressure</td>
+                                    <td style="border:0; padding:1px 3px;">{{ $bp }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td style="padding:0;">
+                            <table class="form-table" style="border:0; width:100%;">
+                                <tr>
+                                    <td class="label-cell" style="width:45%; border:0; border-right:1px solid #000;">Temperature</td>
+                                    <td style="border:0; padding:1px 3px;">{{ $temperature !== null ? $temperature.'°C' : '' }}</td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
                     <tr>
-                        <td class="label-cell" style="border-left:0;">Height (cm)</td>
-                        <td style="border-right:0; padding:0;">
-                            <table class="form-table nested-table" style="border:0;">
+                        <td style="border-left:0; padding:0;">
+                            <table class="form-table" style="border:0; width:100%;">
                                 <tr>
-                                    <td style="width:50%; border-top:0; border-left:0; border-bottom:0;">{{ $height }}</td>
-                                    <td class="label-cell" style="width:28%;">Weight (kg)</td>
-                                    <td style="border-top:0; border-right:0; border-bottom:0;">{{ $weight }}</td>
+                                    <td style="width:55%; border:0; border-right:1px solid #000; padding:1px 3px;">Height (cm)</td>
+                                    <td style="border:0; padding:1px 3px;">{{ $height }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td style="padding:0;">
+                            <table class="form-table" style="border:0; width:100%;">
+                                <tr>
+                                    <td class="label-cell" style="width:45%; border:0; border-right:1px solid #000;">Weight (kg)</td>
+                                    <td style="border:0; padding:1px 3px;">{{ $weight }}</td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
                     <tr>
                         <td class="label-cell" style="border-left:0; border-bottom:0;">Name of Attending Provider</td>
-                        <td class="field-value text-bold" style="border-right:0; border-bottom:0;">{{ $provider }}</td>
+                        <td class="field-value text-bold" style="border-bottom:0;">{{ $provider }}</td>
+                        <td class="label-cell text-center" style="border-bottom:0; vertical-align:middle !important; font-size:7pt;">Referred by</td>
+                        <td class="field-value-sm" style="border-right:0; border-bottom:0;">{{ $isReferral ? $provider : '' }}</td>
                     </tr>
                 </table>
             </td>
+        </tr>
 
-            {{-- Middle: referral block (3/12) --}}
-            <td colspan="3" style="padding:0; vertical-align:top;">
-                <table class="form-table nested-table" style="border:0; height:100%;">
+        {{-- Block 2: Nature of Visit + Type (left) | Chief Complaints (right) --}}
+        <tr>
+            <td colspan="12" style="padding:0; border-bottom:3px solid #000;">
+                <table class="form-table" style="border:0;">
                     <tr>
-                        <td class="label-cell-sm text-center" style="border-top:0;">For REFERRAL Transaction only</td>
-                    </tr>
-                    <tr>
-                        <td style="min-height:24px;">
-                            <p class="field-label" style="font-size:7pt;">REFERRED FROM</p>
-                            <p class="field-value-sm">{{ $isReferral ? ($consultation->referred_from ?? '') : '' }}</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="min-height:24px;">
-                            <p class="field-label" style="font-size:7pt;">REFERRED TO</p>
-                            <p class="field-value-sm">{{ $isReferral ? ($consultation->referred_to ?? 'Higher facility') : '' }}</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="min-height:48px;">
-                            <p class="field-label" style="font-size:7pt;">Reason(s) for Referral</p>
-                            <p class="field-value-sm whitespace-pre">{{ $isReferral ? ($consultation->referral_reason ?? '') : '' }}</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="min-height:20px; border-bottom:0;">
-                            <p class="field-label" style="font-size:7pt;">Referred by</p>
-                            <p class="field-value-sm">{{ $isReferral ? $provider : '' }}</p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-
-            {{-- Right: nature of visit + consultation type (4/12) --}}
-            <td colspan="4" style="padding:0; vertical-align:top;">
-                <table class="form-table nested-table" style="border:0; height:100%;">
-                    <tr>
-                        <td class="label-cell" style="width:38%; border-top:0; border-right:0;">Nature of Visit</td>
-                        <td style="border-top:0; border-right:0;">
+                        <td class="label-cell text-center" style="width:14%; border-top:0; border-left:0; vertical-align:middle !important;">Nature of Visit</td>
+                        <td style="width:36%; border-top:0; padding:2px 3px;">
                             <div class="marks-stack">
                                 @include('consultations.handout.partials._mark', ['checked' => in_array($natureOfVisit, ['Checkup', 'New Consultation/Case'], true), 'label' => 'New Consultation/Case', 'inline' => false])
                                 @include('consultations.handout.partials._mark', ['checked' => $natureOfVisit === 'New Admission', 'label' => 'New Admission', 'inline' => false])
                                 @include('consultations.handout.partials._mark', ['checked' => in_array($natureOfVisit, ['Follow-up', 'Follow-up Visit', 'Follow-up visit'], true), 'label' => 'Follow-up visit', 'inline' => false])
                             </div>
                         </td>
+                        <td class="label-cell text-center" rowspan="2" style="width:10%; border-top:0; vertical-align:middle !important; font-size:7pt;">Chief<br>Complaints:</td>
+                        <td rowspan="2" class="field-value-sm whitespace-pre" style="width:40%; border-top:0; border-right:0; vertical-align:top; min-height:120px;">{{ $consultation->complaint_text ?? '' }}</td>
                     </tr>
                     <tr>
-                        <td class="label-cell" style="border-right:0; font-size:7pt;">Type of Consultation /<br>Purpose of visit</td>
-                        <td style="border-right:0;">
-                            <div class="marks-2col">
-                                @foreach ($consultationTypes as $type)
-                                    @include('consultations.handout.partials._mark', [
-                                        'checked' => false,
-                                        'label' => $type,
-                                        'inline' => false,
-                                    ])
-                                @endforeach
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="border-bottom:0; border-right:0; min-height:56px; vertical-align:top;">
-                            <p class="field-label" style="font-size:7pt;">Chief Complaints</p>
-                            <p class="field-value-sm whitespace-pre">{{ $consultation->complaint_text ?? '' }}</p>
+                        <td class="label-cell text-center" style="border-left:0; border-bottom:0; vertical-align:middle !important; font-size:7pt;">Type of Consultation /<br>Purpose of visit</td>
+                        <td style="border-bottom:0; padding:2px 3px; vertical-align:top;">
+                            <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
+                                <tr>
+                                    <td style="width:50%; vertical-align:top; border:0; padding:0 2px 0 0;">
+                                        <div class="marks-stack">
+                                            @foreach ($consultationTypesLeft as $type)
+                                                @include('consultations.handout.partials._mark', ['checked' => false, 'label' => $type, 'inline' => false])
+                                            @endforeach
+                                        </div>
+                                    </td>
+                                    <td style="width:50%; vertical-align:top; border:0; padding:0;">
+                                        <div class="marks-stack">
+                                            @foreach ($consultationTypesRight as $type)
+                                                @include('consultations.handout.partials._mark', ['checked' => false, 'label' => $type, 'inline' => false])
+                                            @endforeach
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
 
+        {{-- Block 3: Diagnosis (full width) --}}
         <tr>
-            <td colspan="8" style="padding:0; min-height:56px;">
-                <table class="form-table nested-table" style="border:0; height:100%;">
+            <td colspan="12" style="padding:0; min-height:56px; border-bottom:3px solid #000;">
+                <table class="form-table" style="border:0; height:100%;">
                     <tr>
-                        <td class="label-cell" style="width:14%; border-top:0; border-left:0; border-bottom:0; font-size:7pt;">Diagnosis:</td>
-                        <td class="field-value-sm whitespace-pre" style="border-top:0; border-right:0; border-bottom:0;">{{ $diagnosisText ?: '—' }}</td>
+                        <td class="label-cell text-center" style="width:14%; border:0; border-right:1px solid #000; vertical-align:middle !important; font-size:7pt;">Diagnosis:</td>
+                        <td class="field-value-sm whitespace-pre" style="border:0; vertical-align:top; min-height:56px;">{{ $diagnosisText ?: '' }}</td>
                     </tr>
                 </table>
             </td>
-            <td colspan="4" style="border-bottom:0;">&nbsp;</td>
         </tr>
 
         <tr>
