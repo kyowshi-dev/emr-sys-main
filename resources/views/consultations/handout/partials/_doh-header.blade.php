@@ -5,61 +5,82 @@
 --}}
 @php
     $formTitle = $formTitle ?? 'FORM';
-    $serialDigits = $serialDigits ?? 4;
+    $serialDigits = (int) ($serialDigits ?? 4);
     $householdId = $patient->household_record_id ?? $patient->household_id ?? '';
-    $serial = str_pad('0', $serialDigits, '0', STR_PAD_LEFT);
-    $serialChars = str_split(substr($serial, -$serialDigits));
+    $serialSource = $householdId !== '' && $householdId !== null
+        ? str_pad((string) $householdId, $serialDigits, '0', STR_PAD_LEFT)
+        : str_repeat('0', $serialDigits);
+    $serialChars = str_split(substr($serialSource, -$serialDigits));
     $facilityCode = config('app.facility_code', 'DOH000000000038890');
+    $facilityChars = str_split($facilityCode);
+
+    $logoPath = public_path('img/Department_of_Health_(DOH)_PHL.svg.webp');
+    if (! file_exists($logoPath)) {
+        $logoPath = public_path('img/logo.svg');
+    }
+    $logoMime = match (pathinfo($logoPath, PATHINFO_EXTENSION)) {
+        'webp' => 'image/webp',
+        'svg' => 'image/svg+xml',
+        'png' => 'image/png',
+        default => 'image/jpeg',
+    };
+    $logoSrc = 'data:'.$logoMime.';base64,'.base64_encode((string) file_get_contents($logoPath));
 @endphp
 
-<div class="grid grid-cols-12 border border-black border-b-0 iclinic-form-header">
-    {{-- DOH branding --}}
-    <div class="col-span-7 flex gap-2 p-2 border-r border-black min-h-[64px]">
-        <div class="w-11 h-11 shrink-0 border border-black rounded-full flex items-center justify-center overflow-hidden bg-white iclinic-logo">
-            <img src="{{ asset('img/Department_of_Health_(DOH)_PHL.svg.webp') }}" alt="Department of Health Logo" class="w-9 h-9">
-        </div>
-        <div class="leading-tight">
-            <p class="text-[8px] m-0">Republic of the Philippines</p>
-            <p class="text-[11px] font-bold text-[#1a5c2e] leading-none m-0">Department of Health</p>
-            <p class="text-[9px] italic leading-none m-0">Kagawaran ng Kalusugan</p>
-        </div>
-    </div>
+<table class="form-table" style="border-bottom:0;">
+    <tr>
+        <td rowspan="2" style="width:52%; padding:3px 5px; vertical-align:middle;">
+            <div class="doh-header-brand">
+                <div class="doh-logo-wrap">
+                    <div class="logo-circle">
+                        <img src="{{ $logoSrc }}" alt="DOH">
+                    </div>
+                </div>
+                <div class="doh-brand">
+                    <p class="rep">Republic of the Philippines</p>
+                    <p class="dept">Department of Health</p>
+                    <p class="dept-fil">Kagawaran ng Kalusugan</p>
+                </div>
+            </div>
+        </td>
+        <td class="label-cell" style="width:20%;">Family Serial Number</td>
+        <td style="padding:0; width:28%;">
+            <table class="digit-row form-table" style="border:0; height:100%;">
+                <tr>
+                    @foreach ($serialChars as $digit)
+                        <td class="digit-box" style="border-top:0; border-bottom:0;{{ $loop->last ? ' border-right:0;' : '' }}">{{ $digit }}</td>
+                    @endforeach
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td class="label-cell">Facility Code</td>
+        <td style="padding:0;">
+            <table class="digit-row form-table" style="border:0; height:100%;">
+                <tr>
+                    @foreach ($facilityChars as $char)
+                        <td class="digit-box" style="border-top:0; border-bottom:0;{{ $loop->last ? ' border-right:0;' : '' }}">{{ $char }}</td>
+                    @endforeach
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 
-    {{-- Family Serial Number + Facility Code --}}
-    <div class="col-span-5 grid grid-rows-[auto_auto]">
-        <div class="grid grid-cols-12 border-b border-black">
-            <div class="col-span-5 bg-gray-300 border-r border-black p-1 text-[8px] font-bold leading-tight flex items-center">
-                Family Serial Number
-            </div>
-            <div class="col-span-7 grid grid-cols-4">
-                
-            </div>
-        </div>
-
-        <div class="grid grid-cols-12">
-            <div class="col-span-5 bg-gray-300 border-r border-black p-1 text-[8px] font-bold leading-tight flex items-center">
-                Facility Code
-            </div>
-            <div class="col-span-7 grid grid-cols-12">
-                
-            </div>
-        </div>
-    </div>
+<div class="form-header-block">
+    <p class="title-caption">Integrated Clinic Information System (iCLINICSYS)</p>
+    <h1>{{ $formTitle }}</h1>
 </div>
 
-<div class="border border-black border-b-0 text-center py-1 form-header">
-    <p class="text-[10px] tracking-wide title-caption">Integrated Clinic Information System (iCLINICSYS)</p>
-    <h1 class="text-[12px] font-bold tracking-wide uppercase m-0">{{ $formTitle }}</h1>
-</div>
-
-<div class="border border-black border-b-0 px-1 py-1 text-[8px] italic leading-tight instructions">
+<div class="instructions">
     @if (($formTitle ?? '') === 'PATIENT ENROLMENT RECORD')
         <strong>Instructions:</strong> For new patient only. Please print legibly and mark appropriate boxes with "X".
-        <span class="not-italic">/</span>
+        <span style="font-style:normal;">/</span>
         <strong>Tagubilin:</strong> Para sa bagong pasyente lamang. Sulatan nang malinaw at lagyan ng "X" ang naaangkop na kahon.
     @else
         <strong>Instructions:</strong> Please print legibly and mark appropriate boxes with "X".
-        <span class="not-italic">/</span>
+        <span style="font-style:normal;">/</span>
         <strong>Tagubilin:</strong> Sulatan nang malinaw at lagyan ng "X" ang naaangkop na kahon.
     @endif
 </div>

@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Spatie\LaravelPdf\Enums\Format;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class ConsultationController extends Controller
 {
@@ -415,6 +417,25 @@ class ConsultationController extends Controller
 
     public function printHandout($id)
     {
+        return view('consultations.handout', $this->resolveHandoutData($id));
+    }
+
+    public function downloadHandoutPdf($id)
+    {
+        $data = $this->resolveHandoutData($id);
+        $filename = 'iClinicSys-Handout-C'.str_pad((string) $data['consultation']->id, 4, '0', STR_PAD_LEFT).'.pdf';
+
+        return Pdf::view('consultations.handout-pdf', $data)
+            ->format(Format::A4)
+            ->margins(6, 6, 6, 6)
+            ->inline($filename);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function resolveHandoutData(int|string $id): array
+    {
         if (! auth()->user()->hasPermission('consultations')) {
             abort(403, 'Unauthorized');
         }
@@ -491,7 +512,7 @@ class ConsultationController extends Controller
         $consultationAt = Carbon::parse($consultation->updated_at ?? $consultation->created_at);
         $attendingProvider = trim(($consultation->worker_first_name ?? '').' '.($consultation->worker_last_name ?? '')) ?: null;
 
-        return view('consultations.handout', [
+        return [
             'consultation' => $consultation,
             'patient' => $patient,
             'diagnoses' => $diagnoses,
@@ -502,7 +523,7 @@ class ConsultationController extends Controller
             'zoneLabel' => $zoneLabel,
             'consultationAt' => $consultationAt,
             'attendingProvider' => $attendingProvider,
-        ]);
+        ];
     }
 
     public function retakeVitals(Request $request, $id)

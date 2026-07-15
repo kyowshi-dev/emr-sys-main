@@ -102,6 +102,8 @@ Route::middleware('auth')->group(function () {
         ->name('consultations.acknowledge-intake');
     Route::get('/consultations/{id}/handout', [ConsultationController::class, 'printHandout'])
         ->name('consultations.handout');
+    Route::get('/consultations/{id}/handout/pdf', [ConsultationController::class, 'downloadHandoutPdf'])
+        ->name('consultations.handout.pdf');
     Route::post('/consultations/{id}/vitals/retake', [ConsultationController::class, 'retakeVitals'])
         ->name('consultations.vitals.retake');
     Route::put('/consultations/{consultationId}/vitals/{vitalId}', [ConsultationController::class, 'updateVitalVersion'])
