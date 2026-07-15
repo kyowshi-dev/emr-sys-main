@@ -47,6 +47,19 @@ class DashboardController extends Controller
                     ];
                 });
 
+            $recentPatients = DB::table('patients')
+                ->orderByDesc('created_at')
+                ->limit(3)
+                ->select('id', 'first_name', 'last_name')
+                ->get()
+                ->map(function ($row) {
+                    return (object) [
+                        'id' => $row->id,
+                        'name' => trim($row->first_name.' '.$row->last_name),
+                        'identifier' => 'PT'.str_pad((string) $row->id, 3, '0', STR_PAD_LEFT),
+                    ];
+                });
+
             $handoutData = $user->canViewDashboardHandouts('bhw')
                 ? $this->loadResultsReady($request)
                 : ['resultsReady' => collect(), 'resultsReadyCount' => 0, 'resultsFilters' => $this->emptyResultsFilters()];
@@ -56,6 +69,7 @@ class DashboardController extends Controller
                 'consultationsToday' => $consultationsToday,
                 'pendingConsultations' => $pendingConsultations,
                 'pendingQueue' => $pendingQueue,
+                'recentPatients' => $recentPatients,
                 'queueUpdatedAt' => now()->format('M j, Y g:i A'),
                 'showResultsReady' => $user->canViewDashboardHandouts('bhw'),
                 ...$handoutData,

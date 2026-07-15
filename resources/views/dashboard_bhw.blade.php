@@ -4,24 +4,26 @@
 <div class="space-y-5 lg:space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">Dashboard</h1>
+            <h1 class="font-display font-semibold text-3xl lg:text-4xl" style="color: var(--ink);">Dashboard</h1>
         </div>
-        <a href="{{ url('/patients/create') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold transition hover:bg-primary-hover">
-            <i class="fa-solid fa-user-plus"></i>
-            New Patient
-        </a>
     </div>
 
-    <div class="rounded-xl" x-data="patientSearch()">
-        <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none" style="color: var(--ink-subtle);" :style="loading && 'color: var(--primary)'">
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </span>
-            <input type="text" x-model="query" @input.debounce.300ms="search()"
-                   placeholder="Search patients by name..."
-                   class="w-full pl-10 pr-4 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2 transition"
-                   style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);"
-                   autocomplete="off">
+    <div class="rounded-xl p-4" x-data="patientSearch()">
+        <div class="flex flex-col lg:flex-row lg:items-center gap-3">
+            <div class="relative flex-1 min-w-0">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none" style="color: var(--ink-subtle);" :style="loading && 'color: var(--primary)'">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" x-model="query" @input.debounce.300ms="search()"
+                       placeholder="Search patients by name..."
+                       class="w-full max-w-3xl pl-10 pr-4 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2 transition"
+                       style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);"
+                       autocomplete="off">
+            </div>
+            <a href="{{ url('/patients/create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold transition hover:bg-primary-hover">
+                <i class="fa-solid fa-user-plus"></i>
+                New Patient
+            </a>
         </div>
         <div x-show="results.length > 0" x-transition class="mt-3 rounded-lg border overflow-hidden" style="display: none; border-color: var(--border); background: var(--bg-surface-elevated); box-shadow: var(--shadow-md);">
             <ul>
@@ -47,26 +49,45 @@
     </div>
 
     <div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="p-4 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="p-5 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
                  style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);">
-                <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: var(--ink-muted);">Total patients</p>
-                <p class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">{{ $totalPatients ?? 0 }}</p>
+                <div class="flex items-start justify-between mb-3">
+                    <p class="text-[11px] font-semibold uppercase tracking-wider" style="color: var(--ink-muted);">Total patients</p>
+                    <i class="fa-solid fa-users text-lg" style="color: var(--primary);"></i>
+                </div>
+                <p class="font-display font-bold text-3xl" style="color: var(--ink);">{{ $totalPatients ?? 0 }}</p>
                 <p class="text-xs mt-2" style="color: var(--ink-muted);">Registered records in the barangay</p>
             </div>
 
-            <div class="p-4 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
+            <div class="p-5 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
                  style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);">
-                <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: var(--ink-muted);">Consultations today</p>
-                <p class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">{{ $consultationsToday ?? 0 }}</p>
+                <div class="flex items-start justify-between mb-3">
+                    <p class="text-[11px] font-semibold uppercase tracking-wider" style="color: var(--ink-muted);">Consultations today</p>
+                    <i class="fa-solid fa-stethoscope text-lg" style="color: var(--primary);"></i>
+                </div>
+                <p class="font-display font-bold text-3xl" style="color: var(--ink);">{{ $consultationsToday ?? 0 }}</p>
                 <p class="text-xs mt-2" style="color: var(--ink-muted);">Newly logged patient visits</p>
             </div>
 
-            <div class="p-4 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
+            <div class="p-5 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
                  style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);">
-                <p class="text-[11px] font-semibold uppercase tracking-wider mb-2" style="color: var(--ink-muted);">Pending Queue</p>
-                <p class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">{{ $pendingConsultations ?? 0 }}</p>
+                <div class="flex items-start justify-between mb-3">
+                    <p class="text-[11px] font-semibold uppercase tracking-wider" style="color: var(--ink-muted);">Pending Queue</p>
+                    <i class="fa-solid fa-hourglass-end text-lg" style="color: var(--primary);"></i>
+                </div>
+                <p class="font-display font-bold text-3xl" style="color: var(--ink);">{{ $pendingConsultations ?? 0 }}</p>
                 <p class="text-xs mt-2" style="color: var(--ink-muted);">Cases Waiting for Doctor Review</p>
+            </div>
+
+            <div class="p-5 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
+                 style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);">
+                <div class="flex items-start justify-between mb-3">
+                    <p class="text-[11px] font-semibold uppercase tracking-wider" style="color: var(--ink-muted);">Referrals today</p>
+                    <i class="fa-solid fa-arrow-right-arrow-left text-lg" style="color: var(--primary);"></i>
+                </div>
+                <p class="font-display font-bold text-3xl" style="color: var(--ink);">{{ $referralsToday ?? 0 }}</p>
+                <p class="text-xs mt-2" style="color: var(--ink-muted);">Patient referrals initiated</p>
             </div>
         </div>
     </div>
@@ -100,6 +121,42 @@
                 </ul>
             </div>
 
+            <div class="space-y-4">
+            
+
+            <div class="rounded-xl border bg-surface p-4" style="border-color: var(--border); box-shadow: var(--shadow-sm);">
+            <div class="flex items-center justify-between mb-3">
+                    <p class="text-sm font-semibold" style="color: var(--ink);">Recently registered</p>
+                    <span class="text-xs font-semibold uppercase tracking-wider" style="color: var(--ink-muted);">Last 3</span>
+                </div>
+                <div class="space-y-3">
+                    @forelse($recentPatients ?? [] as $recent)
+                        <div class="rounded-xl bg-surface-elevated p-4 border" style="border-color: var(--border);">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <p class="font-medium text-sm" style="color: var(--ink);">{{ $recent->name }}</p>
+                                    <p class="text-xs mt-1" style="color: var(--ink-muted);">{{ $recent->identifier }}</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="{{ route('consultations.create', $recent->id) }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-primary text-white text-xs font-semibold transition hover:bg-primary-hover">
+                                        <i class="fa-solid fa-clock"></i>
+                                        Start Queue
+                                    </a>
+                                    <a href="{{ route('patients.show', $recent->id) }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-primary text-primary text-xs font-semibold transition hover:bg-primary/10">
+                                        <i class="fa-solid fa-user"></i>
+                                        View profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="rounded-xl bg-surface-elevated p-4 border text-center text-sm" style="border-color: var(--border); color: var(--ink-muted);">
+                            No recently registered patients available.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
             <div class="rounded-xl border bg-surface p-4" style="border-color: var(--border); box-shadow: var(--shadow-sm);">
                 <div class="flex items-center justify-between mb-3">
                     <p class="text-sm font-semibold" style="color: var(--ink);">Queue summary</p>
@@ -116,6 +173,7 @@
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </div>
 
