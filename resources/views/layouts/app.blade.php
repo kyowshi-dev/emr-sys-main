@@ -321,12 +321,12 @@
                             <span>Immunizations</span>
                         </a>
 
-                        <a href="{{ route('lab_requests.index') }}" 
+                        {{-- <a href="{{ route('lab_requests.index') }}" 
                            class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 text-ink-muted hover:bg-black/5 {{ !$authUser->hasPermission('lab_requests') ? 'disabled' : '' }}" 
                            {!! !$authUser->hasPermission('lab_requests') ? 'onclick="'.$swalError.'"' : '' !!}>
                             <i class="fa-solid fa-vials text-sm opacity-70" aria-hidden="true"></i>
                             <span>Labs / Tests</span>
-                        </a>
+                        </a> --}}
                     </div>
                 </div>
 
@@ -575,7 +575,7 @@
                         </nav>
                     @endif
                     
-                    <div class="rounded-2xl p-5 lg:p-8 animate-in opacity-0 delay-2 bg-surface-elevated shadow-sm">
+                    <div class="rounded-2xl lg:p-8 animate-in opacity-0 delay-2 bg-surface-elevated shadow-sm">
                         @yield('content')
                     </div>
 

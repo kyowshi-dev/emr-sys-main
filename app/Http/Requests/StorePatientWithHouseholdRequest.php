@@ -49,7 +49,7 @@ class StorePatientWithHouseholdRequest extends FormRequest
             'date_of_birth' => 'required|date|before:today',
             'birth_place' => 'nullable|string|max:255',
 
-            'civil_status' => 'required|in:Single,Married,Widowed,Separated,Common Law',
+            'civil_status' => 'nullable|in:Single (Walang Asawa),Married (May Asawa),Annulled (Hiwalay),Widow/er (Balo),Separated (Hiwalay),Co-Habitation (Paninirahang magkasama)',
             'blood_type' => 'nullable|in:A+,A-,B+,B-,O+,O-,AB+,AB-',
             'educational_attainment' => 'nullable|string',
             'employment_status' => 'nullable|string|max:100',
