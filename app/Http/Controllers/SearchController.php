@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\IcdApiService;
 
 class SearchController extends Controller
 {
@@ -62,6 +63,16 @@ class SearchController extends Controller
             return response()->json([]);
         }
 
+        // Try ICD API first (if enabled). If API is not configured or returns
+        // no results, fall back to the local diagnosis_lookup table.
+        $icdService = app()->make(IcdApiService::class);
+        if ($icdService->isEnabled()) {
+            $apiResults = $icdService->search($query, 15);
+            if (! empty($apiResults)) {
+                return response()->json($apiResults);
+            }
+        }
+
         $diagnoses = DB::table('diagnosis_lookup')
             ->where('diagnosis_name', 'LIKE', "%{$query}%")
             ->orWhere('diagnosis_code', 'LIKE', "{$query}%")
@@ -72,7 +83,7 @@ class SearchController extends Controller
         $results = $diagnoses->map(function ($d) {
             return [
                 'id' => $d->id,
-                'text' => $d->diagnosis_code.' - '.$d->diagnosis_name,
+                'text' => $d->diagnosis_code ? ($d->diagnosis_code.' - '.$d->diagnosis_name) : $d->diagnosis_name,
             ];
         });
 
