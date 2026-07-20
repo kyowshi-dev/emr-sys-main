@@ -22,7 +22,7 @@
             </div>
             <a href="{{ url('/patients/create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold transition hover:bg-primary-hover">
                 <i class="fa-solid fa-user-plus"></i>
-                New Patient
+                Enrol New Patient
             </a>
         </div>
         <div x-show="results.length > 0" x-transition class="mt-3 rounded-lg border overflow-hidden" style="display: none; border-color: var(--border); background: var(--bg-surface-elevated); box-shadow: var(--shadow-md);">
@@ -44,7 +44,7 @@
             <div class="flex justify-center mb-2"><i class="fa-solid fa-user-plus text-3xl" style="color: var(--ink-subtle);"></i></div>
             <p class="text-sm font-medium" style="color: var(--ink);">No patient found</p>
             <p class="text-xs mt-1 mb-3" style="color: var(--ink-muted);">Try searching with a different name or ID</p>
-            <a href="{{ url('/patients/create') }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-white transition hover:opacity-90" style="background: var(--primary);"><i class="fa-solid fa-plus"></i> Register a new patient</a>
+            <a href="{{ url('/patients/create') }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-white transition hover:opacity-90" style="background: var(--primary);"><i class="fa-solid fa-plus"></i> Enrol a new patient</a>
         </div>
     </div>
 
