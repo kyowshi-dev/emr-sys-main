@@ -104,6 +104,8 @@ Route::middleware('auth')->group(function () {
         ->name('consultations.finalize');
     Route::post('/consultations/{id}/acknowledge-intake', [ConsultationController::class, 'acknowledgeIntake'])
         ->name('consultations.acknowledge-intake');
+    Route::delete('/consultations/{id}', [ConsultationController::class, 'cancelIntake'])
+        ->name('consultations.cancel');
     Route::get('/consultations/{id}/handout', [ConsultationController::class, 'printHandout'])
         ->name('consultations.handout');
     Route::get('/consultations/{id}/handout/pdf', [ConsultationController::class, 'downloadHandoutPdf'])

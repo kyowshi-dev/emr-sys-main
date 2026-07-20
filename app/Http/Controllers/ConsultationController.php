@@ -222,6 +222,7 @@ class ConsultationController extends Controller
             'mode_of_transaction' => ['required', 'string', 'max:255'],
             'referred_from' => ['nullable', 'string', 'max:255'],
             'nature_of_visit' => ['required', 'string', 'max:255'],
+            'purpose_of_visit' => ['required'| 'string', 'max:255'],
             'chief_complaint' => ['nullable', 'string', 'max:1000'],
             'bp_systolic' => ['required', 'numeric', 'min:0', 'max:300'],
             'bp_diastolic' => ['required', 'numeric', 'min:0', 'max:200'],
@@ -465,6 +466,38 @@ class ConsultationController extends Controller
 
         return redirect()->route('consultations.show', $id)
             ->with('success', 'Intake acknowledged. Patient is now in the doctor queue.');
+    }
+
+    public function cancelIntake($id)
+    {
+        if (! auth()->user()->hasPermission('consultations')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $worker = DB::table('health_workers')->where('user_id', Auth::id())->first();
+        if ($worker === null || strtolower((string) $worker->role) !== 'nurse') {
+            abort(403, 'Only nurses can cancel intake requests.');
+        }
+
+        $consultation = DB::table('consultations')->where('id', $id)->first();
+        if (! $consultation) {
+            abort(404, 'Consultation not found');
+        }
+
+        if ($consultation->status !== 'pending_validation') {
+            return redirect()->back()->withErrors([
+                'intake' => 'Only consultations awaiting nurse validation can be canceled.',
+            ]);
+        }
+
+        DB::transaction(function () use ($id) {
+            DB::table('vitals')->where('consultation_id', $id)->delete();
+            DB::table('outward_referrals')->where('consultation_id', $id)->delete();
+            DB::table('consultations')->where('id', $id)->delete();
+        });
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Intake canceled successfully.');
     }
 
     public function printHandout($id)

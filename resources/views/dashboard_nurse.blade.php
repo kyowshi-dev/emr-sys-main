@@ -5,13 +5,8 @@
     <div class="animate-in opacity-0 delay-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
             <h1 class="font-display font-semibold text-2xl lg:text-3xl" style="color: var(--ink);">Nurse Dashboard</h1>
-            <p class="text-sm mt-1" style="color: var(--ink-muted);">Validate triage intake and route patients to the doctor queue.</p>
+            <p class="text-sm mt-1" style="color: var(--ink-muted);">I-validate ang triage intake ug ipasa ang mga pasyente sa linya sa doktor.</p>
         </div>
-        <a href="{{ route('consultations.index', ['queue' => 1, 'status' => 'pending_validation']) }}"
-           class="inline-flex items-center justify-center px-3.5 py-2.5 rounded-xl text-xs font-semibold text-white transition-[transform,box-shadow] duration-200 hover:shadow-md hover:scale-[1.01]"
-           style="background-color: #1B4332; box-shadow: var(--shadow-sm);">
-            Open validation queue
-        </a>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -68,6 +63,13 @@
                                 Acknowledge intake
                             </button>
                         </form>
+                        <form action="{{ route('consultations.cancel', $item->id) }}" method="POST" onsubmit="return confirm('Cancel this intake?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="px-3 py-2 rounded-lg text-xs font-semibold border transition hover:bg-black/[0.02]" style="border-color: var(--border); color: var(--ink-muted);">
+                                Cancel
+                            </button>
+                        </form>
                     </div>
                 </li>
             @empty
@@ -78,6 +80,7 @@
         </ul>
     </div>
 
+    {{--
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <div class="lg:col-span-8 animate-in opacity-0 delay-6 rounded-xl border p-4 lg:p-5"
              style="background: var(--primary); border-color: rgba(255,255,255,0.14); box-shadow: var(--shadow-md);">
@@ -87,6 +90,7 @@
             </p>
         </div>
 
+        
         <div class="lg:col-span-4 animate-in opacity-0 delay-6 rounded-xl border p-4 lg:p-5"
              style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm);">
             <h3 class="text-xs font-semibold uppercase tracking-wider" style="color: var(--ink-muted);">Quick actions</h3>
@@ -104,6 +108,7 @@
             </div>
         </div>
     </div>
+    --}}
 
     @if ($showResultsReady ?? false)
         @include('dashboard.partials.results-ready', [

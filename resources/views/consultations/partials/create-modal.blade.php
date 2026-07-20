@@ -61,6 +61,24 @@
                         </select>
                     </div>
 
+                    <div class="mb-3 lg:mb-4">
+                        <label for="purpose_of_visit" class="block text-xs lg:text-sm font-medium mb-1" style="color: var(--ink-muted);">Purpose of visit <span style="color: #b91c1c;">*</span></label>
+                        <select name="purpose_of_visit" id="purpose_of_visit" class="w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" required>
+                            <option value="Checkup" @selected(old('purpose_of_visit') === 'New Consultation/Case')>General</option>
+                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Family Planning</option>
+                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Prenatal</option>
+                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Postpartum</option>
+                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Tuberculosis</option>
+                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Child Immunization</option>
+                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Child Nutrition</option>
+                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Sick Children</option>
+                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Firecracker Injury</option>
+                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Adult Immunization</option>
+                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Dogbite</option>
+                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Dengue</option>
+                        </select>
+                    </div>
+
                     <div>
                         <label for="chief_complaint" class="block text-xs lg:text-sm font-medium mb-1" style="color: var(--ink-muted);">Chief Complaints</label>
                         <textarea name="chief_complaint" id="chief_complaint" rows="3" class="w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" placeholder="e.g. Fever 3 days, cough">{{ old('chief_complaint') }}</textarea>
