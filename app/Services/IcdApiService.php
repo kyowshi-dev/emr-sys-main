@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class IcdApiService
 {
@@ -41,11 +42,22 @@ class IcdApiService
             ]);
 
             if (! $resp->successful()) {
+                Log::warning('ICD API search request failed', [
+                    'query' => $query,
+                    'url' => $url,
+                    'status' => $resp->status(),
+                    'body' => $resp->body(),
+                ]);
                 return [];
             }
 
             $data = $resp->json();
             if (! is_array($data)) {
+                Log::warning('ICD API search returned non-array payload', [
+                    'query' => $query,
+                    'url' => $url,
+                    'payload' => $resp->body(),
+                ]);
                 return [];
             }
 
@@ -75,6 +87,12 @@ class IcdApiService
 
             return array_slice($items, 0, $limit);
         } catch (\Throwable $e) {
+            Log::error('ICD API search exception', [
+                'query' => $query,
+                'url' => $url,
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             return [];
         }
     }
@@ -92,6 +110,7 @@ class IcdApiService
 
         $tokenUrl = config('bhcis.icd_api.token_url');
         if (empty($tokenUrl)) {
+            Log::warning('ICD API token URL is not configured');
             return null;
         }
 
@@ -103,11 +122,20 @@ class IcdApiService
             ]);
 
             if (! $resp->successful()) {
+                Log::warning('ICD API token request failed', [
+                    'url' => $tokenUrl,
+                    'status' => $resp->status(),
+                    'body' => $resp->body(),
+                ]);
                 return null;
             }
 
             $json = $resp->json();
             if (empty($json['access_token'])) {
+                Log::warning('ICD API token response missing access_token', [
+                    'url' => $tokenUrl,
+                    'payload' => $resp->body(),
+                ]);
                 return null;
             }
 
@@ -116,6 +144,11 @@ class IcdApiService
 
             return $json['access_token'];
         } catch (\Throwable $e) {
+            Log::error('ICD API token request exception', [
+                'url' => $tokenUrl,
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             return null;
         }
     }
