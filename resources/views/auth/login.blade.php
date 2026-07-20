@@ -28,6 +28,32 @@
             --shadow-lg: 0 12px 32px rgba(26, 31, 28, 0.12);
         }
 
+        /* Responsive / autoscaling adjustments */
+        html { font-size: clamp(14px, 1.2vw, 18px); }
+
+        .responsive-card {
+            width: min(92vw, 640px);
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .card-compact { padding: clamp(1rem, 2.5vw, 1.75rem); border-radius: clamp(0.75rem, 1.5vw, 1rem); }
+
+        .logo-mark {
+            width: clamp(48px, 12vw, 80px);
+            height: clamp(48px, 12vw, 80px);
+            border-radius: clamp(10px, 2vw, 14px);
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-surface);
+        }
+
+        .logo-mark img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.08); }
+
+        .brand-title { font-size: clamp(1rem, 2.2vw, 1.25rem); }
+
         input[type="text"], input[type="password"] {
             border: 1px solid var(--border);
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -85,16 +111,16 @@
     <div class="grain fixed inset-0 z-0"></div>
     <div class="absolute inset-0 z-0 opacity-50" style="background: linear-gradient(145deg, var(--teal-soft) 0%, transparent 40%, rgba(196,92,65,0.06) 100%);"></div>
 
-    <div class="relative z-10 w-full max-w-md px-4">
-        <div class="border-2 card-compact animate-in opacity-0" style="background: var(--bg-card); font-family: var(--font-display);">
+    <div class="relative z-10 w-full px-4">
+        <div class="border-2 card-compact responsive-card animate-in opacity-0" style="background: var(--bg-card); font-family: var(--font-display);">
             <div class="text-center mb-6">
             <div class="flex items-center justify-center gap-3">
                 <div class="logo-mark">
-                <img src="{{ asset('img/logo.svg') }}" alt="Santa Ana logo">
+                    <img src="{{ asset('img/logo.svg') }}" alt="Santa Ana logo">
                 </div>
                 <div class="text-left">
-                <h1 class="font-extrabold text-lg leading-snug mb-0" style="color: var(--primary);">Barangay Health Center Consultation and Referral System</h1>
-                <p class="muted-xs leading-tight">Sta. Ana Health Center</p>
+                    <h1 class="font-extrabold brand-title leading-snug mb-0" style="color: var(--primary);">Barangay Health Center Consultation and Referral System</h1>
+                    <p class="muted-xs leading-tight">Sta. Ana Health Center</p>
                 </div>
             </div>
             <p class="text-xs mt-4 muted-xs leading-relaxed">Sign in to access patient records and services</p>
