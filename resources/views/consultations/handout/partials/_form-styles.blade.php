@@ -121,22 +121,7 @@
     .text-upper { text-transform: uppercase; }
     .whitespace-pre { white-space: pre-wrap; }
 
-    .digit-box {
-        border: 1px solid #000;
-        text-align: center;
-        font-size: 8pt;
-        font-weight: bold;
-        padding: 1px 0;
-        min-height: 15px;
-        vertical-align: middle;
-        width: auto;
-    }
-
-    .digit-row {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-    }
+ 
 
     .form-header-block {
         border: 1px solid #000;

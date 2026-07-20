@@ -166,16 +166,16 @@
                         <td style="border-left:0; padding:0;">
                             <table class="form-table" style="border:0; width:100%;">
                                 <tr>
-                                    <td style="width:55%; border:0; border-right:1px solid #000; padding:1px 3px;">Blood Pressure</td>
+                                    <td class="label-cell" style="width:55%; border:0; border-right:1px solid #000; padding:1px 3px;">Blood Pressure</td>
                                     <td style="border:0; padding:1px 3px;">{{ $bp }}</td>
                                 </tr>
                             </table>
                         </td>
-                        <td style="padding:0;">
+                        <td class="padding:0;">
                             <table class="form-table" style="border:0; width:100%;">
                                 <tr>
                                     <td class="label-cell" style="width:45%; border:0; border-right:1px solid #000;">Temperature</td>
-                                    <td style="border:0; padding:1px 3px;">{{ $temperature !== null ? $temperature.'°C' : '' }}</td>
+                                    <td style="border:0; padding:1px 3px;">{{ $temperature !== null ? "{$temperature}°C" : '' }}</td>
                                 </tr>
                             </table>
                         </td>
@@ -184,7 +184,7 @@
                         <td style="border-left:0; padding:0;">
                             <table class="form-table" style="border:0; width:100%;">
                                 <tr>
-                                    <td style="width:55%; border:0; border-right:1px solid #000; padding:1px 3px;">Height (cm)</td>
+                                    <td class="label-cell" style="width:55%; border:0; border-right:1px solid #000; padding:1px 3px;">Height (cm)</td>
                                     <td style="border:0; padding:1px 3px;">{{ $height }}</td>
                                 </tr>
                             </table>
@@ -222,7 +222,7 @@
                             </div>
                         </td>
                         <td class="label-cell text-center" rowspan="2" style="width:10%; border-top:0; vertical-align:middle !important; font-size:7pt;">Chief<br>Complaints:</td>
-                        <td rowspan="2" class="field-value-sm whitespace-pre" style="width:40%; border-top:0; border-right:0; vertical-align:top; min-height:120px;">{{ $consultation->complaint_text ?? '' }}</td>
+                        <td rowspan="2" class="field-value-sm whitespace-pre text-center" style="width:40%; border-top:0; border-right:0; vertical-align:middle; min-height:120px;">{{ $consultation->complaint_text ?? '' }}</td>
                     </tr>
                     <tr>
                         <td class="label-cell text-center" style="border-left:0; border-bottom:0; vertical-align:middle !important; font-size:7pt;">Type of Consultation /<br>Purpose of visit</td>

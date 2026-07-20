@@ -4,15 +4,10 @@
     $serialDigits — number of digit boxes for Family Serial Number (4 or 12)
 --}}
 @php
-    $formTitle = $formTitle ?? 'FORM';
+    $formTitle ??= 'FORM';
     $serialDigits = (int) ($serialDigits ?? 4);
-    $householdId = $patient->household_record_id ?? $patient->household_id ?? '';
-    $serialSource = $householdId !== '' && $householdId !== null
-        ? str_pad((string) $householdId, $serialDigits, '0', STR_PAD_LEFT)
-        : str_repeat('0', $serialDigits);
-    $serialChars = str_split(substr($serialSource, -$serialDigits));
-    $facilityCode = config('app.facility_code', '    ');
-    $facilityChars = str_split($facilityCode);
+    $serialChars = array_fill(0, $serialDigits, '');
+    $facilityChars = array_fill(0, 4, '');
 
     $logoPath = public_path('img/Department_of_Health_(DOH)_PHL.svg.webp');
     if (! file_exists($logoPath)) {
@@ -24,15 +19,15 @@
         'png' => 'image/png',
         default => 'image/jpeg',
     };
-    $logoSrc = 'data:'.$logoMime.';base64,'.base64_encode((string) file_get_contents($logoPath));
+    $logoSrc = "data:{$logoMime};base64," . base64_encode((string) file_get_contents($logoPath));
 @endphp
 
 <table class="form-table" style="border-bottom:0;">
     <tr>
-        <td rowspan="2" style="width:52%; padding:3px 5px; vertical-align:middle;">
+        <td style="width:52%; padding:3px 5px; vertical-align:middle;">
             <div class="doh-header-brand">
                 <div class="doh-logo-wrap">
-                    <div class="logo-circle">
+                    <div class="logo-circle" style="border:none;">
                         <img src="{{ $logoSrc }}" alt="DOH">
                     </div>
                 </div>
@@ -43,25 +38,31 @@
                 </div>
             </div>
         </td>
-        <td class="label-cell" style="width:20%;">Family Serial Number</td>
-        <td style="padding:0; width:28%;">
-            <table class="digit-row form-table" style="border:0; height:100%;">
+        <td style="padding:0; width:48%;">
+            <table class="form-table nested-table" style="border:0; width:100%; border-collapse:collapse;">
                 <tr>
-                    @foreach ($serialChars as $digit)
-                        <td class="digit-box" style="border-top:0; border-bottom:0;{{ $loop->last ? ' border-right:0;' : '' }}">{{ $digit }}</td>
-                    @endforeach
+                    <td class="label-cell" style="width:65%; text-align:center;">Family Serial Number</td>
+                    <td class="label-cell" style="width:35%; text-align:center;">Facility Code</td>
                 </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td class="label-cell">Facility Code</td>
-        <td style="padding:0;">
-            <table class="digit-row form-table" style="border:0; height:100%;">
                 <tr>
-                    @foreach ($facilityChars as $char)
-                        <td class="digit-box" style="border-top:0; border-bottom:0;{{ $loop->last ? ' border-right:0;' : '' }}">{{ $char }}</td>
-                    @endforeach
+                    <td style="padding:0;">
+                        <table class="digit-row form-table" style="border:0; width:100%; height:100%; border-collapse:collapse;">
+                            <tr>
+                                @foreach ($serialChars as $digit)
+                                    <td class="digit-box">{!! $digit ?: '&nbsp;' !!}</td>
+                                @endforeach
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="padding:0;">
+                        <table class="digit-row form-table" style="border:0; width:100%; height:100%; border-collapse:collapse;">
+                            <tr>
+                                @foreach ($facilityChars as $char)
+                                    <td class="digit-box">{!! $char ?: '&nbsp;' !!}</td>
+                                @endforeach
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
             </table>
         </td>
