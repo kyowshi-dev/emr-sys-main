@@ -103,5 +103,11 @@ class DatabaseSeeder extends Seeder
 
         // 11. Sample Audit Logs
         $this->call(AuditLogSeeder::class);
+
+        // 12. PATIENTS
+        $this->call(PatientSeeder::class);
+
+        // 13. CONSULTATIONS
+        $this->call(ConsultationSeeder::class);
     }
 }

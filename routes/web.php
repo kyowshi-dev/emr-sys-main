@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConsultationController;
+use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HouseholdController;
 use App\Http\Controllers\ImmunizationController;
@@ -80,6 +81,9 @@ Route::middleware('auth')->group(function () {
     // Consultation History (list) – must be before /consultations/{id}
     Route::get('/consultations', [ConsultationController::class, 'index'])->name('consultations.index');
     Route::get('/consultations/live-requests', [ConsultationController::class, 'liveRequests'])->name('consultations.live-requests');
+    Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
+    Route::get('/referrals/{id}/print', [ReferralController::class, 'print'])->name('referrals.print');
+    Route::patch('/referrals/{id}/status', [ReferralController::class, 'updateStatus'])->name('referrals.update-status');
 
     // Triage / New Admission
     Route::get('/patients/{id}/consultations/create', [ConsultationController::class, 'create'])->name('consultations.create');

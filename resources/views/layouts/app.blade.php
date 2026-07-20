@@ -307,6 +307,13 @@
                             <span>Check-ups</span>
                         </a>
 
+                        <a href="{{ route('referrals.index') }}" 
+                           class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 text-ink-muted hover:bg-black/5 {{ !$authUser->hasPermission('consultations') ? 'disabled' : '' }}" 
+                           {!! !$authUser->hasPermission('consultations') ? 'onclick="'.$swalError.'"' : '' !!}>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-sm opacity-70" aria-hidden="true"></i>
+                            <span>Referrals</span>
+                        </a>
+
                         <a href="{{ route('immunizations.index') }}" 
                            class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 text-ink-muted hover:bg-black/5 {{ !$authUser->hasPermission('immunizations') ? 'disabled' : '' }}" 
                            {!! !$authUser->hasPermission('immunizations') ? 'onclick="'.$swalError.'"' : '' !!}>
@@ -618,6 +625,27 @@
         </div>
     </div>
 
+    <div id="printReferralConfirmModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4" aria-modal="true" role="dialog" aria-labelledby="printReferralConfirmTitle">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closePrintReferralConfirmModal()"></div>
+        <div id="printReferralConfirmPanel" class="relative w-full max-w-md rounded-2xl shadow-2xl transform scale-95 opacity-0 transition-all duration-300 ease-out p-6" style="background: var(--bg-surface-elevated);">
+            <div class="flex items-start gap-3 mb-4">
+                <div class="shrink-0 w-11 h-11 rounded-full flex items-center justify-center" style="background: var(--teal-soft); color: var(--primary);">
+                    <i class="fa-solid fa-print text-lg" aria-hidden="true"></i>
+                </div>
+                <div>
+                    <h2 id="printReferralConfirmTitle" class="font-display font-semibold text-lg" style="color: var(--ink);">Referral saved</h2>
+                    <p class="text-sm mt-1" style="color: var(--ink-muted);">The outward referral has been recorded. Print the referral slip for the patient before they leave.</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center justify-end gap-2 pt-2">
+                <button type="button" onclick="closePrintReferralConfirmModal()" class="px-4 py-2.5 rounded-xl border font-medium text-sm transition-colors hover:bg-black/[0.03]" style="border-color: var(--border); color: var(--ink-muted);">Close</button>
+                <a id="printReferralConfirmLink" href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white font-semibold text-sm transition hover:opacity-95" style="background: var(--primary);">
+                    <i class="fa-solid fa-print" aria-hidden="true"></i> Print referral
+                </a>
+            </div>
+        </div>
+    </div>
+
     <style>
         .nav-link:hover { background: var(--teal-soft); color: var(--primary) !important; }
         .nav-submenu:hover { background: var(--teal-soft); color: var(--primary) !important; }
@@ -684,6 +712,9 @@
         }
 
         function initConsultationCreateModalForm() {
+            cacheConsultationCreateModalHeader();
+            initOutwardReferralPreviewSync();
+
             var modeSelect = document.getElementById('mode_of_transaction');
             var referredContainer = document.getElementById('referred_from_container');
             if (!modeSelect || !referredContainer) return;
@@ -725,6 +756,7 @@
             .then(function(html) {
                 content.innerHTML = html;
                 initConsultationCreateModalForm();
+                resetConsultationCreateModalView();
             })
             .catch(function() {
                 content.innerHTML = '<div class="p-6 text-center text-sm" style="color: #b91c1c;">Unable to load the consultation form. Please try again.</div>';
@@ -736,6 +768,9 @@
             var panel = document.getElementById('consultationCreateModalPanel');
             var content = document.getElementById('consultationCreateModalContent');
             if (!modal || !panel) return;
+
+            resetConsultationCreateModalView();
+
             panel.classList.remove('scale-100', 'opacity-100');
             panel.classList.add('scale-95', 'opacity-0');
             panel.addEventListener('transitionend', function handleTransitionEnd() {
@@ -745,20 +780,474 @@
             }, { once: true });
         }
 
+        var outwardReferralWizardState = {
+            currentStep: 1,
+            totalSteps: 3,
+            stepNames: ['Referral Details', 'Preview', 'Confirmation'],
+        };
+
+        function outwardReferralPreviewFieldMap() {
+            return [
+                { sourceId: 'outward_referred_to', previewId: 'outward_preview_referred_to' },
+                { sourceId: 'outward_referral_reason_details', previewId: 'outward_preview_referral_reason_details' },
+                { sourceId: 'outward_pertinent_history', previewId: 'outward_preview_pertinent_history' },
+                { sourceId: 'outward_actions_taken', previewId: 'outward_preview_actions_taken' },
+            ];
+        }
+
+        function updateOutwardReferralPreviewReasonsEmptyState() {
+            var empty = document.getElementById('outward_preview_reasons_empty');
+            var list = document.getElementById('outward_preview_reasons_list');
+            var checked = document.querySelectorAll('#outwardReferralWizardStep2 input[data-preview-field="referral_reasons"]:checked');
+            if (!empty || !list) return;
+            empty.classList.toggle('hidden', checked.length > 0);
+            list.classList.toggle('opacity-100', checked.length > 0);
+        }
+
+        function syncOutwardReferralPreviewFromStep1() {
+            outwardReferralPreviewFieldMap().forEach(function(field) {
+                var source = document.getElementById(field.sourceId);
+                var preview = document.getElementById(field.previewId);
+                if (source && preview) {
+                    preview.value = source.value;
+                }
+            });
+
+            document.querySelectorAll('#outwardReferralWizardStep1 input[name="referral_reasons[]"]').forEach(function(sourceCheckbox) {
+                var previewCheckbox = document.querySelector(
+                    '#outwardReferralWizardStep2 input[data-preview-field="referral_reasons"][value="' + sourceCheckbox.value + '"]'
+                );
+                if (previewCheckbox) {
+                    previewCheckbox.checked = sourceCheckbox.checked;
+                }
+            });
+
+            updateOutwardReferralPreviewReasonsEmptyState();
+        }
+
+        function syncOutwardReferralStep1FromPreview(previewEl) {
+            if (!previewEl) return;
+
+            if (previewEl.getAttribute('data-preview-field') === 'referral_reasons') {
+                var sourceCheckbox = document.querySelector(
+                    '#outwardReferralWizardStep1 input[name="referral_reasons[]"][value="' + previewEl.value + '"]'
+                );
+                if (sourceCheckbox) {
+                    sourceCheckbox.checked = previewEl.checked;
+                }
+                updateOutwardReferralPreviewReasonsEmptyState();
+                return;
+            }
+
+            var sourceId = previewEl.getAttribute('data-preview-source');
+            var source = sourceId ? document.getElementById(sourceId) : null;
+            if (source) {
+                source.value = previewEl.value;
+            }
+        }
+
+        function initOutwardReferralPreviewSync() {
+            var wizardView = document.getElementById('consultationCreateOutwardWizardView');
+            if (!wizardView) return;
+
+            wizardView.querySelectorAll('[data-preview-source]').forEach(function(previewEl) {
+                previewEl.removeEventListener('input', previewEl._outwardPreviewSyncHandler);
+                previewEl.removeEventListener('change', previewEl._outwardPreviewSyncHandler);
+                previewEl._outwardPreviewSyncHandler = function() {
+                    syncOutwardReferralStep1FromPreview(previewEl);
+                };
+                previewEl.addEventListener('input', previewEl._outwardPreviewSyncHandler);
+                previewEl.addEventListener('change', previewEl._outwardPreviewSyncHandler);
+            });
+        }
+
+        function validateOutwardReferralStep1() {
+            var referredTo = document.getElementById('outward_referred_to');
+            var history = document.getElementById('outward_pertinent_history');
+            var reasons = document.querySelectorAll('#outwardReferralWizardStep1 input[name="referral_reasons[]"]:checked');
+            var message = '';
+
+            if (!referredTo || !referredTo.value.trim()) {
+                message = 'Please select or enter a destination facility.';
+                referredTo && referredTo.focus();
+            } else if (reasons.length === 0) {
+                message = 'Please select at least one reason for referral.';
+                var firstReason = document.querySelector('#outwardReferralWizardStep1 input[name="referral_reasons[]"]');
+                firstReason && firstReason.focus();
+            } else if (!history || !history.value.trim()) {
+                message = 'Please enter the pertinent history of illness.';
+                history && history.focus();
+            }
+
+            if (message && typeof Swal !== 'undefined') {
+                Swal.fire({ icon: 'warning', title: 'Incomplete referral details', text: message, confirmButtonColor: '#0d4a3c' });
+            }
+
+            return !message;
+        }
+
+        function validateConsultationVitalsForReferral() {
+            var temperature = document.getElementById('temperature');
+            var systolic = document.getElementById('bp_systolic');
+            var diastolic = document.getElementById('bp_diastolic');
+            var weight = document.getElementById('weight');
+            var height = document.getElementById('height');
+            var message = '';
+
+            if (!temperature || !temperature.value.trim()) {
+                message = 'Please enter temperature before creating an outward referral.';
+                temperature && temperature.focus();
+            } else if (!systolic || !systolic.value.trim()) {
+                message = 'Please enter systolic blood pressure before creating an outward referral.';
+                systolic && systolic.focus();
+            } else if (!diastolic || !diastolic.value.trim()) {
+                message = 'Please enter diastolic blood pressure before creating an outward referral.';
+                diastolic && diastolic.focus();
+            } else if (!weight || !weight.value.trim()) {
+                message = 'Please enter weight before creating an outward referral.';
+                weight && weight.focus();
+            } else if (!height || !height.value.trim()) {
+                message = 'Please enter height before creating an outward referral.';
+                height && height.focus();
+            }
+
+            if (message && typeof Swal !== 'undefined') {
+                Swal.fire({ icon: 'warning', title: 'Complete vitals first', text: message, confirmButtonColor: '#0d4a3c' });
+            }
+
+            return !message;
+        }
+
+        function copyOutwardReferralDataToMainForm() {
+            var referralFlag = document.getElementById('outward_refer_to_higher_facility');
+            var hiddenReferredTo = document.getElementById('outward_hidden_referred_to');
+            var hiddenReasonDetails = document.getElementById('outward_hidden_referral_reason_details');
+            var hiddenPertinentHistory = document.getElementById('outward_hidden_pertinent_history');
+            var hiddenActionsTaken = document.getElementById('outward_hidden_actions_taken');
+            var referralReasonsContainer = document.getElementById('outward_hidden_referral_reasons');
+
+            if (!referralFlag || !hiddenReferredTo || !hiddenReasonDetails || !hiddenPertinentHistory || !hiddenActionsTaken || !referralReasonsContainer) {
+                return;
+            }
+
+            referralFlag.value = '1';
+            hiddenReferredTo.value = document.getElementById('outward_referred_to')?.value.trim() || '';
+            hiddenReasonDetails.value = document.getElementById('outward_referral_reason_details')?.value.trim() || '';
+            hiddenPertinentHistory.value = document.getElementById('outward_pertinent_history')?.value.trim() || '';
+            hiddenActionsTaken.value = document.getElementById('outward_actions_taken')?.value.trim() || '';
+
+            referralReasonsContainer.innerHTML = '';
+            document.querySelectorAll('#outwardReferralWizardStep1 input[name="referral_reasons[]"]:checked').forEach(function(sourceCheckbox) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'referral_reasons[]';
+                input.value = sourceCheckbox.value;
+                referralReasonsContainer.appendChild(input);
+            });
+        }
+
+        function populateOutwardReferralConfirmationStep() {
+            document.querySelectorAll('#outwardReferralWizardStep2 [data-preview-source]').forEach(function(previewEl) {
+                syncOutwardReferralStep1FromPreview(previewEl);
+            });
+
+            var subtitle = document.getElementById('consultationCreateModalSubtitle');
+            var meta = document.getElementById('consultationCreateModalMeta');
+            var patientNameEl = document.getElementById('outward_confirm_patient_name');
+            var patientMetaEl = document.getElementById('outward_confirm_patient_meta');
+
+            if (patientNameEl && subtitle) {
+                patientNameEl.textContent = subtitle.textContent.replace(/^Attending to\s*/i, '').trim() || '—';
+            }
+            if (patientMetaEl && meta) {
+                patientMetaEl.textContent = meta.textContent.trim() || '—';
+            }
+
+            var referredTo = document.getElementById('outward_referred_to');
+            var confirmReferredTo = document.getElementById('outward_confirm_referred_to');
+            if (confirmReferredTo) {
+                confirmReferredTo.textContent = referredTo?.value.trim() || '—';
+            }
+
+            var reasonsList = document.getElementById('outward_confirm_reasons');
+            if (reasonsList) {
+                reasonsList.innerHTML = '';
+                document.querySelectorAll('#outwardReferralWizardStep1 input[name="referral_reasons[]"]:checked').forEach(function(checkbox) {
+                    var label = checkbox.closest('label')?.querySelector('span')?.textContent?.trim() || checkbox.value;
+                    var item = document.createElement('li');
+                    item.textContent = label;
+                    reasonsList.appendChild(item);
+                });
+                if (!reasonsList.children.length) {
+                    var emptyItem = document.createElement('li');
+                    emptyItem.textContent = 'No reasons selected';
+                    emptyItem.style.color = 'var(--ink-subtle)';
+                    reasonsList.appendChild(emptyItem);
+                }
+            }
+
+            var reasonDetails = document.getElementById('outward_referral_reason_details');
+            var confirmReasonDetails = document.getElementById('outward_confirm_reason_details');
+            if (confirmReasonDetails) {
+                confirmReasonDetails.textContent = reasonDetails?.value.trim() || 'No additional details provided.';
+            }
+
+            var history = document.getElementById('outward_pertinent_history');
+            var confirmHistory = document.getElementById('outward_confirm_pertinent_history');
+            if (confirmHistory) {
+                confirmHistory.textContent = history?.value.trim() || '—';
+            }
+
+            var actions = document.getElementById('outward_actions_taken');
+            var confirmActions = document.getElementById('outward_confirm_actions_taken');
+            if (confirmActions) {
+                confirmActions.textContent = actions?.value.trim() || 'No actions recorded.';
+            }
+
+            var confirmVitals = document.getElementById('outward_confirm_vitals');
+            if (confirmVitals) {
+                var temp = document.getElementById('temperature')?.value || '—';
+                var sys = document.getElementById('bp_systolic')?.value || '—';
+                var dia = document.getElementById('bp_diastolic')?.value || '—';
+                var weight = document.getElementById('weight')?.value || '—';
+                var height = document.getElementById('height')?.value || '—';
+                confirmVitals.textContent = 'BP ' + sys + '/' + dia + ' mmHg · Temp ' + temp + '°C · Weight ' + weight + ' kg · Height ' + height + ' cm';
+            }
+        }
+
+        function confirmOutwardReferralAndSubmit() {
+            document.querySelectorAll('#outwardReferralWizardStep2 [data-preview-source]').forEach(function(previewEl) {
+                syncOutwardReferralStep1FromPreview(previewEl);
+            });
+            copyOutwardReferralDataToMainForm();
+
+            var intakeForm = document.querySelector('#consultationCreateIntakeView form');
+            if (!intakeForm) {
+                return;
+            }
+
+            intakeForm.submit();
+        }
+
+
+        var consultationCreateModalView = 'intake';
+
+        function cacheConsultationCreateModalHeader() {
+            var subtitle = document.getElementById('consultationCreateModalSubtitle');
+            if (subtitle && !subtitle.dataset.initialHtml) {
+                subtitle.dataset.initialHtml = subtitle.innerHTML;
+            }
+        }
+
+        function consultationCreateModalSetView(view) {
+            var intakeView = document.getElementById('consultationCreateIntakeView');
+            var wizardView = document.getElementById('consultationCreateOutwardWizardView');
+            var title = document.getElementById('consultationCreateModalTitle');
+            var subtitle = document.getElementById('consultationCreateModalSubtitle');
+            var meta = document.getElementById('consultationCreateModalMeta');
+
+            if (!intakeView || !wizardView) return;
+
+            consultationCreateModalView = view;
+
+            if (view === 'wizard') {
+                intakeView.classList.add('hidden');
+                intakeView.setAttribute('aria-hidden', 'true');
+                wizardView.classList.remove('hidden');
+                wizardView.setAttribute('aria-hidden', 'false');
+
+                if (title) title.textContent = 'Outward Referral';
+                if (subtitle) subtitle.textContent = 'Refer patient to a higher-level facility';
+                if (meta) meta.classList.add('hidden');
+                return;
+            }
+
+            wizardView.classList.add('hidden');
+            wizardView.setAttribute('aria-hidden', 'true');
+            intakeView.classList.remove('hidden');
+            intakeView.setAttribute('aria-hidden', 'false');
+
+            if (title) title.textContent = 'New Consultation';
+            if (subtitle && subtitle.dataset.initialHtml) subtitle.innerHTML = subtitle.dataset.initialHtml;
+            if (meta) meta.classList.remove('hidden');
+        }
+
+        function resetConsultationCreateModalView() {
+            outwardReferralWizardState.currentStep = 1;
+            consultationCreateModalSetView('intake');
+            outwardReferralWizardUpdateUi();
+        }
+
+        function outwardReferralWizardUpdateUi() {
+            var state = outwardReferralWizardState;
+            var stepLabel = document.getElementById('outwardReferralWizardStepLabel');
+            var stepName = document.getElementById('outwardReferralWizardStepName');
+            var progressBar = document.getElementById('outwardReferralWizardProgressBar');
+            var nextBtn = document.getElementById('outwardReferralWizardNextBtn');
+
+            if (stepLabel) {
+                stepLabel.textContent = 'Step ' + state.currentStep + ' of ' + state.totalSteps;
+            }
+            if (stepName) {
+                stepName.textContent = state.stepNames[state.currentStep - 1] || '';
+            }
+            if (progressBar) {
+                progressBar.style.width = ((state.currentStep / state.totalSteps) * 100) + '%';
+            }
+
+            document.querySelectorAll('.outward-referral-wizard-step').forEach(function(stepEl) {
+                var stepNumber = parseInt(stepEl.getAttribute('data-wizard-step'), 10);
+                var isActive = stepNumber === state.currentStep;
+                stepEl.classList.toggle('hidden', !isActive);
+                stepEl.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+            });
+
+            if (nextBtn) {
+                if (state.currentStep >= state.totalSteps) {
+                    nextBtn.textContent = 'Confirm & save referral';
+                    nextBtn.setAttribute('aria-label', 'Confirm and save referral');
+                } else if (state.currentStep === 2) {
+                    nextBtn.textContent = 'Continue to confirmation';
+                } else {
+                    nextBtn.textContent = 'Next';
+                }
+            }
+        }
+
+        function outwardReferralWizardGoNext() {
+            if (outwardReferralWizardState.currentStep === 1) {
+                if (!validateOutwardReferralStep1()) {
+                    return;
+                }
+                syncOutwardReferralPreviewFromStep1();
+            }
+
+            if (outwardReferralWizardState.currentStep === 2) {
+                document.querySelectorAll('#outwardReferralWizardStep2 [data-preview-source]').forEach(function(previewEl) {
+                    syncOutwardReferralStep1FromPreview(previewEl);
+                });
+                populateOutwardReferralConfirmationStep();
+            }
+
+            if (outwardReferralWizardState.currentStep >= outwardReferralWizardState.totalSteps) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'question',
+                        title: 'Confirm outward referral?',
+                        text: 'This will save the consultation and create the outward referral record.',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, save referral',
+                        cancelButtonText: 'Review again',
+                        confirmButtonColor: '#0d4a3c',
+                    }).then(function(result) {
+                        if (result.isConfirmed) {
+                            confirmOutwardReferralAndSubmit();
+                        }
+                    });
+                } else {
+                    confirmOutwardReferralAndSubmit();
+                }
+                return;
+            }
+
+            outwardReferralWizardState.currentStep += 1;
+            outwardReferralWizardUpdateUi();
+
+            if (outwardReferralWizardState.currentStep === 2) {
+                syncOutwardReferralPreviewFromStep1();
+            }
+
+            if (outwardReferralWizardState.currentStep === 3) {
+                populateOutwardReferralConfirmationStep();
+            }
+        }
+
+        function outwardReferralWizardGoBack() {
+            if (outwardReferralWizardState.currentStep <= 1) {
+                closeOutwardReferralWizard();
+                return;
+            }
+
+            document.querySelectorAll('#outwardReferralWizardStep2 [data-preview-source]').forEach(function(previewEl) {
+                syncOutwardReferralStep1FromPreview(previewEl);
+            });
+
+            outwardReferralWizardState.currentStep -= 1;
+            outwardReferralWizardUpdateUi();
+        }
+
+        function openOutwardReferralWizard() {
+            if (!validateConsultationVitalsForReferral()) {
+                return;
+            }
+
+            var wizardView = document.getElementById('consultationCreateOutwardWizardView');
+            if (!wizardView) return;
+
+            cacheConsultationCreateModalHeader();
+            outwardReferralWizardState.currentStep = 1;
+            outwardReferralWizardUpdateUi();
+            consultationCreateModalSetView('wizard');
+        }
+
+        function closeOutwardReferralWizard(resetReferralFlag = true) {
+            if (consultationCreateModalView !== 'wizard') return;
+            var referralFlag = document.getElementById('outward_refer_to_higher_facility');
+            if (referralFlag && resetReferralFlag) {
+                referralFlag.value = '0';
+            }
+            consultationCreateModalSetView('intake');
+        }
+
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 var consultationModal = document.getElementById('consultationCreateModal');
                 if (consultationModal && !consultationModal.classList.contains('hidden')) {
+                    if (consultationCreateModalView === 'wizard') {
+                        closeOutwardReferralWizard();
+                        return;
+                    }
                     closeConsultationCreateModal();
                 }
             }
         });
+
+        function openPrintReferralConfirmModal(referralId) {
+            var modal = document.getElementById('printReferralConfirmModal');
+            var panel = document.getElementById('printReferralConfirmPanel');
+            var link = document.getElementById('printReferralConfirmLink');
+            if (!modal || !panel || !link || !referralId) return;
+
+            link.href = '/referrals/' + referralId + '/print';
+            modal.classList.remove('hidden');
+            requestAnimationFrame(function() {
+                panel.classList.remove('scale-95', 'opacity-0');
+                panel.classList.add('scale-100', 'opacity-100');
+            });
+        }
+
+        function closePrintReferralConfirmModal() {
+            var modal = document.getElementById('printReferralConfirmModal');
+            var panel = document.getElementById('printReferralConfirmPanel');
+            if (!modal || !panel) return;
+
+            panel.classList.remove('scale-100', 'opacity-100');
+            panel.classList.add('scale-95', 'opacity-0');
+            panel.addEventListener('transitionend', function handleTransitionEnd() {
+                modal.classList.add('hidden');
+                panel.removeEventListener('transitionend', handleTransitionEnd);
+            }, { once: true });
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('open_consultation_for'))
                 openConsultationCreateModal({{ (int) session('open_consultation_for') }});
             @elseif ($errors->any() && old('modal_patient_id'))
                 openConsultationCreateModal({{ (int) old('modal_patient_id') }});
+            @endif
+
+            @if (session('print_referral_id'))
+                openPrintReferralConfirmModal({{ (int) session('print_referral_id') }});
             @endif
         });
 

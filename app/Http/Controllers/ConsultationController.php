@@ -192,8 +192,22 @@ class ConsultationController extends Controller
 
         $patient->age = Carbon::parse($patient->date_of_birth)->age;
 
+        $previousVitals = DB::table('vitals')
+            ->join('consultations', 'vitals.consultation_id', '=', 'consultations.id')
+            ->where('consultations.patient_id', $patientId)
+            ->orderByDesc('vitals.created_at')
+            ->orderByDesc('vitals.id')
+            ->select([
+                'vitals.bp_systolic',
+                'vitals.bp_diastolic',
+                'vitals.temperature_c',
+                'vitals.weight_kg',
+                'vitals.height_cm',
+            ])
+            ->first();
+
         if ($request->ajax() || $request->wantsJson()) {
-            return view('consultations.partials.create-modal', compact('patient'));
+            return view('consultations.partials.create-modal', compact('patient', 'previousVitals'));
         }
 
         return redirect()
@@ -209,14 +223,18 @@ class ConsultationController extends Controller
             'referred_from' => ['nullable', 'string', 'max:255'],
             'nature_of_visit' => ['required', 'string', 'max:255'],
             'chief_complaint' => ['nullable', 'string', 'max:1000'],
-            'bp_systolic' => ['nullable', 'numeric', 'min:0', 'max:300'],
-            'bp_diastolic' => ['nullable', 'numeric', 'min:0', 'max:200'],
+            'bp_systolic' => ['required', 'numeric', 'min:0', 'max:300'],
+            'bp_diastolic' => ['required', 'numeric', 'min:0', 'max:200'],
             'temperature' => ['required', 'numeric', 'min:30', 'max:45'],
-            'weight' => ['nullable', 'numeric', 'min:0', 'max:500'],
-            'height' => ['nullable', 'numeric', 'min:0', 'max:300'],
+            'weight' => ['required', 'numeric', 'min:0', 'max:500'],
+            'height' => ['required', 'numeric', 'min:0', 'max:300'],
             'refer_to_higher_facility' => ['nullable', 'boolean'],
-            'referred_to' => ['nullable', 'string', 'max:255'],
-            'referral_reason' => ['nullable', 'string', 'max:1000'],
+            'referred_to' => ['required_if:refer_to_higher_facility,1', 'nullable', 'string', 'max:255'],
+            'referral_reasons' => ['nullable', 'array'],
+            'referral_reasons.*' => ['string'],
+            'referral_reason_details' => ['nullable', 'string', 'max:1000'],
+            'pertinent_history' => ['required_if:refer_to_higher_facility,1', 'nullable', 'string'],
+            'actions_taken' => ['nullable', 'string'],
         ], [
             'temperature.required' => 'Temperature is required.',
             'temperature.min' => 'Temperature must be at least 30°C.',
@@ -231,7 +249,10 @@ class ConsultationController extends Controller
             abort(403, 'No health worker profile is linked to this user.');
         }
 
-        DB::transaction(function () use ($validated, $patientId, $workerId) {
+        $consultationId = null;
+        $createdReferralId = null;
+
+        DB::transaction(function () use ($validated, $patientId, $workerId, &$consultationId, &$createdReferralId) {
             $consultationId = DB::table('consultations')->insertGetId([
                 'patient_id' => $patientId,
                 'worker_id' => $workerId,
@@ -239,14 +260,39 @@ class ConsultationController extends Controller
                 'nature_of_visit' => $validated['nature_of_visit'],
                 'mode_of_transaction' => $validated['mode_of_transaction'],
                 'referred_from' => $validated['referred_from'] ?? null,
-                'refer_to_higher_facility' => $validated['refer_to_higher_facility'] ?? false,
-                'referred_to' => $validated['referred_to'] ?? null,
-                'referral_reason' => $validated['referral_reason'] ?? null,
                 'chief_complaint_id' => null,
                 'complaint_text' => $validated['chief_complaint'] ?? null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+
+            if (! empty($validated['refer_to_higher_facility'])) {
+                $reasonLabels = [
+                    'specialized_evaluation' => 'Need for specialized medical evaluation / physician',
+                    'lack_diagnostics' => 'Lack of diagnostic equipment / laboratory tests',
+                    'lack_medicines' => 'Lack of available medicines / vaccines',
+                    'emergency_trauma' => 'Emergency / trauma stabilization required',
+                ];
+
+                $reasons = array_filter(array_map(function ($reason) use ($reasonLabels) {
+                    return $reasonLabels[$reason] ?? $reason;
+                }, $validated['referral_reasons'] ?? []));
+
+                $details = trim($validated['referral_reason_details'] ?? '');
+                $reasonText = $reasons ? 'Reasons: '.implode(', ', $reasons) : '';
+                $specificDetails = trim($reasonText.($details ? "\n\n".$details : '')) ?: null;
+
+                $createdReferralId = DB::table('outward_referrals')->insertGetId([
+                    'consultation_id' => $consultationId,
+                    'destination_facility' => $validated['referred_to'],
+                    'pertinent_history' => $validated['pertinent_history'],
+                    'actions_taken' => $validated['actions_taken'] ?? null,
+                    'specific_details' => $specificDetails,
+                    'status' => 'pending',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
 
             $vitalsPayload = [
                 'consultation_id' => $consultationId,
@@ -267,8 +313,14 @@ class ConsultationController extends Controller
             DB::table('vitals')->insert($vitalsPayload);
         });
 
-        return redirect()->route('patients.show', $patientId)
+        $redirect = redirect()->route('patients.show', $patientId)
             ->with('success', 'Consultation started. Patient is awaiting nurse intake validation.');
+
+        if ($createdReferralId) {
+            $redirect->with('print_referral_id', $createdReferralId);
+        }
+
+        return $redirect;
     }
 
     // 3. Show the Doctor's Workspace (View Consultation)
@@ -458,6 +510,10 @@ class ConsultationController extends Controller
             abort(404, 'Consultation not found');
         }
 
+        $outwardReferral = DB::table('outward_referrals')
+            ->where('consultation_id', $id)
+            ->first();
+
         if (! in_array($consultation->status, ['completed', 'referred'], true)) {
             abort(403, 'Print handout is available only for completed consultations.');
         }
@@ -514,6 +570,7 @@ class ConsultationController extends Controller
 
         return [
             'consultation' => $consultation,
+            'outwardReferral' => $outwardReferral,
             'patient' => $patient,
             'diagnoses' => $diagnoses,
             'prescriptions' => $prescriptions,
@@ -795,9 +852,30 @@ class ConsultationController extends Controller
             }
 
             $updates['status'] = 'referred';
-            $updates['refer_to_higher_facility'] = true;
-            $updates['referred_to'] = $validated['referred_to'] ?? null;
-            $updates['referral_reason'] = $validated['referral_reason'] ?? null;
+
+            $existingReferral = DB::table('outward_referrals')
+                ->where('consultation_id', $id)
+                ->first();
+
+            $specificDetails = trim($validated['referral_reason'] ?? null);
+            $referralPayload = [
+                'consultation_id' => $id,
+                'destination_facility' => $validated['referred_to'] ?? null,
+                'pertinent_history' => $existingReferral->pertinent_history ?? '',
+                'actions_taken' => $existingReferral->actions_taken ?? null,
+                'specific_details' => $specificDetails,
+                'updated_at' => now(),
+            ];
+
+            if ($existingReferral) {
+                DB::table('outward_referrals')
+                    ->where('id', $existingReferral->id)
+                    ->update($referralPayload);
+            } else {
+                $referralPayload['status'] = 'pending';
+                $referralPayload['created_at'] = now();
+                DB::table('outward_referrals')->insert($referralPayload);
+            }
         }
 
         DB::table('consultations')

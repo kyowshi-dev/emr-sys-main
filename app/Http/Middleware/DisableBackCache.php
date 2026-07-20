@@ -34,11 +34,12 @@ class DisableBackCache
         $response = $next($request);
 
         // Set Cache-Control header to prevent back-button bypass
-        $response->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0, private');
+        // Use headers->set() instead of header() for compatibility with all response types (including StreamedResponse)
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0, private');
 
         // Additional security headers
-        $response->header('Pragma', 'no-cache');                    // For HTTP/1.0 compatibility
-        $response->header('Expires', 'Thu, 01 Jan 1970 00:00:00 GMT');  // Force expiration in the past
+        $response->headers->set('Pragma', 'no-cache');                    // For HTTP/1.0 compatibility
+        $response->headers->set('Expires', 'Thu, 01 Jan 1970 00:00:00 GMT');  // Force expiration in the past
 
         return $response;
     }

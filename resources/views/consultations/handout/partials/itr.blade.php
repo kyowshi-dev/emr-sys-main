@@ -58,6 +58,12 @@
     $consultationTypesRight = [
         'Family Planning', 'Postpartum', 'Tuberculosis', 'Child Immunization', 'Sick Children', 'Firecracker Injury',
     ];
+
+    $outwardReferral = $outwardReferral ?? null;
+    $isReferral = $mode === 'Referral' || ($outwardReferral !== null) || (bool) ($consultation->refer_to_higher_facility ?? false);
+    $referredFrom = $outwardReferral?->referred_from ?? $consultation->referred_from ?? '';
+    $referredTo = $outwardReferral?->destination_facility ?? $consultation->referred_to ?? 'Higher facility';
+    $referralReasonText = $outwardReferral?->specific_details ?? ($consultation->referral_reason ?? '');
 @endphp
 
 <section class="iclinic-form" aria-label="Individual Treatment Record">
@@ -123,14 +129,14 @@
                             @include('consultations.handout.partials._mark', ['checked' => $mode === 'Visited', 'label' => 'Visited', 'inline' => false])
                         </td>
                         <td class="label-cell text-center" style="width:16%; vertical-align:middle !important; font-size:7pt;">REFERRED FROM</td>
-                        <td style="border-right:0;">{{ $isReferral ? ($consultation->referred_from ?? '') : '' }}</td>
+                        <td style="border-right:0;">{{ $isReferral ? $referredFrom : '' }}</td>
                     </tr>
                     <tr>
                         <td style="padding:1px 3px;">
                             @include('consultations.handout.partials._mark', ['checked' => $mode === 'Referral', 'label' => 'Referral', 'inline' => false])
                         </td>
                         <td class="label-cell text-center" style="vertical-align:middle !important; font-size:7pt;">REFERRED TO</td>
-                        <td style="border-right:0;">{{ $isReferral ? ($consultation->referred_to ?? 'Higher facility') : '' }}</td>
+                        <td style="border-right:0;">{{ $isReferral ? $referredTo : '' }}</td>
                     </tr>
 
                     {{-- Vitals + Reason(s) for Referral --}}
@@ -142,7 +148,7 @@
                         </td>
                         <td class="label-cell text-center" rowspan="4" style="vertical-align:middle !important; font-size:7pt;">Reason(s) for<br>Referral</td>
                         <td rowspan="4" style="border-right:0; vertical-align:top; min-height:72px;">
-                            <p class="field-value-sm whitespace-pre">{{ $isReferral ? ($consultation->referral_reason ?? '') : '' }}</p>
+                            <p class="field-value-sm whitespace-pre">{{ $isReferral ? $referralReasonText : '' }}</p>
                         </td>
                     </tr>
                     <tr>

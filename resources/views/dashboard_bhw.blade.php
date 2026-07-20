@@ -132,17 +132,17 @@
                 <div class="space-y-3">
                     @forelse($recentPatients ?? [] as $recent)
                         <div class="rounded-xl bg-surface-elevated p-4 border" style="border-color: var(--border);">
-                            <div class="flex items-center justify-between gap-3">
-                                <div>
-                                    <p class="font-medium text-sm" style="color: var(--ink);">{{ $recent->name }}</p>
-                                    <p class="text-xs mt-1" style="color: var(--ink-muted);">{{ $recent->identifier }}</p>
+                            <div class="flex items-center justify-between gap-3 min-w-0">
+                                <div class="min-w-0">
+                                    <p class="font-medium text-sm truncate" style="color: var(--ink);" title="{{ ucwords($recent->name) }}">{{ ucwords($recent->name) }}</p>
+                                    <p class="text-xs mt-1 truncate" style="color: var(--ink-muted);">{{ $recent->identifier }}</p>
                                 </div>
-                                <div class="flex flex-wrap gap-2">
-                                    <a href="{{ route('consultations.create', $recent->id) }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-primary text-white text-xs font-semibold transition hover:bg-primary-hover">
+                                <div class="flex flex-wrap gap-2 shrink-0">
+                                    <a href="{{ route('consultations.create', $recent->id) }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-primary text-white text-xs font-semibold transition hover:bg-primary-hover whitespace-nowrap">
                                         <i class="fa-solid fa-clock"></i>
                                         Start Queue
                                     </a>
-                                    <a href="{{ route('patients.show', $recent->id) }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-primary text-primary text-xs font-semibold transition hover:bg-primary/10">
+                                    <a href="{{ route('patients.show', $recent->id) }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-primary text-primary text-xs font-semibold transition hover:bg-primary/10 whitespace-nowrap">
                                         <i class="fa-solid fa-user"></i>
                                         View profile
                                     </a>

@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
+use App\Models\OutwardReferral;
 
 class Consultation extends Model
 {
@@ -34,6 +37,11 @@ class Consultation extends Model
     public function chiefComplaint()
     {
         return $this->belongsTo(ComplaintLookup::class, 'chief_complaint_id');
+    }
+
+    public function outwardReferral(): HasOne
+    {
+        return $this->hasOne(OutwardReferral::class);
     }
 
     public function labRequests(): HasMany
