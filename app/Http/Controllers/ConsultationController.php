@@ -150,8 +150,10 @@ class ConsultationController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
+        // Only fetch consultations waiting for doctor that haven't been notified yet
         $consultation = DB::table('consultations')
             ->where('status', 'pending_doctor')
+            ->whereNull('notified_at')  // Only unnotified consultations
             ->orderByDesc('created_at')
             ->first();
 
@@ -165,6 +167,11 @@ class ConsultationController extends Controller
         if (! $patient || ! $worker) {
             return response()->json(['hasRequest' => false]);
         }
+
+        // Mark consultation as notified
+        DB::table('consultations')
+            ->where('id', $consultation->id)
+            ->update(['notified_at' => now()]);
 
         return response()->json([
             'hasRequest' => true,

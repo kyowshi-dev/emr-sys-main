@@ -91,30 +91,18 @@
                 <div class="rounded-xl border p-4 lg:p-5" style="background: var(--bg-surface); border-color: var(--border);">
                     <h3 class="font-semibold mb-3 lg:mb-4 pb-2 border-b text-sm lg:text-base" style="color: var(--ink); border-color: var(--border);">2. Vitals</h3>
 
-                    @if (!empty($previousVitals))
-                        <div class="rounded-xl border p-3 mb-4 text-sm" style="border-color: var(--border); background: var(--bg-surface); color: var(--ink);">
-                            <p class="font-semibold mb-2 text-xs" style="color: var(--ink-muted);">Last recorded vitals</p>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs" style="color: var(--ink);">
-                                <div><strong>BP:</strong> {{ $previousVitals->bp_systolic }}/{{ $previousVitals->bp_diastolic }}</div>
-                                <div><strong>Temp:</strong> {{ $previousVitals->temperature_c }}°C</div>
-                                <div><strong>Weight:</strong> {{ $previousVitals->weight_kg }} kg</div>
-                                <div><strong>Height:</strong> {{ $previousVitals->height_cm }} cm</div>
-                            </div>
-                        </div>
-                    @endif
-
                     <div class="grid grid-cols-2 gap-3 lg:gap-4">
                         <div class="col-span-2">
                             <label class="block text-xs lg:text-sm font-medium mb-1" style="color: var(--ink-muted);">BP <span style="color: #b91c1c;">*</span></label>
                             <div class="flex items-center gap-2">
                                 <div class="flex-1">
                                     <input type="number" name="bp_systolic" id="bp_systolic" value="{{ old('bp_systolic', $previousVitals->bp_systolic ?? '') }}" min="0" max="300" placeholder="120" class="w-full px-3 lg:px-4 py-2 rounded-lg border text-center text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" required>
-                                    <p class="text-xs mt-1 text-center" style="color: var(--ink-muted);">Sys</p>
+                                    <p class="text-xs mt-1 text-center" style="color: var(--ink-muted);">Systolic</p>
                                 </div>
                                 <span style="color: var(--ink-subtle); font-weight: 500;">/ </span>
                                 <div class="flex-1">
                                     <input type="number" name="bp_diastolic" id="bp_diastolic" value="{{ old('bp_diastolic', $previousVitals->bp_diastolic ?? '') }}" min="0" max="200" placeholder="80" class="w-full px-3 lg:px-4 py-2 rounded-lg border text-center text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" required>
-                                    <p class="text-xs mt-1 text-center" style="color: var(--ink-muted);">Dia</p>
+                                    <p class="text-xs mt-1 text-center" style="color: var(--ink-muted);">Diastolic</p>
                                 </div>
                             </div>
                         </div>

@@ -1477,8 +1477,9 @@
             var liveToast = document.getElementById('liveConsultationToast');
             var liveToastAccept = document.getElementById('liveToastAccept');
             var liveToastDecline = document.getElementById('liveToastDecline');
-            var liveToastLastId = localStorage.getItem('lastLiveConsultationId');
             var liveToastCloseTimer = null;
+            var lastPolledRequestId = null;
+            var pollingEnabled = true;
 
             function playLiveToastChime() {
                 if (!window.AudioContext && !window.webkitAudioContext) {
@@ -1538,9 +1539,12 @@
                     return;
                 }
 
-                if (liveToastLastId === String(request.id)) {
+                // Skip if we already showed this one
+                if (lastPolledRequestId === request.id) {
                     return;
                 }
+
+                lastPolledRequestId = request.id;
 
                 document.getElementById('liveToastTitle').textContent = 'New Consultation Request';
                 document.getElementById('liveToastSubtitle').textContent = request.clinic_name + ' · BHW: ' + request.worker_name;
@@ -1549,11 +1553,10 @@
                 document.getElementById('liveToastReason').textContent = request.chief_complaint || 'No complaint provided';
 
                 liveToastAccept.onclick = function() {
-                    localStorage.setItem('lastLiveConsultationId', request.id);
+                    pollingEnabled = false;  // Stop polling when accepted
                     window.location.href = request.open_url;
                 };
                 liveToastDecline.onclick = function() {
-                    localStorage.setItem('lastLiveConsultationId', request.id);
                     dismissConsultationToast();
                 };
 
@@ -1563,7 +1566,6 @@
                     clearTimeout(liveToastCloseTimer);
                 }
                 liveToastCloseTimer = setTimeout(dismissConsultationToast, 18000);
-                liveToastLastId = request.id;
 
                 playLiveToastChime();
                 notifyBrowser({
@@ -1589,6 +1591,10 @@
              * @returns {Promise} A promise that resolves with the server response
              */
             function pollLiveConsultationRequests() {
+                if (!pollingEnabled) {
+                    return Promise.resolve();
+                }
+
                 return fetch('/consultations/live-requests', {
                     credentials: 'same-origin',
                     headers: {

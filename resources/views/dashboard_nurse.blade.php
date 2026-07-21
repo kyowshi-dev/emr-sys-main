@@ -36,12 +36,12 @@
          style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--accent);">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
             <div>
-                <h2 class="font-display font-semibold text-lg" style="color: var(--ink);">Nurse validation queue</h2>
+                <h2 class="font-display font-semibold text-lg" style="color: var(--ink);">Triage Review Queue</h2>
                 <p class="text-xs mt-1" style="color: var(--ink-muted);">
                     @if ($pendingValidationCount > 0)
                         {{ $pendingValidationCount }} intake{{ $pendingValidationCount !== 1 ? 's' : '' }} awaiting acknowledgment before doctor review.
                     @else
-                        No intakes are waiting for nurse validation right now.
+                        First come, first served. No pending intakes in the validation queue.
                     @endif
                 </p>
             </div>
@@ -52,7 +52,7 @@
                 <li class="rounded-xl border px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
                     style="border-color: var(--border); background: var(--bg-surface-elevated);">
                     <div>
-                        <p class="text-sm font-semibold" style="color: var(--ink);">{{ $item->last_name }}, {{ $item->first_name }}</p>
+                        <p class="text-sm font-semibold" style="color: var(--ink);">{{ $item->last_name }}, {{ ucwords ($item->first_name) }}</p>
                         <p class="text-xs mt-0.5" style="color: var(--ink-muted);">{{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}@if ($item->complaint_text) · {{ Str::limit($item->complaint_text, 60) }}@endif</p>
                     </div>
                     <div class="flex items-center gap-2">
