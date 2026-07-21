@@ -62,7 +62,7 @@
                                 <i class="fa fa-search" aria-hidden="true"></i>
                             </span>
                             <input type="text" id="query" name="query" value="{{ request('query') }}"
-                                   placeholder="Search by patient, ID, or diagnosis..."
+                                   placeholder="      Search by patient, ID, or diagnosis..."
                                    class="w-full pl-10 pr-4 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2 transition"
                                    style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);">
                         </div>

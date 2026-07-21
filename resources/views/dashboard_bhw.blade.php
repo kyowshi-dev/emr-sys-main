@@ -15,7 +15,7 @@
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </span>
                 <input type="text" x-model="query" @input.debounce.300ms="search()"
-                       placeholder="Search patients by name..."
+                       placeholder="        Search patients by name..."
                        class="w-full max-w-3xl pl-10 pr-4 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2 transition"
                        style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);"
                        autocomplete="off">
