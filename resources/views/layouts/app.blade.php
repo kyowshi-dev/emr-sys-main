@@ -880,27 +880,48 @@
             if (path === current) link.classList.add('router-link-active');
         });
 
-        function openPageDrawer() {
-            var modal = document.getElementById('pageModal');
-            var panel = document.getElementById('pageModalPanel');
-            if (!modal || !panel) return;
-            modal.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                panel.classList.remove('scale-95', 'opacity-0');
-                panel.classList.add('scale-100', 'opacity-100');
+        function getModalElements(modalId, panelId) {
+            return {
+                modal: document.getElementById(modalId),
+                panel: document.getElementById(panelId),
+            };
+        }
+
+        function showModal(modalId, panelId, callback) {
+            var elements = getModalElements(modalId, panelId);
+            if (!elements.modal || !elements.panel) return false;
+            elements.modal.classList.remove('hidden');
+            requestAnimationFrame(function() {
+                elements.panel.classList.remove('scale-95', 'opacity-0');
+                elements.panel.classList.add('scale-100', 'opacity-100');
+                if (typeof callback === 'function') {
+                    callback();
+                }
             });
+            return true;
+        }
+
+        function hideModal(modalId, panelId, onHidden) {
+            var elements = getModalElements(modalId, panelId);
+            if (!elements.modal || !elements.panel) return false;
+            elements.panel.classList.remove('scale-100', 'opacity-100');
+            elements.panel.classList.add('scale-95', 'opacity-0');
+            elements.panel.addEventListener('transitionend', function handleTransitionEnd() {
+                elements.modal.classList.add('hidden');
+                if (typeof onHidden === 'function') {
+                    onHidden();
+                }
+                elements.panel.removeEventListener('transitionend', handleTransitionEnd);
+            }, { once: true });
+            return true;
+        }
+
+        function openPageDrawer() {
+            showModal('pageModal', 'pageModalPanel');
         }
 
         function closePageDrawer() {
-            var modal = document.getElementById('pageModal');
-            var panel = document.getElementById('pageModalPanel');
-            if (!modal || !panel) return;
-            panel.classList.remove('scale-100', 'opacity-100');
-            panel.classList.add('scale-95', 'opacity-0');
-            panel.addEventListener('transitionend', function handleTransitionEnd() {
-                modal.classList.add('hidden');
-                panel.removeEventListener('transitionend', handleTransitionEnd);
-            }, { once: true });
+            hideModal('pageModal', 'pageModalPanel');
         }
 
         function initConsultationCreateModalForm() {
@@ -922,19 +943,16 @@
         }
 
         function openConsultationCreateModal(patientId) {
-            var modal = document.getElementById('consultationCreateModal');
-            var panel = document.getElementById('consultationCreateModalPanel');
             var content = document.getElementById('consultationCreateModalContent');
-            if (!modal || !panel || !content || !patientId) return;
+            if (!content || !patientId) return;
 
             content.innerHTML = '<div class="p-8 text-center text-sm" style="color: var(--ink-muted);"><i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i>Loading consultation form…</div>';
-            modal.classList.remove('hidden');
-            requestAnimationFrame(function() {
-                panel.classList.remove('scale-95', 'opacity-0');
-                panel.classList.add('scale-100', 'opacity-100');
-            });
+            if (!showModal('consultationCreateModal', 'consultationCreateModalPanel')) {
+                content.innerHTML = '<div class="p-6 text-center text-sm" style="color: #b91c1c;">Unable to open consultation modal.</div>';
+                return;
+            }
 
-            fetch('/patients/' + patientId + '/consultations/create', {
+            fetch('/patients/' + encodeURIComponent(patientId) + '/consultations/create', {
                 credentials: 'same-origin',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -942,7 +960,9 @@
                 },
             })
             .then(function(response) {
-                if (!response.ok) throw new Error('Failed to load consultation form');
+                if (!response.ok) {
+                    throw new Error('Failed to load consultation form: ' + response.status);
+                }
                 return response.text();
             })
             .then(function(html) {
@@ -950,26 +970,20 @@
                 initConsultationCreateModalForm();
                 resetConsultationCreateModalView();
             })
-            .catch(function() {
+            .catch(function(error) {
+                console.error('Consultation modal load failed:', error);
                 content.innerHTML = '<div class="p-6 text-center text-sm" style="color: #b91c1c;">Unable to load the consultation form. Please try again.</div>';
             });
         }
 
         function closeConsultationCreateModal() {
-            var modal = document.getElementById('consultationCreateModal');
-            var panel = document.getElementById('consultationCreateModalPanel');
-            var content = document.getElementById('consultationCreateModalContent');
-            if (!modal || !panel) return;
-
             resetConsultationCreateModalView();
-
-            panel.classList.remove('scale-100', 'opacity-100');
-            panel.classList.add('scale-95', 'opacity-0');
-            panel.addEventListener('transitionend', function handleTransitionEnd() {
-                modal.classList.add('hidden');
-                if (content) content.innerHTML = '';
-                panel.removeEventListener('transitionend', handleTransitionEnd);
-            }, { once: true });
+            hideModal('consultationCreateModal', 'consultationCreateModalPanel', function() {
+                var content = document.getElementById('consultationCreateModalContent');
+                if (content) {
+                    content.innerHTML = '';
+                }
+            });
         }
 
         var outwardReferralWizardState = {
@@ -1405,30 +1419,15 @@
         });
 
         function openPrintReferralConfirmModal(referralId) {
-            var modal = document.getElementById('printReferralConfirmModal');
-            var panel = document.getElementById('printReferralConfirmPanel');
             var link = document.getElementById('printReferralConfirmLink');
-            if (!modal || !panel || !link || !referralId) return;
+            if (!link || !referralId) return;
 
-            link.href = '/referrals/' + referralId + '/print';
-            modal.classList.remove('hidden');
-            requestAnimationFrame(function() {
-                panel.classList.remove('scale-95', 'opacity-0');
-                panel.classList.add('scale-100', 'opacity-100');
-            });
+            link.href = '/referrals/' + encodeURIComponent(referralId) + '/print';
+            showModal('printReferralConfirmModal', 'printReferralConfirmPanel');
         }
 
         function closePrintReferralConfirmModal() {
-            var modal = document.getElementById('printReferralConfirmModal');
-            var panel = document.getElementById('printReferralConfirmPanel');
-            if (!modal || !panel) return;
-
-            panel.classList.remove('scale-100', 'opacity-100');
-            panel.classList.add('scale-95', 'opacity-0');
-            panel.addEventListener('transitionend', function handleTransitionEnd() {
-                modal.classList.add('hidden');
-                panel.removeEventListener('transitionend', handleTransitionEnd);
-            }, { once: true });
+            hideModal('printReferralConfirmModal', 'printReferralConfirmPanel');
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -1597,7 +1596,7 @@
                         'Accept': 'application/json',
                     },
                 })
-                .then(function(response) ) {
+                .then(function(response) {
                     if (!response.ok) {
                         throw new Error('Live request fetch failed');
                     }

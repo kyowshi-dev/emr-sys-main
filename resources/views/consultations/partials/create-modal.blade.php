@@ -42,6 +42,7 @@
                     <div class="mb-3 lg:mb-4">
                         <label for="mode_of_transaction" class="block text-xs lg:text-sm font-medium mb-1" style="color: var(--ink-muted);">Mode of transaction <span style="color: #b91c1c;">*</span></label>
                         <select name="mode_of_transaction" id="mode_of_transaction" class="w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" required>
+                            <option value="">Select mode...</option>
                             <option value="Walk-in" @selected(old('mode_of_transaction') === 'Walk-in')>Walk-in</option>
                             <option value="Visited" @selected(old('mode_of_transaction') === 'Visited')>Visited</option>
                             <option value="Referral" @selected(old('mode_of_transaction') === 'Referral')>Referral</option>
@@ -56,26 +57,28 @@
                     <div class="mb-3 lg:mb-4">
                         <label for="nature_of_visit" class="block text-xs lg:text-sm font-medium mb-1" style="color: var(--ink-muted);">Nature of visit <span style="color: #b91c1c;">*</span></label>
                         <select name="nature_of_visit" id="nature_of_visit" class="w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" required>
-                            <option value="Checkup" @selected(old('nature_of_visit') === 'New Consultation/Case')>New Consultation/Case</option>
-                            <option value="Follow-up" @selected(old('nature_of_visit') === 'Follow-up Visit')>Follow-up Visit</option>
+                            <option value="">Select visit type...</option>
+                            <option value="New Consultation/Case" @selected(old('nature_of_visit') === 'New Consultation/Case')>New Consultation/Case</option>
+                            <option value="Follow-up Visit" @selected(old('nature_of_visit') === 'Follow-up Visit')>Follow-up Visit</option>
                         </select>
                     </div>
 
                     <div class="mb-3 lg:mb-4">
                         <label for="purpose_of_visit" class="block text-xs lg:text-sm font-medium mb-1" style="color: var(--ink-muted);">Purpose of visit <span style="color: #b91c1c;">*</span></label>
                         <select name="purpose_of_visit" id="purpose_of_visit" class="w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" required>
-                            <option value="Checkup" @selected(old('purpose_of_visit') === 'New Consultation/Case')>General</option>
-                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Family Planning</option>
-                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Prenatal</option>
-                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Postpartum</option>
-                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Tuberculosis</option>
-                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Child Immunization</option>
-                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Child Nutrition</option>
-                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Sick Children</option>
-                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Firecracker Injury</option>
-                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Adult Immunization</option>
-                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Dogbite</option>
-                            <option value="Follow-up" @selected(old('purpose_of_visit') === 'Follow-up Visit')>Dengue</option>
+                            <option value="">Select purpose...</option>
+                            <option value="General" @selected(old('purpose_of_visit') === 'General')>General</option>
+                            <option value="Family Planning" @selected(old('purpose_of_visit') === 'Family Planning')>Family Planning</option>
+                            <option value="Prenatal" @selected(old('purpose_of_visit') === 'Prenatal')>Prenatal</option>
+                            <option value="Postpartum" @selected(old('purpose_of_visit') === 'Postpartum')>Postpartum</option>
+                            <option value="Tuberculosis" @selected(old('purpose_of_visit') === 'Tuberculosis')>Tuberculosis</option>
+                            <option value="Child Immunization" @selected(old('purpose_of_visit') === 'Child Immunization')>Child Immunization</option>
+                            <option value="Child Nutrition" @selected(old('purpose_of_visit') === 'Child Nutrition')>Child Nutrition</option>
+                            <option value="Sick Children" @selected(old('purpose_of_visit') === 'Sick Children')>Sick Children</option>
+                            <option value="Firecracker Injury" @selected(old('purpose_of_visit') === 'Firecracker Injury')>Firecracker Injury</option>
+                            <option value="Adult Immunization" @selected(old('purpose_of_visit') === 'Adult Immunization')>Adult Immunization</option>
+                            <option value="Dogbite" @selected(old('purpose_of_visit') === 'Dogbite')>Dogbite</option>
+                            <option value="Dengue" @selected(old('purpose_of_visit') === 'Dengue')>Dengue</option>
                         </select>
                     </div>
 
@@ -88,30 +91,32 @@
                 <div class="rounded-xl border p-4 lg:p-5" style="background: var(--bg-surface); border-color: var(--border);">
                     <h3 class="font-semibold mb-3 lg:mb-4 pb-2 border-b text-sm lg:text-base" style="color: var(--ink); border-color: var(--border);">2. Vitals</h3>
 
-                    @if (! empty($previousVitals))
+                    @if (!empty($previousVitals))
                         <div class="rounded-xl border p-3 mb-4 text-sm" style="border-color: var(--border); background: var(--bg-surface); color: var(--ink);">
-                            <p class="font-semibold mb-2" style="color: var(--ink);">Last recorded vitals</p>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm" style="color: var(--ink-muted);">
-                                <div>Blood pressure: {{ $previousVitals->bp_systolic }} / {{ $previousVitals->bp_diastolic }} mmHg</div>
-                                <div>Temperature: {{ $previousVitals->temperature_c }} °C</div>
-                                <div>Weight: {{ $previousVitals->weight_kg }} kg</div>
-                                <div>Height: {{ $previousVitals->height_cm }} cm</div>
+                            <p class="font-semibold mb-2 text-xs" style="color: var(--ink-muted);">Last recorded vitals</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs" style="color: var(--ink);">
+                                <div><strong>BP:</strong> {{ $previousVitals->bp_systolic }}/{{ $previousVitals->bp_diastolic }}</div>
+                                <div><strong>Temp:</strong> {{ $previousVitals->temperature_c }}°C</div>
+                                <div><strong>Weight:</strong> {{ $previousVitals->weight_kg }} kg</div>
+                                <div><strong>Height:</strong> {{ $previousVitals->height_cm }} cm</div>
                             </div>
                         </div>
                     @endif
+
                     <div class="grid grid-cols-2 gap-3 lg:gap-4">
                         <div class="col-span-2">
-                            <label class="block text-xs lg:text-sm font-medium mb-1" style="color: var(--ink-muted);">Blood pressure (mmHg) <span style="color: #b91c1c;">*</span></label>
+                            <label class="block text-xs lg:text-sm font-medium mb-1" style="color: var(--ink-muted);">BP <span style="color: #b91c1c;">*</span></label>
                             <div class="flex items-center gap-2">
-                                <input type="number" name="bp_systolic" id="bp_systolic" value="{{ old('bp_systolic', $previousVitals->bp_systolic ?? '') }}" min="0" max="300" placeholder="120" class="w-full px-3 lg:px-4 py-2 rounded-lg border text-center text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" required>
-                                <span style="color: var(--ink-subtle);">/</span>
-                                <input type="number" name="bp_diastolic" id="bp_diastolic" value="{{ old('bp_diastolic', $previousVitals->bp_diastolic ?? '') }}" min="0" max="200" placeholder="80" class="w-full px-3 lg:px-4 py-2 rounded-lg border text-center text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" required>
+                                <div class="flex-1">
+                                    <input type="number" name="bp_systolic" id="bp_systolic" value="{{ old('bp_systolic', $previousVitals->bp_systolic ?? '') }}" min="0" max="300" placeholder="120" class="w-full px-3 lg:px-4 py-2 rounded-lg border text-center text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" required>
+                                    <p class="text-xs mt-1 text-center" style="color: var(--ink-muted);">Sys</p>
+                                </div>
+                                <span style="color: var(--ink-subtle); font-weight: 500;">/ </span>
+                                <div class="flex-1">
+                                    <input type="number" name="bp_diastolic" id="bp_diastolic" value="{{ old('bp_diastolic', $previousVitals->bp_diastolic ?? '') }}" min="0" max="200" placeholder="80" class="w-full px-3 lg:px-4 py-2 rounded-lg border text-center text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" required>
+                                    <p class="text-xs mt-1 text-center" style="color: var(--ink-muted);">Dia</p>
+                                </div>
                             </div>
-                        </div>
-
-                        <div>
-                            <label for="temperature" class="block text-xs lg:text-sm font-medium mb-1" style="color: var(--ink-muted);">Temperature (°C) <span style="color: #b91c1c;">*</span></label>
-                            <input type="number" step="0.1" name="temperature" id="temperature" value="{{ old('temperature', $previousVitals->temperature_c ?? '') }}" min="30" max="45" placeholder="36.5" class="w-full px-3 lg:px-4 py-2 rounded-lg border text-center text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" required>
                         </div>
 
                         <div>
@@ -122,6 +127,11 @@
                         <div>
                             <label for="height" class="block text-xs lg:text-sm font-medium mb-1" style="color: var(--ink-muted);">Height (cm) <span style="color: #b91c1c;">*</span></label>
                             <input type="number" step="0.1" name="height" id="height" value="{{ old('height', $previousVitals->height_cm ?? '') }}" min="0" max="300" placeholder="—" class="w-full px-3 lg:px-4 py-2 rounded-lg border text-center text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" required>
+                        </div>
+
+                        <div>
+                            <label for="temperature" class="block text-xs lg:text-sm font-medium mb-1" style="color: var(--ink-muted);">Temperature (°C) <span style="color: #b91c1c;">*</span></label>
+                            <input type="number" step="0.1" name="temperature" id="temperature" value="{{ old('temperature', $previousVitals->temperature_c ?? '') }}" min="30" max="45" placeholder="36.5" class="w-full px-3 lg:px-4 py-2 rounded-lg border text-center text-sm focus:outline-none focus:ring-2" style="border-color: var(--border); color: var(--ink); --tw-ring-color: var(--primary);" required>
                         </div>
                     </div>
                 </div>

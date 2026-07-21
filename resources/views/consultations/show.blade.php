@@ -217,14 +217,6 @@
             @if ($clinicalReviewOpen)
             <form action="{{ route('consultations.diagnosis', $consultation->id) }}" method="POST" x-data="diagnosisSearch()" @set-diagnosis-query.window="setQuery($event.detail.query)" class="space-y-4 mt-4 pt-4 border-t" style="border-color: var(--border);">
                 @csrf
-                <div>
-                    <label class="block text-xs font-medium mb-2" style="color: var(--ink-muted);">Frequent Diagnoses</label>
-                    <div class="flex flex-wrap gap-2">
-                        <button type="button" @click="$dispatch('set-diagnosis-query', { query: 'Common Cold' })" class="px-3 py-1 rounded-full text-xs bg-emerald-900/10 text-emerald-900">Common cold</button>
-                        <button type="button" @click="$dispatch('set-diagnosis-query', { query: 'Hypertension' })" class="px-3 py-1 rounded-full text-xs bg-emerald-900/10 text-emerald-900">Hypertension</button>
-                        <button type="button" @click="$dispatch('set-diagnosis-query', { query: 'Urinary Tract Infection' })" class="px-3 py-1 rounded-full text-xs bg-emerald-900/10 text-emerald-900">UTI</button>
-                    </div>
-                </div>
                 <div class="relative">
                     <div class="flex items-center justify-between gap-2 mb-1">
                         <label class="block text-xs font-medium" style="color: var(--ink-muted);">Search ICD-10 / Disease name</label>

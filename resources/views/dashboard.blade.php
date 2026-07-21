@@ -35,7 +35,7 @@
         <div class="kpi-card animate-in opacity-0 delay-2 flex items-center gap-2.5 p-2.5 lg:p-3 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
              style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);">
             <span class="kpi-card__icon" style="background: var(--teal-soft); color: var(--primary);">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.856-1.487M15 10a3 3 0 11-6 0 3 3 0 016 0zM6 20a9 9 0 0118 0v2h2v-2a11 11 0 00-22 0v2h2v-2z"></path></svg>
+                <i class="fas fa-users text-lg"></i>
             </span>
             <div class="min-w-0 flex-1">
                 <p class="text-[10px] font-semibold uppercase tracking-wider truncate" style="color: var(--ink-muted);">Total Patients</p>
