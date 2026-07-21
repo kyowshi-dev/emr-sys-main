@@ -45,6 +45,15 @@
             --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.08);
         }
 
+        /* === AUTOSCALING FOUNDATION === */
+        html {
+            font-size: clamp(13px, 1.1vw, 16px);
+        }
+
+        body {
+            font-size: clamp(13px, 1.1vw, 16px);
+        }
+
         .grain::before {
             content: '';
             position: absolute;
@@ -54,14 +63,63 @@
             z-index: 0;
         }
 
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* === AUTOSCALING TYPOGRAPHY === */
+        h1 { font-size: clamp(1.5rem, 5vw, 2.25rem); line-height: clamp(1.3, 1.5, 1.8); }
+        h2 { font-size: clamp(1.25rem, 3.5vw, 1.875rem); line-height: clamp(1.3, 1.5, 1.8); }
+        h3 { font-size: clamp(1.125rem, 2.5vw, 1.5rem); line-height: clamp(1.4, 1.6, 1.9); }
+        h4 { font-size: clamp(1rem, 2vw, 1.25rem); }
+        h5 { font-size: clamp(0.95rem, 1.8vw, 1.125rem); }
+        
+        .text-xs { font-size: clamp(0.7rem, 0.85vw, 0.875rem); }
+        .text-sm { font-size: clamp(0.8rem, 0.95vw, 0.9375rem); }
+        .text-base { font-size: clamp(0.9rem, 1.1vw, 1rem); }
+        .text-lg { font-size: clamp(1rem, 1.2vw, 1.125rem); }
+        .text-xl { font-size: clamp(1.1rem, 1.4vw, 1.25rem); }
+
+        /* === AUTOSCALING SPACING === */
+        .px-2 { padding-left: clamp(0.4rem, 1vw, 0.5rem); padding-right: clamp(0.4rem, 1vw, 0.5rem); }
+        .px-3 { padding-left: clamp(0.6rem, 1.5vw, 0.75rem); padding-right: clamp(0.6rem, 1.5vw, 0.75rem); }
+        .px-4 { padding-left: clamp(0.8rem, 2vw, 1rem); padding-right: clamp(0.8rem, 2vw, 1rem); }
+        .px-5 { padding-left: clamp(1rem, 2.5vw, 1.25rem); padding-right: clamp(1rem, 2.5vw, 1.25rem); }
+        .px-6 { padding-left: clamp(1.2rem, 3vw, 1.5rem); padding-right: clamp(1.2rem, 3vw, 1.5rem); }
+        
+        .py-1 { padding-top: clamp(0.2rem, 0.5vw, 0.25rem); padding-bottom: clamp(0.2rem, 0.5vw, 0.25rem); }
+        .py-2 { padding-top: clamp(0.4rem, 1vw, 0.5rem); padding-bottom: clamp(0.4rem, 1vw, 0.5rem); }
+        .py-3 { padding-top: clamp(0.6rem, 1.5vw, 0.75rem); padding-bottom: clamp(0.6rem, 1.5vw, 0.75rem); }
+        .py-4 { padding-top: clamp(0.8rem, 2vw, 1rem); padding-bottom: clamp(0.8rem, 2vw, 1rem); }
+        .py-5 { padding-top: clamp(1rem, 2.5vw, 1.25rem); padding-bottom: clamp(1rem, 2.5vw, 1.25rem); }
+        
+        .gap-2 { gap: clamp(0.4rem, 1vw, 0.5rem); }
+        .gap-3 { gap: clamp(0.6rem, 1.5vw, 0.75rem); }
+        .gap-4 { gap: clamp(0.8rem, 2vw, 1rem); }
+        .gap-5 { gap: clamp(1rem, 2.5vw, 1.25rem); }
+
+        .mb-2 { margin-bottom: clamp(0.4rem, 1vw, 0.5rem); }
+        .mb-4 { margin-bottom: clamp(0.8rem, 2vw, 1rem); }
+        .mb-6 { margin-bottom: clamp(1.2rem, 3vw, 1.5rem); }
+        .mb-8 { margin-bottom: clamp(1.6rem, 4vw, 2rem); }
+
+        /* === AUTOSCALING COMPONENTS === */
+        .logo-mark { 
+            width: clamp(36px, 8vw, 48px); 
+            height: clamp(36px, 8vw, 48px); 
+            border-radius: clamp(8px, 1.5vw, 12px); 
+            overflow: hidden; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: var(--bg-surface); 
+        }
+        .logo-mark img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* === AUTOSCALING SIDEBAR === */
+        aside {
+            width: clamp(240px, 30vw, 300px) !important;
         }
 
-        .animate-in { animation: fadeSlideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        .delay-1 { animation-delay: 0.05s; }
-        .delay-2 { animation-delay: 0.1s; }
+        aside.lg\:w-0 {
+            width: 0 !important;
+        }
         
         .disabled {
             opacity: 0.5;
@@ -69,18 +127,136 @@
             cursor: not-allowed;
         }
 
-        .logo-mark { 
-            width: 37px; 
-            height: 37px; 
-            border-radius: 14px; 
-            overflow: hidden; 
-            display: inline-flex; 
-            align-items: center; 
-            justify-content: center; 
-            background: var(--bg-surface); 
-            zoom: 200%;
+        /* === AUTOSCALING BUTTONS & FORMS === */
+        button, a[role="button"] {
+            padding-top: clamp(0.5rem, 1.2vw, 0.75rem);
+            padding-bottom: clamp(0.5rem, 1.2vw, 0.75rem);
+            padding-left: clamp(0.8rem, 2vw, 1.25rem);
+            padding-right: clamp(0.8rem, 2vw, 1.25rem);
+            border-radius: clamp(0.375rem, 1vw, 0.625rem);
+            font-size: clamp(0.8rem, 0.95vw, 1rem);
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
-        .logo-mark img { width: 100%; height: 100%; object-fit: cover; }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            padding: clamp(0.5rem, 1vw, 0.75rem);
+            border-radius: clamp(0.375rem, 0.8vw, 0.625rem);
+            font-size: clamp(0.85rem, 1vw, 1rem);
+            border: 1px solid var(--border);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(13, 74, 60, 0.15);
+        }
+
+        /* === AUTOSCALING CARDS & MODALS === */
+        .rounded-2xl {
+            border-radius: clamp(0.75rem, 2vw, 1.5rem);
+        }
+
+        .rounded-xl {
+            border-radius: clamp(0.5rem, 1.5vw, 0.75rem);
+        }
+
+        .rounded-lg {
+            border-radius: clamp(0.375rem, 1vw, 0.5rem);
+        }
+
+        /* === AUTOSCALING TABLE === */
+        table {
+            font-size: clamp(0.8rem, 0.95vw, 0.95rem);
+        }
+
+        th {
+            padding: clamp(0.6rem, 1.2vw, 0.75rem);
+            font-size: clamp(0.8rem, 0.9vw, 0.9375rem);
+        }
+
+        td {
+            padding: clamp(0.5rem, 1vw, 0.875rem);
+            font-size: clamp(0.8rem, 0.95vw, 0.95rem);
+        }
+
+        /* === AUTOSCALING MODALS === */
+        #pageModalPanel,
+        #consultationCreateModalPanel,
+        #printReferralConfirmPanel {
+            max-width: min(95vw, 900px);
+            border-radius: clamp(0.75rem, 2vw, 1.25rem);
+            padding: clamp(1rem, 3vw, 2rem);
+        }
+
+        /* === AUTOSCALING KPI CARDS === */
+        .kpi-card {
+            min-height: clamp(3rem, 10vw, 5rem);
+            padding: clamp(0.75rem, 1.5vw, 1.25rem);
+            border-radius: clamp(0.625rem, 1.5vw, 0.875rem);
+        }
+
+        .kpi-card__icon {
+            width: clamp(2rem, 4vw, 2.5rem);
+            height: clamp(2rem, 4vw, 2.5rem);
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: clamp(0.4rem, 1vw, 0.625rem);
+        }
+
+        .kpi-card__icon svg {
+            width: clamp(1rem, 2vw, 1.25rem);
+            height: clamp(1rem, 2vw, 1.25rem);
+        }
+
+        .kpi-card__value {
+            font-family: 'Poppins', system-ui, sans-serif;
+            font-weight: 600;
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            line-height: 1.2;
+            color: var(--ink);
+        }
+
+        .dashboard-chart__plot {
+            height: clamp(10rem, 40vw, 16rem);
+        }
+
+        /* === AUTOSCALING NAVIGATION === */
+        .nav-link {
+            padding: clamp(0.5rem, 1vw, 0.75rem) clamp(0.75rem, 1.5vw, 1rem);
+            border-radius: clamp(0.375rem, 0.8vw, 0.625rem);
+            font-size: clamp(0.8rem, 0.95vw, 0.95rem);
+            gap: clamp(0.5rem, 1vw, 0.75rem);
+        }
+
+        .nav-link i {
+            font-size: clamp(0.875rem, 1.2vw, 1.1rem);
+        }
+
+        /* === AUTOSCALING ANIMATIONS === */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(clamp(8px, 2vw, 16px)); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in { animation: fadeSlideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.1s; }
 
         /* Normalize checkbox appearance & size across the app */
         input[type="checkbox"],
@@ -88,10 +264,10 @@
         input[type="checkbox"].household-checkbox,
         input[type="checkbox"]#selectAllCheckbox,
         input[type="checkbox"].rounded {
-            width: 1rem !important; /* 16px */
-            height: 1rem !important; /* 16px */
-            min-width: 1rem !important;
-            min-height: 1rem !important;
+            width: clamp(0.9rem, 2vw, 1.125rem) !important; 
+            height: clamp(0.9rem, 2vw, 1.125rem) !important; 
+            min-width: clamp(0.9rem, 2vw, 1.125rem) !important;
+            min-height: clamp(0.9rem, 2vw, 1.125rem) !important;
             padding: 0 !important;
             margin: 0 !important;
             box-sizing: border-box !important;
@@ -102,7 +278,7 @@
         }
 
         /* Reduce visual differences from border-radius utilities */
-        input[type="checkbox"].rounded { border-radius: 4px !important; }
+        input[type="checkbox"].rounded { border-radius: clamp(3px, 0.5vw, 5px) !important; }
 
         /* Ensure accent color consistent */
         input[type="checkbox"] { accent-color: var(--primary); }
@@ -130,53 +306,50 @@
             color: #ffffff !important;
         }
 
-        /* Dashboard — horizontal KPI cards & compact charts */
-        .kpi-card {
-            min-height: 4.25rem;
+        /* === RESPONSIVE PADDING FOR MAIN CONTENT === */
+        main {
+            padding-left: clamp(0.5rem, 2vw, 1rem);
+            padding-right: clamp(0.5rem, 2vw, 1rem);
+            padding-top: clamp(0.75rem, 1.5vw, 1.5rem);
+            padding-bottom: clamp(0.5rem, 1.5vw, 1rem);
         }
 
-        .kpi-card__icon {
-            width: 2.25rem;
-            height: 2.25rem;
-            flex-shrink: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0.625rem;
+        .max-w-7xl, .max-w-5xl {
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+            padding-left: clamp(0.5rem, 1.5vw, 1rem);
+            padding-right: clamp(0.5rem, 1.5vw, 1rem);
         }
 
-        .kpi-card__icon svg {
-            width: 1.125rem;
-            height: 1.125rem;
+        /* === BREADCRUMB AUTOSCALING === */
+        nav[aria-label="Breadcrumb"] {
+            font-size: clamp(0.75rem, 0.9vw, 0.9375rem);
+            margin-left: clamp(0.5rem, 2vw, 1.25rem);
+            margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
+            gap: clamp(0.4rem, 0.8vw, 0.625rem);
         }
 
-        .kpi-card__value {
-            font-family: 'Poppins', system-ui, sans-serif;
-            font-weight: 600;
-            font-size: 1.25rem;
-            line-height: 1.2;
-            color: var(--ink);
+        /* === NOTIFICATION TOAST AUTOSCALING === */
+        #liveConsultationToast {
+            width: clamp(300px, 90vw, 420px);
+            border-radius: clamp(1rem, 2vw, 1.5rem);
+            bottom: clamp(1rem, 3vw, 2rem);
+            right: clamp(1rem, 3vw, 2rem);
         }
 
-        @media (min-width: 1024px) {
-            .kpi-card__value {
-                font-size: 1.375rem;
-            }
+        #liveConsultationToast .p-5 {
+            padding: clamp(1rem, 1.5vw, 1.25rem);
         }
 
-        .dashboard-chart__plot {
-            height: 11rem;
+        #liveConsultationToast .p-4 {
+            padding: clamp(0.75rem, 1.2vw, 1rem);
         }
 
-        @media (min-width: 640px) {
-            .dashboard-chart__plot {
-                height: 13rem;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .dashboard-chart__plot {
-                height: 15rem;
+        @media (max-width: 640px) {
+            #liveConsultationToast {
+                width: clamp(280px, 95vw, 350px);
+                border-radius: clamp(0.75rem, 1.5vw, 1rem);
             }
         }
     </style>
@@ -205,6 +378,25 @@
                         sm: 'var(--shadow-sm)',
                         md: 'var(--shadow-md)',
                         lg: 'var(--shadow-lg)',
+                    },
+                    /* === AUTOSCALING UTILITIES === */
+                    fontSize: {
+                        'xs': ['clamp(0.7rem, 0.85vw, 0.875rem)', 'clamp(1rem, 1.2vw, 1.25rem)'],
+                        'sm': ['clamp(0.8rem, 0.95vw, 0.9375rem)', 'clamp(1.1rem, 1.3vw, 1.375rem)'],
+                        'base': ['clamp(0.9rem, 1.1vw, 1rem)', 'clamp(1.3rem, 1.5vw, 1.5rem)'],
+                        'lg': ['clamp(1rem, 1.2vw, 1.125rem)', 'clamp(1.4rem, 1.6vw, 1.625rem)'],
+                        'xl': ['clamp(1.1rem, 1.4vw, 1.25rem)', 'clamp(1.5rem, 1.8vw, 1.75rem)'],
+                    },
+                    spacing: {
+                        'autoscale-xs': 'clamp(0.25rem, 0.5vw, 0.375rem)',
+                        'autoscale-sm': 'clamp(0.5rem, 1vw, 0.75rem)',
+                        'autoscale-md': 'clamp(0.75rem, 1.5vw, 1rem)',
+                        'autoscale-lg': 'clamp(1rem, 2vw, 1.5rem)',
+                        'autoscale-xl': 'clamp(1.5rem, 3vw, 2rem)',
+                    },
+                    borderRadius: {
+                        'autoscale': 'clamp(0.375rem, 1vw, 0.625rem)',
+                        'autoscale-lg': 'clamp(0.75rem, 2vw, 1.5rem)',
                     }
                 },
             },
@@ -242,7 +434,7 @@
                     <div class="logo-mark" style="background: transparent;">
                         <img src="{{ asset('img/logo.svg') }}" alt="Santa Ana logo">
                     </div>
-                    <span class="font-display font-semibold text-lg text-ink">EMR System</span>
+                    <span class="font-display font-semibold text-lg text-ink">BHCR System</span>
                     <span class="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded bg-teal-soft text-primary">Sta. Ana</span>
                 </a>
                 <button @click="sidebarOpen = false" class="lg:hidden p-2 rounded-lg hover:bg-black/5 transition-colors text-ink-muted">
@@ -1398,14 +1590,14 @@
              * @returns {Promise} A promise that resolves with the server response
              */
             function pollLiveConsultationRequests() {
-                fetch('/consultations/live-requests', {
+                return fetch('/consultations/live-requests', {
                     credentials: 'same-origin',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
                         'Accept': 'application/json',
                     },
                 })
-                .then(function(response) {
+                .then(function(response) ) {
                     if (!response.ok) {
                         throw new Error('Live request fetch failed');
                     }
