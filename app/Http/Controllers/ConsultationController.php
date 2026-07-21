@@ -222,7 +222,7 @@ class ConsultationController extends Controller
             'mode_of_transaction' => ['required', 'string', 'max:255'],
             'referred_from' => ['nullable', 'string', 'max:255'],
             'nature_of_visit' => ['required', 'string', 'max:255'],
-            'purpose_of_visit' => ['required'| 'string', 'max:255'],
+            'purpose_of_visit' => ['required', 'string', 'max:255'],
             'chief_complaint' => ['nullable', 'string', 'max:1000'],
             'bp_systolic' => ['required', 'numeric', 'min:0', 'max:300'],
             'bp_diastolic' => ['required', 'numeric', 'min:0', 'max:200'],
@@ -568,11 +568,6 @@ class ConsultationController extends Controller
             ->orderByDesc('id')
             ->first();
 
-        $labRequests = DB::table('lab_requests')
-            ->where('consultation_id', $id)
-            ->orderBy('id')
-            ->get();
-
         $diagnoses = $this->diagnosisRecordsQuery()
             ->where('diagnosis_records.consultation_id', $id)
             ->select(
@@ -628,7 +623,7 @@ class ConsultationController extends Controller
             'temperature' => ['nullable', 'numeric', 'min:30', 'max:45'],
             'weight' => ['nullable', 'numeric', 'min:0', 'max:500'],
             'height' => ['nullable', 'numeric', 'min:0', 'max:300'],
-            'notes' => ['nullable', 'string', 'max:500'],
+            'notes' => ['nullable', 'string', 'max:500']
         ]);
 
         $consultation = DB::table('consultations')->where('id', $id)->first();

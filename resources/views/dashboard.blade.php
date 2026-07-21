@@ -100,7 +100,7 @@
             </div>
         </div>
 
-        <div class="kpi-card animate-in opacity-0 delay-5 flex items-center gap-2.5 p-2.5 lg:p-3 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
+                <div class="kpi-card animate-in opacity-0 delay-5 flex items-center gap-2.5 p-2.5 lg:p-3 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
              style="background: var(--bg-surface); border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);">
             <span class="kpi-card__icon" style="background: var(--teal-soft); color: var(--primary);">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -111,20 +111,6 @@
                 <p class="text-[10px] truncate mt-0.5" style="color: var(--ink-muted);">Staff on record</p>
             </div>
         </div>
-
-        @if($pendingPasswordResets > 0)
-        <div class="kpi-card animate-in opacity-0 delay-6 col-span-full flex items-center gap-2.5 p-2.5 lg:p-3 rounded-xl border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-md"
-             style="background: #fef3c7; border-color: var(--border); box-shadow: var(--shadow-sm); border-left: 4px solid #f59e0b;">
-            <span class="kpi-card__icon" style="background: rgba(245, 158, 11, 0.18); color: #92400e;">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
-            </span>
-            <div class="min-w-0 flex-1">
-                <p class="text-[10px] font-semibold uppercase tracking-wider truncate" style="color: #92400e;">Pending password resets</p>
-                <p class="kpi-card__value" style="color: #92400e;">{{ $pendingPasswordResets }}</p>
-            </div>
-            <a href="{{ route('users.password-reset-requests') }}" class="shrink-0 text-[10px] font-bold px-2 py-1 rounded-lg border" style="border-color: var(--border); color: #f59e0b;">Review</a>
-        </div>
-        @endif
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-3">

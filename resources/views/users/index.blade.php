@@ -248,6 +248,37 @@
         });
     }
 
+    if (typeof window.openPageDrawer !== 'function') {
+        window.openPageDrawer = function() {
+            const modal = document.getElementById('pageModal');
+            const panel = document.getElementById('pageModalPanel');
+            if (!modal || !panel) {
+                return;
+            }
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                panel.classList.remove('scale-95', 'opacity-0');
+                panel.classList.add('scale-100', 'opacity-100');
+            });
+        };
+    }
+
+    if (typeof window.closePageDrawer !== 'function') {
+        window.closePageDrawer = function() {
+            const modal = document.getElementById('pageModal');
+            const panel = document.getElementById('pageModalPanel');
+            if (!modal || !panel) {
+                return;
+            }
+            panel.classList.remove('scale-100', 'opacity-100');
+            panel.classList.add('scale-95', 'opacity-0');
+            panel.addEventListener('transitionend', function handleTransitionEnd() {
+                modal.classList.add('hidden');
+                panel.removeEventListener('transitionend', handleTransitionEnd);
+            }, { once: true });
+        };
+    }
+
     function openPermissionsModal(userId, username) {
         document.getElementById('modalUsername').textContent = username;
         document.getElementById('permissionsForm').action = '/users/' + userId + '/permissions';
