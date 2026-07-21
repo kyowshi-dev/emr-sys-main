@@ -107,7 +107,7 @@
         .animate-in { animation: fadeSlideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center font-sans antialiased overflow-hidden" style="background: url('{{ asset('img/bg.jpg') }}') center/cover no-repeat, var(--bg-page); font-family: var(--font-body);">
+<body class="min-h-screen flex items-center justify-center font-sans antialiased overflow-hidden" style="background: url('{{ asset('img/bg.svg') }}') center/cover no-repeat, var(--bg-page); font-family: var(--font-body);">
     <div class="grain fixed inset-0 z-0"></div>
     <div class="absolute inset-0 z-0 opacity-50" style="background: linear-gradient(145deg, var(--teal-soft) 0%, transparent 40%, rgba(196,92,65,0.06) 100%);"></div>
 

@@ -49,7 +49,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/search/households', [SearchController::class, 'households'])->name('search.households');
 
     // 3. PATIENT MANAGEMENT
-    // Households (Census)
     Route::get('/households', [HouseholdController::class, 'index'])
         ->name('households.index');
     Route::get('/households/create', [HouseholdController::class, 'create'])
@@ -67,14 +66,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/households/bulk-update-zone', [HouseholdController::class, 'updateZone'])
         ->name('households.update-zone');
 
-    // Patients
+    //3a. Patients
     Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
 
-    // Create Patient (Order matters: This must be BEFORE {id})
+    //3b. Create Patient (Order matters: This must be BEFORE {id})
     Route::get('/patients/create', [PatientController::class, 'create'])->name('patients.create');
     Route::post('/patients', [PatientController::class, 'store'])->name('patients.store');
 
-    // Show Patient Profile (Wildcard catches IDs like 1, 2, 100)
+    //3c. Show Patient Profile (Wildcard catches IDs like 1, 2, 100)
     Route::get('/patients/{id}', [PatientController::class, 'show'])->name('patients.show');
 
     // 4. CONSULTATION MODULE
@@ -149,7 +148,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/consultation-summary', [ReportController::class, 'consultationSummary'])
         ->name('reports.consultation-summary');
 
-    // 7. USER MANAGEMENT
+    // 8. USER MANAGEMENT
     Route::get('/users', [UserManagementController::class, 'index'])
         ->name('users.index');
     Route::get('/users/create', [UserManagementController::class, 'create'])
@@ -167,7 +166,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])
         ->name('users.destroy');
 
-    // User Permissions
+    // 9. User Permissions
     Route::get('/users/{user}/permissions', [UserManagementController::class, 'editPermissions'])
         ->name('users.permissions.edit');
     Route::get('/users/{user}/permissions-data', [UserManagementController::class, 'getPermissionsData'])
@@ -175,13 +174,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/users/{user}/permissions', [UserManagementController::class, 'updatePermissions'])
         ->name('users.permissions.update');
 
-    // 7a. Password reset request admin queue
-    Route::get('/users/password-reset-requests', [UserManagementController::class, 'passwordResetRequests'])
-        ->name('users.password-reset-requests');
-    Route::post('/users/password-reset-requests/{passwordResetRequest}/complete', [UserManagementController::class, 'completePasswordResetRequest'])
-        ->name('users.password-reset-requests.complete');
-
-    // 8. ZONE MANAGEMENT
+    // 10. ZONE MANAGEMENT
     Route::get('/zones', [ZoneController::class, 'index'])
         ->name('zones.index');
     Route::get('/zones/create', [ZoneController::class, 'create'])
@@ -197,7 +190,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/zones/{id}', [ZoneController::class, 'destroy'])
         ->name('zones.destroy');
 
-    // 9. MEDICINE MANAGEMENT
+    // 11. MEDICINE MANAGEMENT
     Route::get('/medicines', [MedicineController::class, 'index'])
         ->name('medicines.index');
     Route::get('/medicines/create', [MedicineController::class, 'create'])
@@ -215,7 +208,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/medicines/{id}', [MedicineController::class, 'destroy'])
         ->name('medicines.destroy');
 
-    // 10. SETTINGS
+    // 12. SETTINGS
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::get('/settings/account', [SettingsController::class, 'account'])->name('settings.account');
     Route::post('/settings/account', [SettingsController::class, 'updateAccount'])->name('settings.account.update');
@@ -226,7 +219,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/settings/backups/import', [SettingsController::class, 'importBackup'])
         ->name('settings.backups.import');
 
-    // 11. PROFILE MANAGEMENT
+    // 13. PROFILE MANAGEMENT
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -234,11 +227,13 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/settings', [ProfileController::class, 'updateSettings'])->name('profile.settings.update');
     Route::get('/session/status', [ProfileController::class, 'sessionStatus'])->name('session.status');
 
-    // 12. NOTIFICATIONS
+    // 14. NOTIFICATIONS
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markRead'])->name('notifications.mark-read');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
     Route::post('/notifications/destroy-all', [NotificationController::class, 'destroyAll'])->name('notifications.destroy-all');
+
+    // 15. MISC
 
 }); // <--- End of Auth Group
